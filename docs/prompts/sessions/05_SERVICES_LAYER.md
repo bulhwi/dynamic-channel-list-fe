@@ -162,6 +162,80 @@ ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be
 - Identified Issue #10 (ChannelList component) as next priority
 - Session 05 completed with 50% Phase 2 progress
 
+### Prompt #8: Verify Documentation Update
+
+**User**:
+
+```
+그전에 프롬프트 업데이트 다시 확인하자 우리가 주고받은 대화내용은 최신화가 안된거 같아
+```
+
+**Translation**: "Before that, let's check the prompt update again - it seems our conversation history hasn't been updated."
+
+**Claude's Response**:
+
+- Added complete conversation history (Prompts #1-#7) to Session 05
+- Each prompt now includes original Korean, translation, and response summary
+- Documented all 8 commits made during Session 05
+- Updated timestamp to 2025-11-24 05:10
+
+### Prompt #9: Plan Dummy Data with MSW
+
+**User**:
+
+```
+진행전에 더미데이터 구성 어떻게 하고 활용할건지 계획해보자 swc를 사용하면 좋을거 같은데
+```
+
+(Clarification: User meant "MSW" not "SWC")
+
+```
+아 아냐 내가 잘못말햇어 msw를 말한거엿어
+더미데이터의 구성은 msw로 구성해보고 후에 실제 api 통신은 fetch api 와 react query, 컴포넌트 내에서 client 레벨의 상태관리는 context api를 사용하자
+```
+
+**Translation**: "Before proceeding, let's plan how to structure and use dummy data. I think using MSW would be good... Oh no, I misspoke - I meant MSW. Let's structure dummy data with MSW, use fetch API and React Query for actual API communication later, and use Context API for client-level state management in components."
+
+**Claude's Response**:
+
+- Proposed MSW (Mock Service Worker) architecture
+- Designed three-layer architecture:
+  - **Data Layer**: MSW + React Query + Fetch API
+  - **State Management**: React Query (server state) + Context API (UI state)
+  - **Component Layer**: ChannelList (container) + ChannelItem (presentation)
+- Created detailed implementation plan:
+  1. MSW handlers for `/api/channels` endpoint
+  2. React Query setup with QueryClientProvider
+  3. Context API for hover state management
+  4. ChannelList component integration
+  5. Testing strategy for each layer
+
+### Prompt #10: Update GitHub Issue #10
+
+**User**:
+
+```
+응, 좋아 현재 github 이슈에서 내용이 좀 변경되엇으니 이슈 업데이트 부터 해보자
+```
+
+**Translation**: "Yes, good. Since the content has changed from the current GitHub issue, let's update the issue first."
+
+**Claude's Response**:
+
+- Updated Issue #10 with new architecture details
+- Restructured tasks into 7 sections:
+  1. Setup Infrastructure
+  2. MSW Mock API
+  3. React Query Setup
+  4. Context API for UI State
+  5. ChannelList Component
+  6. ChannelItem Props Extension
+  7. Testing
+- Added implementation examples for MSW, React Query, Context API
+- Updated acceptance criteria to reflect new architecture
+- Added "Benefits of This Architecture" section
+- Issue now clearly documents MSW + React Query + Context API approach
+
 ---
 
 ## 🔨 Issue #8: Create Sendbird Client Service (TDD)
@@ -365,4 +439,4 @@ Create a ChannelItem component with hover animations following assignment requir
 
 ---
 
-_Last Updated: 2025-11-24 05:10_
+_Last Updated: 2025-11-24 05:25_
