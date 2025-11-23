@@ -57,6 +57,111 @@ Starting Session 05 for services layer:
 4. Plan Sendbird SDK integration
 5. Begin TDD implementation
 
+### Prompt #2: Proceed to Component Work
+
+**User**:
+
+```
+오, 드디어 컴포넌트 작업 진행하는구나 ! 진행해보자
+```
+
+**Translation**: "Oh, finally working on components! Let's proceed"
+
+**Claude's Response**:
+
+- Completed Issue #8 (Sendbird client service)
+- Moved to Issue #9 (ChannelItem component)
+- Started TDD Red phase with 8 component tests
+- Implemented component with CSS animations
+- All tests passing with 100% coverage
+
+### Prompt #3: Add Korean Comments to Tests
+
+**User**:
+
+```
+프롬프트 업데이트 확인해서 업데이트 해줘. 추가로 test code들에 대해서 it 부분(시나리오 부분)에 번역 내용을 it 상단 라인에 주석으로 추가하자 내가 일일이 번역하면서 보기 힘드네 ;;
+```
+
+**Translation**: "Check and update the prompt document. Also, add Korean translation comments above each test scenario - it's hard to read while translating each one."
+
+**Claude's Response**:
+
+- Updated Session 05 documentation with Issue #8 & #9 results
+- Added Korean translation comments to all 30 test cases:
+  - ChannelItem tests (8 tests)
+  - Sendbird client tests (11 tests)
+  - Utility function tests (11 tests)
+- Improved test readability for Korean developers
+
+### Prompt #4: Refactor to Arrow Function
+
+**User**:
+
+```
+ChannelItem.tsx에 JSX.Element 부분 제거했어. 그리고 컴포넌트의 코드 구조를 const Test = () => {} 형태로 변경하자. 함수형이 더 가독성이 좋아
+```
+
+**Translation**: "I removed the JSX.Element part from ChannelItem.tsx. And let's change the component code structure to const Test = () => {} form. Arrow function form has better readability."
+
+**Claude's Response**:
+
+- Converted ChannelItem from function declaration to arrow function
+- Removed JSX.Element return type annotation
+- Separated export default statement
+- Better alignment with modern React patterns
+
+### Prompt #5: Integrate clsx Library
+
+**User**:
+
+```
+new Date(channel.createdAt).toLocaleString() -> new Date() 두번 만들고 있어서 내가 수정했어. 그리고, className은 clx 라이브러리를 사용해서 개선해보자 지금 보다 더 깔끔해질거 같아
+```
+
+**Translation**: "I fixed the duplicate new Date() calls. And let's improve className with clsx library - it will be much cleaner than now."
+
+**Claude's Response**:
+
+- Installed clsx library
+- Replaced manual className construction with clsx
+- Changed from `.filter(Boolean).join(' ')` to clsx syntax
+- More declarative and readable code
+
+### Prompt #6: Fix TypeScript Error
+
+**User**:
+
+```
+ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be of type string, number, symbol, or any 에러가 발생하고 있어 원인이 뭐야?
+```
+
+**Translation**: "The clsx applied part in ChannelItem.tsx is showing TS2464: A computed property name must be of type string, number, symbol, or any error. What's the cause?"
+
+**Claude's Response**:
+
+- Identified CSS Module type issue (string | undefined)
+- Changed from object syntax `{[styles.hovered]: isHovered}` to conditional syntax
+- Fixed: `isHovered && styles.hovered`
+- Resolved TypeScript type safety issues
+
+### Prompt #7: Update Documentation and Check Next Tasks
+
+**User**:
+
+```
+좋아 프롬프트 업데이트 하고 다음 진행가능한 작업 확인해보자
+```
+
+**Translation**: "Good, update the prompt documentation and let's check the next available tasks."
+
+**Claude's Response**:
+
+- Updated Session 05 documentation with all improvements
+- Reviewed Step 1 open issues
+- Identified Issue #10 (ChannelList component) as next priority
+- Session 05 completed with 50% Phase 2 progress
+
 ---
 
 ## 🔨 Issue #8: Create Sendbird Client Service (TDD)
@@ -260,4 +365,4 @@ Create a ChannelItem component with hover animations following assignment requir
 
 ---
 
-_Last Updated: 2025-11-24 04:45_
+_Last Updated: 2025-11-24 05:10_
