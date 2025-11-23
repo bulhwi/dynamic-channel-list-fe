@@ -1,6 +1,6 @@
 # Prompt Documentation Index
 
-이 디렉토리는 Claude Code와의 모든 대화를 문서화합니다.
+이 디렉토리는 Claude Code와의 모든 대화를 세션별로 문서화합니다.
 
 ---
 
@@ -8,42 +8,39 @@
 
 ```
 prompts/
-├── sessions/          # 주제별 세션 정리 (수동 작성)
+├── sessions/          # 세션별 대화 문서 (모든 프롬프트와 응답 포함)
 │   ├── 00_PROJECT_INITIALIZATION.md
-│   ├── 01_PROJECT_SETUP.md
-│   ├── 02_STEP1_IMPLEMENTATION.md
+│   ├── 01_GITHUB_ISSUES_SETUP.md
+│   ├── 02_PROJECT_SETUP.md
+│   ├── 03_STEP1_IMPLEMENTATION.md
 │   └── ...
 │
-├── daily/            # 날짜별 자동 로그 (.claude hooks)
-│   ├── 2025-11-23.md
-│   ├── 2025-11-24.md
-│   └── ...
-│
-└── README.md         # 이 파일
+├── SESSION_TEMPLATE.md  # 새 세션 작성 시 사용할 템플릿
+└── README.md            # 이 파일
 ```
 
 ---
 
 ## 📝 문서화 정책
 
-### 1. 세션별 문서 (sessions/)
-- **목적**: 주제별로 깔끔하게 정리된 대화 기록
-- **작성 시점**: 각 개발 단계(Step) 시작/완료 시
+### 세션별 문서화 (Session-Based Documentation)
+
+**중요**: 모든 프롬프트와 응답은 세션별로 문서화됩니다. 자동 로깅은 사용하지 않습니다.
+
+- **목적**: 주제별로 체계적으로 정리된 완전한 대화 기록
+- **작성 시점**: 각 개발 세션 진행 중 및 완료 시
 - **내용**:
-  - 목표 및 계획
-  - 주요 대화 내용
-  - 기술적 결정사항
-  - 구현 결과
-  - 배운 점
+  - 세션의 목표 및 계획
+  - 모든 사용자 프롬프트 (원문 그대로)
+  - Claude의 주요 응답
+  - 기술적 결정사항과 근거
+  - 구현된 코드 및 파일
+  - 발생한 문제와 해결 방법
+  - 배운 점 및 개선사항
+  - 다음 단계
 
 - **파일 네이밍**: `NN_TOPIC_NAME.md`
-  - 예: `01_PROJECT_SETUP.md`, `02_STEP1_IMPLEMENTATION.md`
-
-### 2. 날짜별 로그 (daily/)
-- **목적**: 모든 프롬프트의 완전한 원본 기록
-- **작성 시점**: 자동 (.claude hooks)
-- **내용**: 타임스탬프 + 원본 프롬프트
-- **파일 네이밍**: `YYYY-MM-DD.md`
+  - 예: `00_PROJECT_INITIALIZATION.md`, `01_GITHUB_ISSUES_SETUP.md`
 
 ---
 
@@ -54,18 +51,19 @@ prompts/
 | 번호 | 파일명 | 주제 | 날짜 | 상태 |
 |------|--------|------|------|------|
 | 00 | `sessions/00_PROJECT_INITIALIZATION.md` | 프로젝트 초기화, PRD/Tech Spec 작성 | 2025-11-23 | ✅ 완료 |
+| 01 | `sessions/01_GITHUB_ISSUES_SETUP.md` | GitHub Issues, Milestones, Labels 설정 | 2025-11-23 | ✅ 완료 |
 
 ### 🔄 진행 예정
 
 | 번호 | 주제 | 예상 내용 |
 |------|------|----------|
-| 01 | Project Setup | Next.js 초기화, 의존성 설치, 환경 설정 |
-| 02 | Step 1: Dummy Data & Animation | 더미 데이터, 호버 애니메이션 구현 |
-| 03 | Step 2: Channel Creation | Sendbird SDK 통합, 채널 생성 |
-| 04 | Step 3: Pagination | 무한 스크롤, 실제 데이터 교체 |
-| 05 | Step 4: Channel Update | 채널 업데이트, 재정렬 애니메이션 |
-| 06 | Testing & Refinement | 통합 테스트, 버그 수정 |
-| 07 | Deployment & Documentation | 배포, 최종 문서 정리 |
+| 02 | Project Setup | Next.js 초기화, 의존성 설치, 환경 설정 |
+| 03 | Step 1: Dummy Data & Animation | 더미 데이터, 호버 애니메이션 구현 |
+| 04 | Step 2: Channel Creation | Sendbird SDK 통합, 채널 생성 |
+| 05 | Step 3: Pagination | 무한 스크롤, 실제 데이터 교체 |
+| 06 | Step 4: Channel Update | 채널 업데이트, 재정렬 애니메이션 |
+| 07 | Testing & Refinement | 통합 테스트, 버그 수정 |
+| 08 | Deployment & Documentation | 배포, 최종 문서 정리 |
 
 ---
 
@@ -73,58 +71,72 @@ prompts/
 
 ### 특정 주제 찾기
 ```bash
-# 세션 파일에서 검색
+# 세션 파일에서 키워드 검색
 grep -r "animation" sessions/
 
-# 날짜별 로그에서 검색
-grep -r "createChannel" daily/
+# 특정 기술 스택 관련 대화 찾기
+grep -r "Sendbird" sessions/
+
+# 특정 컴포넌트 구현 찾기
+grep -r "ChannelList" sessions/
 ```
 
-### 특정 날짜의 대화 찾기
+### 특정 날짜의 세션 찾기
 ```bash
-# 2025-11-23의 모든 대화
-cat daily/2025-11-23.md
+# 세션 목록 확인
+ls -la sessions/
 
-# 특정 시간대
-grep "14:30" daily/2025-11-23.md
+# 특정 세션 읽기
+cat sessions/00_PROJECT_INITIALIZATION.md
 ```
 
 ---
 
 ## 📊 통계
 
+### 현재 문서 현황
+- **완료된 세션**: 2개 (00_PROJECT_INITIALIZATION, 01_GITHUB_ISSUES_SETUP)
+- **총 문서 라인**: ~1,200줄
+- **작성된 PRD/Tech Spec**: ~5,400줄 (EN + KO)
+- **생성된 GitHub Issues**: 35개
+
 ### 파일 크기 가이드라인
-- **세션 파일**: 500-1,500줄 권장
-- **일일 로그**: 제한 없음 (자동 생성)
-- **총 프로젝트**: ~10,000-15,000줄 예상
+- **세션 파일**: 400-800줄 권장 (너무 길면 읽기 어려움)
+- **총 프로젝트**: ~5,000-8,000줄 예상
 
 ### 권장 사항
-- 세션 파일이 2,000줄 초과 시 분리 고려
+- 세션 파일이 1,000줄 초과 시 분리 고려
 - 복잡한 주제는 여러 세션으로 나누기
 - 각 세션은 하나의 명확한 목표에 집중
+- 모든 프롬프트를 원문 그대로 기록
 
 ---
 
 ## 🎯 제출 시
 
-### 통합 문서 생성
-```bash
-# 모든 세션을 하나의 파일로 병합
-cat sessions/*.md > ../CLAUDE_SESSIONS.md
-
-# 모든 원본 로그도 별도로 제공
-cat daily/*.md > ../CLAUDE_DAILY_LOGS.md
-```
+### AI 도구 사용 문서
+프로젝트 루트의 `CLAUDE.md` 파일에 모든 AI 사용 내역이 정리되어 있습니다:
+- 사용한 도구 정보 (Claude Sonnet 4.5)
+- 세션별 작업 요약
+- 주요 기술적 결정사항과 근거
+- 통계 및 성과
 
 ### 제출 패키지
 ```
 docs/
-├── CLAUDE_SESSIONS.md        # 세션 정리본 (읽기 쉬움)
-├── CLAUDE_DAILY_LOGS.md      # 원본 로그 (완전한 기록)
-└── prompts/                   # 전체 디렉토리
-    ├── sessions/
-    ├── daily/
-    └── README.md
+├── CLAUDE.md                  # AI 도구 사용 종합 문서 ⭐
+├── prompts/                   # 전체 프롬프트 문서
+│   ├── sessions/              # 세션별 상세 문서
+│   │   ├── 00_PROJECT_INITIALIZATION.md
+│   │   ├── 01_GITHUB_ISSUES_SETUP.md
+│   │   └── ...
+│   └── README.md              # 프롬프트 문서 인덱스
+├── en/                        # 영문 문서
+│   ├── PRD_EN.md
+│   └── TECH_SPEC.md
+└── ko/                        # 한글 문서
+    ├── PRD_KO.md
+    └── TECH_SPEC.md
 ```
 
 ---
