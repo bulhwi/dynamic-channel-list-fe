@@ -14,8 +14,10 @@ jest.mock('@sendbird/chat', () => {
     currentUser: null,
   }
 
+  // Mock the default export
   return {
-    SendbirdChat: {
+    __esModule: true,
+    default: {
       init: jest.fn(() => mockSendbirdInstance),
     },
   }
@@ -25,7 +27,7 @@ jest.mock('@sendbird/chat/groupChannel', () => ({
   GroupChannelModule: jest.fn(),
 }))
 
-import { SendbirdChat } from '@sendbird/chat'
+import SendbirdChat from '@sendbird/chat'
 import { GroupChannelModule } from '@sendbird/chat/groupChannel'
 import {
   initializeSendbird,

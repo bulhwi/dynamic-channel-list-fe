@@ -1,5 +1,10 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
+import { TextEncoder, TextDecoder } from 'util'
+
+// Polyfill for TextEncoder/TextDecoder (needed for MSW)
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder
 
 // Mock IntersectionObserver (needed for infinite scroll tests)
 global.IntersectionObserver = class IntersectionObserver {
@@ -29,7 +34,8 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Mock Sendbird SDK
 jest.mock('@sendbird/chat', () => ({
-  SendbirdChat: {
+  __esModule: true,
+  default: {
     init: jest.fn(),
     connect: jest.fn(),
     disconnect: jest.fn(),
