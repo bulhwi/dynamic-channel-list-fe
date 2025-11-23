@@ -14,6 +14,7 @@ Implement utility functions for Phase 2 using Test-Driven Development (TDD):
 - [ ] Issue #7: Implement `sortChannels()` utility
 - [x] Achieve 100% code coverage for Issue #6 - ✅ COMPLETED
 - [x] Document Issue #6 implementation - ✅ COMPLETED
+- [x] Refactor project structure to use `src/` directory - ✅ COMPLETED
 
 ---
 
@@ -355,14 +356,139 @@ Background processes were in `killed` state (normal for background processes).
 
 ---
 
+### Prompt #5: Folder Structure Refactoring Request
+
+**User**:
+
+```
+폴더 구조와 관련해서 리팩토링이 필요한 부분이 있어, 작업초반에 문서화를 위한 셋업 작업 이후에 프로젝트 세팅을 해서 발생한 문제인거 같아.
+nextjs/react, typescript등 실제 개발과 관련된 파일들은 src폴더 하위로 옮기는게 맞을거 같아. 현재는 기본적인 nextjs 프로젝트의 폴더구조와는 달라서 정리가 필요해 확인해보고 정리하자.
+```
+
+**Translation**: "There's a refactoring needed related to folder structure, seems like a problem that occurred because we did project setup after documentation setup work at the beginning. Files related to actual development like nextjs/react, typescript should be moved under src folder. Currently different from standard nextjs project folder structure, needs cleanup. Let's check and organize."
+
+**Claude's Analysis**:
+
+Identified the issue: Project was created with `--no-src-dir` option, causing all development folders to be in root directory instead of following Next.js best practices.
+
+**Current Structure (Problem)**:
+
+```
+/
+├── app/
+├── components/
+├── lib/
+├── hooks/
+├── services/
+├── types/
+├── __tests__/
+├── utils/ (empty folder)
+└── ...
+```
+
+**Target Structure (Standard Next.js)**:
+
+```
+/
+├── src/
+│   ├── app/
+│   ├── components/
+│   ├── lib/
+│   ├── hooks/
+│   ├── services/
+│   ├── types/
+│   └── __tests__/
+├── public/
+├── docs/
+└── ...
+```
+
+**Refactoring Plan**:
+
+1. Create `src/` directory
+2. Move all development folders to `src/`
+3. Update `tsconfig.json` path mappings
+4. Update `jest.config.js` path configurations
+5. Run tests to verify all imports work
+6. Test production build
+7. Verify dev server works
+8. Commit changes
+
+**Implementation Steps**:
+
+1. **Created src directory and moved folders**:
+
+   ```bash
+   mkdir src
+   mv app components lib hooks services types __tests__ src/
+   rm -rf utils  # Removed empty folder
+   ```
+
+2. **Updated tsconfig.json**:
+
+   ```json
+   "paths": {
+     "@/*": ["./src/*"]  // Changed from "./*"
+   }
+   ```
+
+3. **Updated jest.config.js**:
+   - `moduleNameMapper`: `<rootDir>/src/$1` (was `<rootDir>/$1`)
+   - `collectCoverageFrom`: Added `src/` prefix to all paths
+   - Changed `utils/` to `lib/`
+
+4. **Fixed prettier formatting**:
+
+   ```bash
+   npx prettier --write "src/**/*.{ts,tsx}"
+   ```
+
+**Verification Results**:
+
+- ✅ Tests: 6/6 passing
+- ✅ Coverage: 100% maintained
+- ✅ Build: Successful
+- ✅ Dev server: Running on http://localhost:3000
+- ✅ Git: Correctly tracked as file renames (not deletions/additions)
+
+**Git Commit**: `29e3d01`
+
+```
+refactor: restructure project to use src directory
+
+Move all development-related files to src/ directory following Next.js best practices
+```
+
+**Files Changed**:
+
+- 11 files moved (renamed in git)
+- 2 config files modified (tsconfig.json, jest.config.js)
+- 1 empty folder removed (utils/)
+
+---
+
+### Prompt #6: Prompt Update Check Request
+
+**User**:
+
+```
+프롬프트 업데이트 확인해줘
+```
+
+**Translation**: "Check prompt update"
+
+**Claude's Action**: Currently updating Session 04 documentation with folder structure refactoring work.
+
+---
+
 ## 📊 Final Results
 
 ### Deliverables
 
 **Code**:
 
-- ✅ `lib/utils.ts` - generateRandomName() function (30 lines)
-- ✅ `__tests__/lib/utils.test.ts` - Comprehensive tests (42 lines)
+- ✅ `src/lib/utils.ts` - generateRandomName() function (30 lines)
+- ✅ `src/__tests__/lib/utils.test.ts` - Comprehensive tests (42 lines)
 - ✅ JSDoc documentation
 - ✅ 100% code coverage
 
@@ -374,10 +500,19 @@ Background processes were in `killed` state (normal for background processes).
 
 **Git**:
 
-- ✅ 1 commit (fed0b7c)
+- ✅ 3 commits (fed0b7c, 36f9c6a, 29e3d01)
+  - feat: Issue #6 implementation
+  - docs: Session 04 documentation
+  - refactor: Folder structure to src/
 - ✅ Issue #6 closed on GitHub
 - ✅ Session 04 started
 - ✅ .claude/current-session updated
+
+**Refactoring**:
+
+- ✅ Project restructured to use `src/` directory
+- ✅ All imports updated and working
+- ✅ Tests and build verified
 
 ### Metrics
 
@@ -428,6 +563,27 @@ Background processes were in `killed` state (normal for background processes).
    - Loop test (10 iterations) increases confidence
    - Probabilistic test (different names) could theoretically fail, but extremely unlikely
 
+3. **Project Structure Refactoring**
+   - Standard `src/` directory improves project organization
+   - Git correctly tracks file moves (not delete+add)
+   - Path alias updates must be synchronized across all config files
+   - Comprehensive testing after structure changes is critical
+   - Next.js best practices: Use `src/` for all application code
+
+### Challenges and Solutions
+
+1. **Initial Setup Issue**
+   - **Problem**: Project created with `--no-src-dir` flag
+   - **Impact**: Non-standard folder structure
+   - **Solution**: Moved all development folders to `src/`
+   - **Learning**: Consider project structure from the start
+
+2. **Configuration Synchronization**
+   - **Challenge**: Multiple config files need path updates
+   - **Files affected**: `tsconfig.json`, `jest.config.js`
+   - **Solution**: Systematic update and verification
+   - **Key insight**: Test everything after path changes
+
 ---
 
 ## ➡️ Next Steps
@@ -466,25 +622,28 @@ Background processes were in `killed` state (normal for background processes).
 
 ## 📝 Session Metadata
 
-| Field                  | Value                       |
-| ---------------------- | --------------------------- |
-| **Session Number**     | 04                          |
-| **Date**               | 2025-11-23                  |
-| **Duration**           | ~1 hour (23:30-00:30)       |
-| **Issues Completed**   | #6                          |
-| **Issues In Progress** | -                           |
-| **Files Created**      | 3 (lib, tests, session doc) |
-| **Lines Added (Code)** | +72 (30 impl + 42 tests)    |
-| **Lines Added (Docs)** | +450 (Session 04 doc)       |
-| **Tests Written**      | 4                           |
-| **Tests Passing**      | 4/4 (100%)                  |
-| **Coverage**           | 100% (all metrics)          |
-| **Commits**            | 1                           |
-| **Prompts Documented** | 4                           |
+| Field                     | Value                       |
+| ------------------------- | --------------------------- |
+| **Session Number**        | 04                          |
+| **Date**                  | 2025-11-23                  |
+| **Duration**              | ~2.5 hours (22:30-01:00)    |
+| **Issues Completed**      | #6                          |
+| **Issues In Progress**    | -                           |
+| **Refactoring Completed** | Folder structure (src/)     |
+| **Files Created**         | 3 (lib, tests, session doc) |
+| **Files Moved**           | 11 (to src/)                |
+| **Config Files Updated**  | 2 (tsconfig, jest.config)   |
+| **Lines Added (Code)**    | +72 (30 impl + 42 tests)    |
+| **Lines Added (Docs)**    | +550 (Session 04 doc)       |
+| **Tests Written**         | 4                           |
+| **Tests Passing**         | 4/4 (100%)                  |
+| **Coverage**              | 100% (all metrics)          |
+| **Commits**               | 3 (feat, docs, refactor)    |
+| **Prompts Documented**    | 6                           |
 
 ---
 
-**Session Status**: 🔄 IN PROGRESS (Issue #6 complete, Issue #7 pending)
+**Session Status**: 🔄 IN PROGRESS (Issue #6 complete, refactoring complete, Issue #7 pending)
 
 **Phase 2 Progress**: 1/8 issues complete (12.5%)
 
@@ -492,4 +651,4 @@ Background processes were in `killed` state (normal for background processes).
 
 ---
 
-_Last Updated: 2025-11-24 00:30_
+_Last Updated: 2025-11-23 23:10_
