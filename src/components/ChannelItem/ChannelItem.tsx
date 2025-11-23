@@ -21,7 +21,6 @@ export interface ChannelItemProps {
  * ChannelItem component for displaying channel information with animations.
  *
  * @param {ChannelItemProps} props - Component props
- * @returns {JSX.Element} Rendered channel item
  *
  * @example
  * ```tsx
@@ -32,11 +31,7 @@ export interface ChannelItemProps {
  * />
  * ```
  */
-export default function ChannelItem({
-  channel,
-  isHovered = false,
-  isAdjacent = false,
-}: ChannelItemProps) {
+const ChannelItem = ({ channel, isHovered = false, isAdjacent = false }: ChannelItemProps) => {
   // Build CSS class names based on state
   const classNames = [
     styles['channel-item'],
@@ -62,3 +57,5 @@ export default function ChannelItem({
     </div>
   )
 }
+
+export default ChannelItem
