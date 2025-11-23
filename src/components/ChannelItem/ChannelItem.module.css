@@ -5,6 +5,7 @@
  * - 호버된 아이템: translateX(40px)
  * - 인접한 아이템들: translateX(20px)
  * - Duration: 250ms, easing: ease-in-out
+ * - GPU 가속을 위한 will-change 및 backface-visibility 사용
  */
 
 .channel-item {
@@ -14,6 +15,9 @@
   cursor: pointer;
   transition: transform 250ms ease-in-out;
   transform: translateX(0);
+  /* GPU 가속 최적화 */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* 호버된 아이템 - 40px 이동 */
