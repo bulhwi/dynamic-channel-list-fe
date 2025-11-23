@@ -1,4 +1,4 @@
-# Dynamic Channel List with Animation
+# 애니메이션을 활용한 동적 채널 리스트
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.6-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
@@ -6,342 +6,342 @@
 [![Sendbird](https://img.shields.io/badge/Sendbird-4.20.2-purple)](https://sendbird.com/)
 [![License](https://img.shields.io/badge/License-Assignment-green)](LICENSE)
 
-A modern, animated channel list implementation using Sendbird UIKit and Next.js 15, featuring smooth animations, infinite scrolling, and real-time updates.
+Sendbird UIKit과 Next.js 15를 활용한 현대적인 애니메이션 채널 리스트 구현체입니다. 부드러운 애니메이션, 무한 스크롤, 실시간 업데이트 기능을 제공합니다.
 
-## 📋 Project Overview
+## 📋 프로젝트 개요
 
-This project implements a dynamic channel list with four progressive enhancement steps:
+이 프로젝트는 점진적으로 향상되는 4단계의 동적 채널 리스트를 구현합니다:
 
-- **Step 1**: Basic list with hover animations (translate + scale effects)
-- **Step 2**: Item insertion with staggered animations
-- **Step 3**: Dynamic sorting with smooth transitions
-- **Step 4**: Real-time updates with auto-positioning
+- **Step 1**: 호버 애니메이션이 적용된 기본 리스트 (translate + scale 효과)
+- **Step 2**: 순차적 애니메이션을 활용한 아이템 추가
+- **Step 3**: 부드러운 전환 효과를 가진 동적 정렬
+- **Step 4**: 자동 위치 조정이 가능한 실시간 업데이트
 
-Built with **Test-Driven Development (TDD)** methodology and comprehensive documentation.
+**테스트 주도 개발(TDD)** 방법론과 포괄적인 문서화를 통해 구축되었습니다.
 
-## 🚀 Features
+## 🚀 주요 기능
 
-- ✅ **Modern Tech Stack**: Next.js 15 with TypeScript, React 19, Tailwind CSS
-- ✅ **Smooth Animations**: GPU-accelerated CSS transforms (60 FPS)
-- ✅ **Infinite Scrolling**: Load more channels on scroll with React Query
-- ✅ **Real-time Updates**: Sendbird SDK integration for live channel updates
-- ✅ **Type Safety**: Strict TypeScript with comprehensive type definitions
-- ✅ **Testing**: Jest + React Testing Library with 80% coverage target
-- ✅ **Code Quality**: ESLint, Prettier, Husky pre-commit hooks
-- ✅ **Accessibility**: WCAG 2.1 AA compliance with keyboard navigation
-- ✅ **Bilingual Docs**: English and Korean documentation
+- ✅ **최신 기술 스택**: TypeScript를 활용한 Next.js 15, React 19, Tailwind CSS
+- ✅ **부드러운 애니메이션**: GPU 가속 CSS 변환 (60 FPS)
+- ✅ **무한 스크롤**: React Query를 활용한 스크롤 시 추가 로딩
+- ✅ **실시간 업데이트**: Sendbird SDK 통합을 통한 실시간 채널 업데이트
+- ✅ **타입 안정성**: 포괄적인 타입 정의가 적용된 엄격한 TypeScript
+- ✅ **테스팅**: 80% 커버리지 목표의 Jest + React Testing Library
+- ✅ **코드 품질**: ESLint, Prettier, Husky 프리커밋 훅
+- ✅ **접근성**: 키보드 네비게이션을 지원하는 WCAG 2.1 AA 준수
+- ✅ **이중 언어 문서**: 영어 및 한국어 문서
 
-## 📊 Project Status
+## 📊 프로젝트 상태
 
-**Current Phase**: Phase 1 Complete ✅ (5/35 issues, 14.3%)
+**현재 단계**: Phase 1 완료 ✅ (5/35 이슈, 14.3%)
 
-| Phase   | Status            | Issues     | Progress |
+| Phase   | 상태              | 이슈       | 진행률   |
 | ------- | ----------------- | ---------- | -------- |
-| Phase 1 | ✅ Complete       | #1-5 (5)   | 5/5 100% |
-| Phase 2 | 🎯 Ready to Start | #6-13 (8)  | 0/8 0%   |
-| Phase 3 | ⏳ Pending        | #14-19 (6) | 0/6 0%   |
-| Phase 4 | ⏳ Pending        | #20-25 (6) | 0/6 0%   |
-| Phase 5 | ⏳ Pending        | #26-29 (4) | 0/4 0%   |
-| Phase 6 | ⏳ Pending        | #30-35 (6) | 0/6 0%   |
+| Phase 1 | ✅ 완료           | #1-5 (5)   | 5/5 100% |
+| Phase 2 | 🎯 시작 준비 완료 | #6-13 (8)  | 0/8 0%   |
+| Phase 3 | ⏳ 대기 중        | #14-19 (6) | 0/6 0%   |
+| Phase 4 | ⏳ 대기 중        | #20-25 (6) | 0/6 0%   |
+| Phase 5 | ⏳ 대기 중        | #26-29 (4) | 0/4 0%   |
+| Phase 6 | ⏳ 대기 중        | #30-35 (6) | 0/6 0%   |
 
-**Phase 1 Completed**:
+**Phase 1 완료 내역**:
 
-- ✅ Next.js 15.5.6 initialized with TypeScript
-- ✅ Core dependencies installed (Sendbird SDK, React Query)
-- ✅ Development tools configured (ESLint, Prettier, Husky)
-- ✅ Testing environment set up (Jest, React Testing Library)
-- ✅ TypeScript types defined (Channel, Sendbird, Component types)
+- ✅ TypeScript를 활용한 Next.js 15.5.6 초기화
+- ✅ 핵심 의존성 설치 (Sendbird SDK, React Query)
+- ✅ 개발 도구 설정 (ESLint, Prettier, Husky)
+- ✅ 테스팅 환경 구축 (Jest, React Testing Library)
+- ✅ TypeScript 타입 정의 (Channel, Sendbird, Component 타입)
 
-See [GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues) for detailed progress tracking.
+자세한 진행 상황은 [GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues)를 참조하세요.
 
-## 🛠️ Tech Stack
+## 🛠️ 기술 스택
 
-### Core
+### 핵심 기술
 
-- **Framework**: Next.js 15.5.6 (App Router)
-- **Runtime**: React 19.0.0
-- **Language**: TypeScript 5.x (Strict Mode)
-- **Styling**: Tailwind CSS 3.4.14
+- **프레임워크**: Next.js 15.5.6 (App Router)
+- **런타임**: React 19.0.0
+- **언어**: TypeScript 5.x (Strict Mode)
+- **스타일링**: Tailwind CSS 3.4.14
 
-### State Management
+### 상태 관리
 
-- **Server State**: TanStack React Query 5.90.10
-- **UI State**: React Hooks (useState, useReducer)
+- **서버 상태**: TanStack React Query 5.90.10
+- **UI 상태**: React Hooks (useState, useReducer)
 
-### Backend Integration
+### 백엔드 통합
 
-- **Chat SDK**: Sendbird Chat SDK 4.20.2
+- **채팅 SDK**: Sendbird Chat SDK 4.20.2
 
-### Testing
+### 테스팅
 
-- **Framework**: Jest 30.2.0
-- **Testing Library**: React Testing Library 16.3.0
-- **Coverage Target**: 80% (lines, functions, branches, statements)
+- **프레임워크**: Jest 30.2.0
+- **테스팅 라이브러리**: React Testing Library 16.3.0
+- **커버리지 목표**: 80% (lines, functions, branches, statements)
 
-### Development Tools
+### 개발 도구
 
-- **Linting**: ESLint 9 + eslint-config-next
-- **Formatting**: Prettier 3.6.2
-- **Git Hooks**: Husky 9.1.7 + lint-staged
+- **린팅**: ESLint 9 + eslint-config-next
+- **포맷팅**: Prettier 3.6.2
+- **Git 훅**: Husky 9.1.7 + lint-staged
 
-## 📦 Installation
+## 📦 설치 방법
 
-### Prerequisites
+### 사전 요구사항
 
 - Node.js >= 18.17.0
-- npm or yarn
+- npm 또는 yarn
 - Git
 
-### Setup
+### 설치 및 실행
 
 ```bash
-# Clone the repository
+# 저장소 클론
 git clone https://github.com/bulhwi/dynamic-channel-list-fe.git
 cd dynamic-channel-list-fe
 
-# Install dependencies
+# 의존성 설치
 npm install
 
-# Set up environment variables
+# 환경 변수 설정
 cp .env.local.example .env.local
-# Edit .env.local and add your Sendbird App ID and API Token
+# .env.local 파일을 편집하여 Sendbird App ID와 API Token을 추가하세요
 
-# Run development server
+# 개발 서버 실행
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to view the application.
+[http://localhost:3000](http://localhost:3000)에서 애플리케이션을 확인할 수 있습니다.
 
-## 🔧 Available Scripts
+## 🔧 사용 가능한 스크립트
 
 ```bash
-# Development
-npm run dev          # Start development server (http://localhost:3000)
+# 개발
+npm run dev          # 개발 서버 시작 (http://localhost:3000)
 
-# Production
-npm run build        # Create production build
-npm run start        # Start production server
+# 프로덕션
+npm run build        # 프로덕션 빌드 생성
+npm run start        # 프로덕션 서버 시작
 
-# Code Quality
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint errors
-npm run format       # Format code with Prettier
-npm run format:check # Check code formatting
+# 코드 품질
+npm run lint         # ESLint 실행
+npm run lint:fix     # ESLint 에러 자동 수정
+npm run format       # Prettier로 코드 포맷팅
+npm run format:check # 코드 포맷팅 검사
 
-# Testing
-npm test             # Run tests
-npm run test:watch   # Run tests in watch mode
-npm run test:coverage # Generate coverage report
+# 테스팅
+npm test             # 테스트 실행
+npm run test:watch   # 테스트 watch 모드 실행
+npm run test:coverage # 커버리지 리포트 생성
 ```
 
-## 📁 Project Structure
+## 📁 프로젝트 구조
 
 ```
 dynamic-channel-list-fe/
 ├── app/                      # Next.js App Router
-│   ├── layout.tsx           # Root layout
-│   ├── page.tsx             # Home page
-│   └── globals.css          # Global styles
-├── components/              # React components (TBD in Phase 2)
-├── hooks/                   # Custom React hooks (TBD in Phase 2)
-├── services/                # Sendbird service layer (TBD in Phase 2)
-├── lib/                     # Utilities (TBD in Phase 2)
-├── types/                   # TypeScript type definitions
-│   ├── channel.types.ts     # Channel domain types
-│   ├── sendbird.types.ts    # Sendbird integration types
-│   ├── component.types.ts   # Component props types
-│   └── index.ts             # Type exports
-├── docs/                    # Documentation
-│   ├── en/                  # English documentation
-│   │   ├── PRD_EN.md        # Product Requirements Document
-│   │   └── TECH_SPEC.md     # Technical Specification
-│   ├── ko/                  # Korean documentation
+│   ├── layout.tsx           # 루트 레이아웃
+│   ├── page.tsx             # 홈 페이지
+│   └── globals.css          # 글로벌 스타일
+├── components/              # React 컴포넌트 (Phase 2에서 구현 예정)
+├── hooks/                   # 커스텀 React 훅 (Phase 2에서 구현 예정)
+├── services/                # Sendbird 서비스 레이어 (Phase 2에서 구현 예정)
+├── lib/                     # 유틸리티 (Phase 2에서 구현 예정)
+├── types/                   # TypeScript 타입 정의
+│   ├── channel.types.ts     # 채널 도메인 타입
+│   ├── sendbird.types.ts    # Sendbird 통합 타입
+│   ├── component.types.ts   # 컴포넌트 props 타입
+│   └── index.ts             # 타입 내보내기
+├── docs/                    # 문서
+│   ├── en/                  # 영어 문서
+│   │   ├── PRD_EN.md        # 제품 요구사항 문서
+│   │   └── TECH_SPEC.md     # 기술 사양서
+│   ├── ko/                  # 한국어 문서
 │   │   ├── PRD_KO.md        # 제품 요구사항 문서
 │   │   ├── TECH_SPEC.md     # 기술 사양서
 │   │   └── REQUIREMENTS.md  # 추가 요구사항
-│   └── prompts/             # AI session documentation
-│       └── sessions/        # Session-by-session logs
-├── __tests__/               # Test files
-├── public/                  # Static assets
-├── .husky/                  # Git hooks
-├── CLAUDE.md                # AI usage documentation
-├── jest.config.js           # Jest configuration
-├── tailwind.config.ts       # Tailwind configuration
-├── tsconfig.json            # TypeScript configuration
-└── package.json             # Dependencies and scripts
+│   └── prompts/             # AI 세션 문서
+│       └── sessions/        # 세션별 로그
+├── __tests__/               # 테스트 파일
+├── public/                  # 정적 에셋
+├── .husky/                  # Git 훅
+├── CLAUDE.md                # AI 사용 문서
+├── jest.config.js           # Jest 설정
+├── tailwind.config.ts       # Tailwind 설정
+├── tsconfig.json            # TypeScript 설정
+└── package.json             # 의존성 및 스크립트
 ```
 
-## 📚 Documentation
+## 📚 문서
 
-### For Developers
+### 개발자용
 
-- **[Product Requirements (EN)](docs/en/PRD_EN.md)** - Detailed requirements and user stories
-- **[Technical Specification (EN)](docs/en/TECH_SPEC.md)** - Architecture and implementation details
+- **[제품 요구사항 (EN)](docs/en/PRD_EN.md)** - 상세 요구사항 및 사용자 스토리
+- **[기술 사양서 (EN)](docs/en/TECH_SPEC.md)** - 아키텍처 및 구현 세부사항
 - **[한국어 PRD](docs/ko/PRD_KO.md)** - 제품 요구사항 (한국어)
 - **[한국어 기술 사양서](docs/ko/TECH_SPEC.md)** - 기술 사양 (한국어)
 
-### For Evaluators
+### 평가자용
 
-- **[CLAUDE.md](CLAUDE.md)** - Complete AI usage documentation (required by assignment)
-- **[Session Logs](docs/prompts/sessions/)** - Detailed conversation logs with Claude Code
-- **[GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues)** - Task tracking and progress
+- **[CLAUDE.md](CLAUDE.md)** - 전체 AI 사용 문서 (과제 제출 필수)
+- **[세션 로그](docs/prompts/sessions/)** - Claude Code와의 상세 대화 로그
+- **[GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues)** - 작업 추적 및 진행 상황
 
-### Key Documentation
+### 주요 문서 통계
 
-- **PRD**: 2,000+ lines (EN + KO)
-- **Tech Spec**: 2,400+ lines (EN + KO)
-- **Session Logs**: 2,700+ lines (4 sessions)
-- **AI Documentation**: 8,600+ total lines
+- **PRD**: 2,000+ 줄 (EN + KO)
+- **Tech Spec**: 2,400+ 줄 (EN + KO)
+- **세션 로그**: 2,700+ 줄 (4 세션)
+- **AI 문서**: 총 8,600+ 줄
 
-## 🧪 Testing
+## 🧪 테스팅
 
-This project follows **Test-Driven Development (TDD)**:
+이 프로젝트는 **테스트 주도 개발(TDD)** 을 따릅니다:
 
 ```bash
-# Run all tests
+# 모든 테스트 실행
 npm test
 
-# Run tests in watch mode (recommended during development)
+# watch 모드로 테스트 실행 (개발 중 권장)
 npm run test:watch
 
-# Generate coverage report
+# 커버리지 리포트 생성
 npm run test:coverage
 ```
 
-**Coverage Requirements**:
+**커버리지 요구사항**:
 
 - Lines: 80%
 - Functions: 80%
 - Branches: 80%
 - Statements: 80%
 
-Current Status: Phase 1 Complete - 2/2 tests passing ✅
+현재 상태: Phase 1 완료 - 2/2 테스트 통과 ✅
 
-## 🤖 AI Tool Usage
+## 🤖 AI 도구 사용
 
-This project was developed with assistance from **Claude Code** (claude-sonnet-4.5) by Anthropic.
+이 프로젝트는 Anthropic의 **Claude Code** (claude-sonnet-4.5) 지원을 받아 개발되었습니다.
 
-All AI interactions are transparently documented:
+모든 AI 상호작용은 투명하게 문서화되었습니다:
 
-- **[CLAUDE.md](CLAUDE.md)**: Complete AI usage documentation
-- **[Session Logs](docs/prompts/sessions/)**: Detailed conversation logs
+- **[CLAUDE.md](CLAUDE.md)**: 전체 AI 사용 문서
+- **[세션 로그](docs/prompts/sessions/)**: 상세 대화 로그
 
-**What Claude Code did**:
+**Claude Code가 수행한 작업**:
 
-- ✅ Documentation generation (PRD, Tech Spec)
-- ✅ Project planning and task breakdown
-- ✅ Architecture design and best practices guidance
-- ✅ GitHub Issues creation automation
-- ✅ TypeScript type definitions
+- ✅ 문서 생성 (PRD, Tech Spec)
+- ✅ 프로젝트 계획 및 작업 분해
+- ✅ 아키텍처 설계 및 모범 사례 가이드
+- ✅ GitHub Issues 생성 자동화
+- ✅ TypeScript 타입 정의
 
-**What the developer did**:
+**개발자가 수행한 작업**:
 
-- ✅ All final decisions and approvals
-- ✅ Requirements analysis and clarification
-- ✅ Code review and understanding
-- ✅ Testing and validation
-- ✅ Git commits and project management
+- ✅ 모든 최종 의사결정 및 승인
+- ✅ 요구사항 분석 및 명확화
+- ✅ 코드 리뷰 및 이해
+- ✅ 테스팅 및 검증
+- ✅ Git 커밋 및 프로젝트 관리
 
-All commits include co-authorship:
+모든 커밋에는 공동 저자 표시가 포함됩니다:
 
 ```
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## 🎯 Roadmap
+## 🎯 로드맵
 
-### Phase 1: Foundation & Setup ✅ (100% Complete)
+### Phase 1: 기반 구축 및 설정 ✅ (100% 완료)
 
-- ✅ Next.js initialization
-- ✅ Dependencies installation
-- ✅ Development tools setup
-- ✅ Testing environment
-- ✅ Type definitions
+- ✅ Next.js 초기화
+- ✅ 의존성 설치
+- ✅ 개발 도구 설정
+- ✅ 테스팅 환경
+- ✅ 타입 정의
 
-### Phase 2: Step 1 - Animated List (0% Complete)
+### Phase 2: Step 1 - 애니메이션 리스트 (0% 완료)
 
-- ⏳ Utility functions
-- ⏳ Sendbird service layer
-- ⏳ Basic components with animations
-- ⏳ Hover effects implementation
+- ⏳ 유틸리티 함수
+- ⏳ Sendbird 서비스 레이어
+- ⏳ 애니메이션이 적용된 기본 컴포넌트
+- ⏳ 호버 효과 구현
 
-### Phase 3: Step 2 - Item Insertion (Pending)
+### Phase 3: Step 2 - 아이템 삽입 (대기 중)
 
-- ⏳ Insert animation logic
-- ⏳ Staggered animations
-- ⏳ Position calculation
+- ⏳ 삽입 애니메이션 로직
+- ⏳ 순차적 애니메이션
+- ⏳ 위치 계산
 
-### Phase 4: Step 3 - Dynamic Sorting (Pending)
+### Phase 4: Step 3 - 동적 정렬 (대기 중)
 
-- ⏳ Sorting logic
-- ⏳ Transition animations
-- ⏳ Performance optimization
+- ⏳ 정렬 로직
+- ⏳ 전환 애니메이션
+- ⏳ 성능 최적화
 
-### Phase 5: Step 4 - Real-time Updates (Pending)
+### Phase 5: Step 4 - 실시간 업데이트 (대기 중)
 
-- ⏳ Sendbird event handlers
-- ⏳ Auto-positioning logic
-- ⏳ Real-time synchronization
+- ⏳ Sendbird 이벤트 핸들러
+- ⏳ 자동 위치 조정 로직
+- ⏳ 실시간 동기화
 
-### Phase 6: Polish & Deployment (Pending)
+### Phase 6: 마무리 및 배포 (대기 중)
 
-- ⏳ Accessibility improvements
-- ⏳ Performance optimization
-- ⏳ Production build
-- ⏳ Deployment setup
+- ⏳ 접근성 개선
+- ⏳ 성능 최적화
+- ⏳ 프로덕션 빌드
+- ⏳ 배포 설정
 
-See [GitHub Projects](https://github.com/bulhwi/dynamic-channel-list-fe/projects) for detailed roadmap.
+자세한 로드맵은 [GitHub Projects](https://github.com/bulhwi/dynamic-channel-list-fe/projects)를 참조하세요.
 
-## 📝 Environment Variables
+## 📝 환경 변수
 
-Copy `.env.local.example` to `.env.local` and configure:
+`.env.local.example` 파일을 `.env.local`로 복사하여 설정하세요:
 
 ```env
-# Sendbird Configuration
+# Sendbird 설정
 NEXT_PUBLIC_SENDBIRD_APP_ID=your_app_id_here
 NEXT_PUBLIC_SENDBIRD_API_TOKEN=your_api_token_here
 
-# Optional: User Configuration
+# 옵션: 사용자 설정
 NEXT_PUBLIC_DEFAULT_USER_ID=test_user
 ```
 
-Get your Sendbird credentials at [Sendbird Dashboard](https://dashboard.sendbird.com/).
+Sendbird 인증 정보는 [Sendbird Dashboard](https://dashboard.sendbird.com/)에서 발급받을 수 있습니다.
 
-## 🤝 Contributing
+## 🤝 기여
 
-This is an assignment project, but feedback and suggestions are welcome!
+이 프로젝트는 과제 제출용이지만, 피드백과 제안은 환영합니다!
 
-1. Check [GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues) for current tasks
-2. Review [Technical Specification](docs/en/TECH_SPEC.md) for architecture
-3. Follow TDD methodology (write tests first)
-4. Ensure all tests pass and coverage is maintained
+1. 현재 작업은 [GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues)에서 확인하세요
+2. 아키텍처는 [기술 사양서](docs/en/TECH_SPEC.md)를 검토하세요
+3. TDD 방법론을 따라주세요 (테스트를 먼저 작성)
+4. 모든 테스트가 통과하고 커버리지가 유지되는지 확인하세요
 
-## 📄 License
+## 📄 라이선스
 
-This project is part of a coding assignment submission.
+이 프로젝트는 코딩 과제 제출의 일부입니다.
 
-## 👤 Author
+## 👤 작성자
 
 **Park Bulhwi** ([@bulhwi](https://github.com/bulhwi))
 
-Developed with assistance from:
+다음의 지원을 받아 개발되었습니다:
 
 - **Claude Code** (claude-sonnet-4.5) by Anthropic
 
-## 🙏 Acknowledgments
+## 🙏 감사의 말
 
-- **Sendbird** - Chat SDK and documentation
-- **Vercel** - Next.js framework and hosting
-- **Anthropic** - Claude Code AI assistance
-- **Open Source Community** - Amazing tools and libraries
-
----
-
-**Last Updated**: 2025-11-23
-**Version**: 0.1.0
-**Status**: Phase 1 Complete ✅
+- **Sendbird** - 채팅 SDK 및 문서
+- **Vercel** - Next.js 프레임워크 및 호스팅
+- **Anthropic** - Claude Code AI 지원
+- **오픈소스 커뮤니티** - 훌륭한 도구와 라이브러리
 
 ---
 
-For detailed AI usage documentation, see [CLAUDE.md](CLAUDE.md).
-For session-by-session conversation logs, see [docs/prompts/sessions/](docs/prompts/sessions/).
+**최종 업데이트**: 2025-11-23
+**버전**: 0.1.0
+**상태**: Phase 1 완료 ✅
+
+---
+
+자세한 AI 사용 문서는 [CLAUDE.md](CLAUDE.md)를 참조하세요.
+세션별 대화 로그는 [docs/prompts/sessions/](docs/prompts/sessions/)를 참조하세요.
