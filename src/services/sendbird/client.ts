@@ -5,12 +5,12 @@
  * connection, and disconnection logic.
  */
 
-import { SendbirdChat } from '@sendbird/chat'
+import SendbirdChat from '@sendbird/chat'
 import { GroupChannelModule } from '@sendbird/chat/groupChannel'
-import type { User } from '@sendbird/chat'
+import type { SendbirdChatWith, User } from '@sendbird/chat'
 
 // Singleton instance
-let sendbirdInstance: ReturnType<typeof SendbirdChat.init> | null = null
+let sendbirdInstance: SendbirdChatWith<[GroupChannelModule]> | null = null
 
 /**
  * Initializes the Sendbird SDK with required configuration.
@@ -18,7 +18,7 @@ let sendbirdInstance: ReturnType<typeof SendbirdChat.init> | null = null
  * Uses singleton pattern to ensure only one instance exists.
  * **IMPORTANT**: localCacheEnabled is set to false as per assignment requirements.
  *
- * @returns {SendbirdChat} The initialized Sendbird instance
+ * @returns {SendbirdChatWith<[GroupChannelModule]>} The initialized Sendbird instance
  * @throws {Error} When NEXT_PUBLIC_SENDBIRD_APP_ID environment variable is missing
  *
  * @example
@@ -26,7 +26,7 @@ let sendbirdInstance: ReturnType<typeof SendbirdChat.init> | null = null
  * const sendbird = initializeSendbird()
  * ```
  */
-export function initializeSendbird(): ReturnType<typeof SendbirdChat.init> {
+export function initializeSendbird(): SendbirdChatWith<[GroupChannelModule]> {
   // Return existing instance if already initialized
   if (sendbirdInstance) {
     return sendbirdInstance
@@ -111,7 +111,7 @@ export async function disconnectUser(): Promise<void> {
 /**
  * Gets the current Sendbird instance.
  *
- * @returns {SendbirdChat | null} The Sendbird instance or null if not initialized
+ * @returns {SendbirdChatWith<[GroupChannelModule]> | null} The Sendbird instance or null if not initialized
  *
  * @example
  * ```typescript
@@ -121,7 +121,7 @@ export async function disconnectUser(): Promise<void> {
  * }
  * ```
  */
-export function getSendbirdInstance(): ReturnType<typeof SendbirdChat.init> | null {
+export function getSendbirdInstance(): SendbirdChatWith<[GroupChannelModule]> | null {
   return sendbirdInstance
 }
 
