@@ -16,6 +16,7 @@ This document captures the initial conversation between the user and Claude Code
 ### 🎯 User's Initial Request
 
 **User**:
+
 ```
 현재 디렉토리에에서 docs하위에 잇는 문서를 분석하여 prd 작성해줘.
 _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf 문서가 원본 요구사항 문서이고,
@@ -24,7 +25,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 ```
 
 **Translation**:
-"Analyze the documents in the docs subdirectory and create a PRD. The _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf document is the original requirements document, and REQUIREMENTS.md is the document where I've organized additional requirements based on the PDF. Do you understand?"
+"Analyze the documents in the docs subdirectory and create a PRD. The _JS**EN**Assignment_for_Messaging_Apps_(UIKit)\_-\_Dynamic_Channel_List.pdf document is the original requirements document, and REQUIREMENTS.md is the document where I've organized additional requirements based on the PDF. Do you understand?"
 
 ---
 
@@ -33,6 +34,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 **Confirmation**: Claude confirmed understanding of the task.
 
 **Actions Taken**:
+
 1. Read both documents:
    - `docs/_JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf`
    - `docs/REQUIREMENTS.md`
@@ -52,6 +54,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 #### From Original PDF:
 
 **Step 1: Animated List with Dummy Data**
+
 - Create alphabetically sorted list
 - Hover animations:
   - Hovered item: 40px right
@@ -59,21 +62,25 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
   - Return to original position on mouse leave
 
 **Step 2: Channel Creation**
+
 - "Create new channel" button
 - Random 8-letter English string names
 - Automatic alphabetical insertion
 
 **Step 3: Pagination**
+
 - Container height limited to 10 items
 - Fetch real channels from Sendbird SDK
 - Infinite scroll implementation
 
 **Step 4: Channel Update**
+
 - Click to update channel name
 - New random 8-letter string
 - Automatic re-positioning
 
 **SDK Constraints**:
+
 - Only 5 specific Sendbird functions allowed
 - `localCacheEnabled: false` required
 - `GroupChannelCollection` prohibited
@@ -81,12 +88,14 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 #### From REQUIREMENTS.md:
 
 **Tech Stack**:
+
 - React 18+ / Next.js 15 / TypeScript
 - React Query for state management
 - Jest for testing
 - TDD approach
 
 **Additional Requirements**:
+
 - Test coverage ≥80%
 - English + Korean documentation
 - Prompt documentation (automated via hooks)
@@ -97,6 +106,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 ### 🔄 Follow-up Request
 
 **User**:
+
 ```
 응, 작성해보자
 그리고 한국어 문서와 영문문서를 docs/ko, docs/en 하위로 분리해서 관리하자
@@ -112,6 +122,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 ### 🛠 Claude's Implementation Plan
 
 **Created Todo List**:
+
 1. ✅ Create directory structure (docs/en, docs/ko)
 2. ✅ Move existing PRD files to language-specific directories
 3. ✅ Write TECH_SPEC_EN.md (English technical specification)
@@ -124,6 +135,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 ### 📁 Directory Restructuring
 
 **Before**:
+
 ```
 docs/
 ├── PRD_EN.md
@@ -133,6 +145,7 @@ docs/
 ```
 
 **After**:
+
 ```
 docs/
 ├── en/
@@ -154,10 +167,12 @@ docs/
 #### 1. Product Requirements Document (PRD)
 
 **Location**:
+
 - `docs/en/PRD.md` (English)
 - `docs/ko/PRD.md` (Korean)
 
 **Structure** (16 sections):
+
 1. Document Information
 2. Executive Summary
 3. Goals & Objectives
@@ -176,6 +191,7 @@ docs/
 16. Approval & Sign-off
 
 **Key Features**:
+
 - Quantitative success metrics (60 FPS, 80% coverage, <2s load)
 - Detailed user stories with acceptance criteria
 - Step-by-step functional requirements
@@ -187,10 +203,12 @@ docs/
 #### 2. Technical Specification (TECH_SPEC)
 
 **Location**:
+
 - `docs/en/TECH_SPEC.md` (English)
 - `docs/ko/TECH_SPEC.md` (Korean)
 
 **Structure** (14 sections):
+
 1. System Architecture (layered architecture diagram)
 2. Technology Stack (detailed dependencies)
 3. Component Design (tree + specifications)
@@ -207,6 +225,7 @@ docs/
 14. Appendices (utilities + types + constants)
 
 **Key Features**:
+
 - Detailed component specifications with code examples
 - React Query configuration and custom hooks
 - Complete Sendbird SDK integration guide
@@ -224,11 +243,13 @@ docs/
 **Purpose**: Automatically log all user prompts to a daily conversation file
 
 **Configuration**:
+
 - Log directory: `docs/prompts/`
 - Log file format: `conversation_YYYYMMDD.md`
 - Timestamp format: `YYYY-MM-DD HH:MM:SS`
 
 **Functionality**:
+
 - Creates log directory if doesn't exist
 - Creates daily log file with header
 - Appends each user prompt with timestamp
@@ -243,19 +264,23 @@ docs/
 ### 1. Technology Stack
 
 **Core**:
+
 - React 18+ (latest features)
 - Next.js 15 with App Router (modern architecture)
 - TypeScript strict mode (type safety)
 
 **State Management**:
+
 - React Query v5 (server state)
 - React hooks (local UI state)
 
 **Testing**:
+
 - Jest + React Testing Library
 - 80% coverage target
 
 **Code Quality**:
+
 - ESLint + Prettier
 - Husky + lint-staged
 
@@ -264,12 +289,14 @@ docs/
 ### 2. Architecture Pattern
 
 **Layered Architecture**:
+
 1. **Presentation Layer**: React components, CSS Modules
 2. **Business Logic Layer**: Custom hooks, services
 3. **Data Layer**: React Query (caching, synchronization)
 4. **External Integration**: Sendbird SDK
 
 **Benefits**:
+
 - Clear separation of concerns
 - Easy to test each layer independently
 - Scalable and maintainable
@@ -279,10 +306,12 @@ docs/
 ### 3. State Management Strategy
 
 **Hybrid Approach**:
+
 - **Server State**: React Query (channels, loading, errors)
 - **Local UI State**: React hooks (hover, scroll, UI flags)
 
 **Rationale**:
+
 - React Query excels at server state management
 - React hooks are sufficient for simple UI state
 - Avoids Redux complexity for this use case
@@ -292,15 +321,18 @@ docs/
 ### 4. Animation Strategy
 
 **CSS Transforms** (preferred):
+
 - GPU-accelerated (`translateX`)
 - Smooth 60 FPS performance
 - No layout thrashing
 
 **Alternative** (optional):
+
 - Framer Motion for complex animations
 - React Transition Group for list transitions
 
 **Rationale**:
+
 - CSS is fastest and most performant
 - JavaScript animation only if necessary
 
@@ -309,11 +341,13 @@ docs/
 ### 5. Infinite Scroll Implementation
 
 **Intersection Observer API**:
+
 - Better performance than scroll events
 - No manual throttling/debouncing needed
 - Built-in threshold and rootMargin options
 
 **Alternative** (not chosen):
+
 - Scroll event + throttle (less performant)
 
 ---
@@ -321,6 +355,7 @@ docs/
 ### 6. Testing Approach
 
 **Test-Driven Development (TDD)**:
+
 1. Write test first
 2. Implement minimum code to pass
 3. Refactor
@@ -329,6 +364,7 @@ docs/
 **Coverage Target**: ≥80%
 
 **Test Types**:
+
 - Unit tests (utilities, hooks, services)
 - Component tests (render, interactions, animations)
 - Integration tests (full user flows)
@@ -337,21 +373,22 @@ docs/
 
 ## Success Metrics Defined
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Animation FPS | 60 FPS | Performance monitoring |
-| Test Coverage | ≥80% | Jest coverage report |
-| Load Time (Initial) | <2s | Lighthouse |
-| Load Time (Pagination) | <500ms | Network timing |
-| Code Quality | 0 ESLint errors | CI/CD |
-| TypeScript | No `any` types | tsc compiler |
-| Lighthouse Score | ≥90 | Lighthouse audit |
+| Metric                 | Target          | Measurement            |
+| ---------------------- | --------------- | ---------------------- |
+| Animation FPS          | 60 FPS          | Performance monitoring |
+| Test Coverage          | ≥80%            | Jest coverage report   |
+| Load Time (Initial)    | <2s             | Lighthouse             |
+| Load Time (Pagination) | <500ms          | Network timing         |
+| Code Quality           | 0 ESLint errors | CI/CD                  |
+| TypeScript             | No `any` types  | tsc compiler           |
+| Lighthouse Score       | ≥90             | Lighthouse audit       |
 
 ---
 
 ## Next Steps
 
 ### Immediate (Week 1):
+
 1. Initialize Next.js 15 project
 2. Setup ESLint, Prettier, Husky
 3. Configure Jest and React Testing Library
@@ -359,18 +396,21 @@ docs/
 5. Implement utility functions (TDD)
 
 ### Short-term (Week 1-2):
+
 6. Implement Step 1 (animated list with dummy data)
 7. Implement Step 2 (channel creation)
 8. Integrate Sendbird SDK
 9. Setup React Query
 
 ### Mid-term (Week 2):
+
 10. Implement Step 3 (pagination + real data)
 11. Implement Step 4 (channel update)
 12. Performance optimization
 13. Accessibility improvements
 
 ### Final (Week 3):
+
 14. Comprehensive testing
 15. Code review and refactoring
 16. Documentation completion
@@ -402,6 +442,7 @@ docs/
 ## Files Modified/Created in This Session
 
 ### Created:
+
 1. `docs/en/PRD.md` (~1,000 lines)
 2. `docs/ko/PRD.md` (~1,000 lines)
 3. `docs/en/TECH_SPEC.md` (~1,200 lines)
@@ -410,11 +451,13 @@ docs/
 6. `docs/prompts/00_PROJECT_INITIALIZATION.md` (this file)
 
 ### Moved:
+
 1. `docs/PRD_EN.md` → `docs/en/PRD.md`
 2. `docs/PRD_KO.md` → `docs/ko/PRD.md`
 3. `docs/REQUIREMENTS.md` → `docs/ko/REQUIREMENTS.md`
 
 ### Directories Created:
+
 1. `docs/en/`
 2. `docs/ko/`
 3. `docs/prompts/`
@@ -439,16 +482,19 @@ docs/
 ## References
 
 ### Source Documents:
+
 - `docs/_JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf`
 - `docs/ko/REQUIREMENTS.md`
 
 ### Created Documents:
+
 - `docs/en/PRD.md`
 - `docs/ko/PRD.md`
 - `docs/en/TECH_SPEC.md`
 - `docs/ko/TECH_SPEC.md`
 
 ### External References:
+
 - [Sendbird Dashboard](https://dashboard.sendbird.com/)
 - [Sendbird Chat SDK for JavaScript](https://sendbird.com/docs/chat/sdk/v4/javascript/overview)
 - [Next.js 15 Documentation](https://nextjs.org/docs)
@@ -470,4 +516,4 @@ docs/
 
 ---
 
-_This document is auto-generated and will be supplemented by daily conversation logs in `docs/prompts/conversation_*.md` files via Claude hooks._
+_This document is auto-generated and will be supplemented by daily conversation logs in `docs/prompts/conversation_\*.md` files via Claude hooks.\_

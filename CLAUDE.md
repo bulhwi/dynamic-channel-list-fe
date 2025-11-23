@@ -12,6 +12,7 @@
 This document provides comprehensive details about how Claude Code AI was utilized throughout the development of this project, as required by the assignment submission guidelines.
 
 **Assignment Note**:
+
 > "You are welcome to utilize AI tools, such as ChatGPT and Claude, to enhance your code. However, if you use any AI tools, please include specific details about how you used them (e.g., the type of tool and the prompt you provided) when submitting your assignment."
 
 ---
@@ -20,18 +21,19 @@ This document provides comprehensive details about how Claude Code AI was utiliz
 
 ### Tool Details
 
-| Attribute | Details |
-|-----------|---------|
-| **Tool Name** | Claude Code |
-| **AI Model** | Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`) |
-| **Provider** | Anthropic |
-| **Interface** | CLI (Command Line Interface) |
-| **Version** | Latest (as of 2025-11-23) |
-| **Documentation** | https://docs.claude.com/claude-code |
+| Attribute         | Details                                          |
+| ----------------- | ------------------------------------------------ |
+| **Tool Name**     | Claude Code                                      |
+| **AI Model**      | Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`) |
+| **Provider**      | Anthropic                                        |
+| **Interface**     | CLI (Command Line Interface)                     |
+| **Version**       | Latest (as of 2025-11-23)                        |
+| **Documentation** | https://docs.claude.com/claude-code              |
 
 ### Capabilities Used
 
 Claude Code was used for:
+
 - ✅ **Documentation Generation**: PRD, Technical Specifications
 - ✅ **Project Planning**: Task breakdown, milestone planning
 - ✅ **Code Architecture**: System design, component structure
@@ -42,6 +44,7 @@ Claude Code was used for:
 ### What Claude Code Did NOT Do
 
 To maintain integrity:
+
 - ❌ **No actual implementation code** written yet (planning phase only)
 - ❌ **No copy-paste from external sources** without attribution
 - ❌ **No decisions without developer approval**
@@ -54,6 +57,7 @@ To maintain integrity:
 All prompts, responses, and decisions are documented in detail in session files located at `docs/prompts/sessions/`.
 
 ### Session 00: Project Initialization
+
 **File**: [`docs/prompts/sessions/00_PROJECT_INITIALIZATION.md`](docs/prompts/sessions/00_PROJECT_INITIALIZATION.md)
 **Date**: 2025-11-23
 **Duration**: ~1 hour
@@ -61,6 +65,7 @@ All prompts, responses, and decisions are documented in detail in session files 
 #### Prompts Used
 
 **Prompt #1**: Initial PRD Request
+
 ```
 현재 디렉토리에에서 docs하위에 잇는 문서를 분석하여 prd 작성해줘.
 _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf 문서가 원본 요구사항 문서이고,
@@ -71,18 +76,21 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 **Translation**: "Analyze documents in docs/ and create a PRD. The PDF is the original requirements, and REQUIREMENTS.md is my additional requirements. Understand?"
 
 **Claude's Actions**:
+
 1. Read and analyzed both documents
 2. Created comprehensive PRD in English (~1,000 lines)
 3. Created comprehensive PRD in Korean (~1,000 lines)
 4. Structured with 16 sections following industry standards
 
 **Output**:
+
 - `docs/en/PRD_EN.md` (1,000 lines)
 - `docs/ko/PRD_KO.md` (1,000 lines)
 
 ---
 
 **Prompt #2**: Technical Specification & Documentation Structure
+
 ```
 응, 작성해보자
 그리고 한국어 문서와 영문문서를 docs/ko, docs/en 하위로 분리해서 관리하자
@@ -93,6 +101,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 **Translation**: "Yes, let's write it. Separate EN/KO docs into separate directories. Also set up prompt documentation with Claude hooks. Document our Q&A and execution plans."
 
 **Claude's Actions**:
+
 1. Created directory structure (docs/en, docs/ko)
 2. Moved PRD files to language-specific directories
 3. Created Technical Specification in English (~1,200 lines)
@@ -101,6 +110,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 6. Created initial session document
 
 **Output**:
+
 - `docs/en/TECH_SPEC.md` (1,200 lines)
 - `docs/ko/TECH_SPEC.md` (1,200 lines)
 - `docs/prompts/sessions/00_PROJECT_INITIALIZATION.md`
@@ -108,6 +118,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 - `docs/prompts/SESSION_TEMPLATE.md`
 
 **Key Decisions**:
+
 - Bilingual documentation (EN + KO)
 - Session-based prompt documentation
 - Comprehensive technical specifications
@@ -115,6 +126,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 ---
 
 ### Session 01: GitHub Issues & Project Management Setup
+
 **File**: [`docs/prompts/sessions/01_GITHUB_ISSUES_SETUP.md`](docs/prompts/sessions/01_GITHUB_ISSUES_SETUP.md)
 **Date**: 2025-11-23
 **Duration**: ~1 hour
@@ -122,6 +134,7 @@ _JS__EN__Assignment_for_Messaging_Apps_(UIKit)_-_Dynamic_Channel_List.pdf를 바
 #### Prompts Used
 
 **Prompt #1**: GitHub Issues Request
+
 ```
 실제 구현 작업을 진행하기 이전에 작업을 진행할 플랜별로 태스크를 구성하고, 태스크로 github 이슈로 등록하여 관리하자!
 todo리스트 한번 뽑아보고 이슈등록해줘
@@ -130,6 +143,7 @@ todo리스트 한번 뽑아보고 이슈등록해줘
 **Translation**: "Before implementation, organize tasks by plan and register them as GitHub issues. Create a todo list and register issues."
 
 **Claude's Actions**:
+
 1. Analyzed PRD and created 35 actionable tasks
 2. Organized tasks into 6 development phases
 3. Created comprehensive GitHub Issues creation script (1,130 lines)
@@ -138,12 +152,14 @@ todo리스트 한번 뽑아보고 이슈등록해줘
 6. Executed script to create 35 GitHub Issues
 
 **Output**:
+
 - 6 Milestones
 - 11 Labels
 - 35 GitHub Issues (#1-#35)
 - Detailed session documentation
 
 **Key Decisions**:
+
 - Medium-granularity tasks (2-4 hours each)
 - Phase-based milestone structure
 - Comprehensive issue templates with acceptance criteria
@@ -154,24 +170,24 @@ todo리스트 한번 뽑아보고 이슈등록해줘
 
 ### Documentation
 
-| Document | Language | Lines | Sections | Purpose |
-|----------|----------|-------|----------|---------|
-| PRD | English | ~1,000 | 16 | Product requirements, user stories, success criteria |
-| PRD | Korean | ~1,000 | 16 | Same as above (Korean version) |
-| Tech Spec | English | ~1,200 | 14 | Architecture, implementation, testing strategy |
-| Tech Spec | Korean | ~1,200 | 14 | Same as above (Korean version) |
-| Session 00 | EN/KO | ~400 | - | Project initialization conversation log |
-| Session 01 | EN/KO | ~600 | - | GitHub Issues setup conversation log |
+| Document   | Language | Lines  | Sections | Purpose                                              |
+| ---------- | -------- | ------ | -------- | ---------------------------------------------------- |
+| PRD        | English  | ~1,000 | 16       | Product requirements, user stories, success criteria |
+| PRD        | Korean   | ~1,000 | 16       | Same as above (Korean version)                       |
+| Tech Spec  | English  | ~1,200 | 14       | Architecture, implementation, testing strategy       |
+| Tech Spec  | Korean   | ~1,200 | 14       | Same as above (Korean version)                       |
+| Session 00 | EN/KO    | ~400   | -        | Project initialization conversation log              |
+| Session 01 | EN/KO    | ~600   | -        | GitHub Issues setup conversation log                 |
 
 **Total Documentation**: ~5,400 lines
 
 ### GitHub Resources
 
-| Resource | Count | Details |
-|----------|-------|---------|
-| Milestones | 6 | Phase 1-6 with due dates |
-| Labels | 11 | setup, feature, test, docs, step-1~4, tdd, a11y |
-| Issues | 35 | Detailed tasks with acceptance criteria |
+| Resource   | Count | Details                                         |
+| ---------- | ----- | ----------------------------------------------- |
+| Milestones | 6     | Phase 1-6 with due dates                        |
+| Labels     | 11    | setup, feature, test, docs, step-1~4, tdd, a11y |
+| Issues     | 35    | Detailed tasks with acceptance criteria         |
 
 ### File Structure
 
@@ -203,11 +219,13 @@ dynamic-channel-list-fe/
 ### 1. Architecture Decisions
 
 **Decision**: Layered Architecture
+
 - **Prompt**: "Design system architecture for the channel list application"
 - **Claude's Recommendation**: 4-layer architecture (Presentation → Business Logic → Data → External Integration)
 - **Rationale**: Clear separation of concerns, testability, scalability
 
 **Decision**: State Management Strategy
+
 - **Prompt**: "Choose state management approach for React application"
 - **Claude's Recommendation**: Hybrid approach (React Query for server state + React hooks for UI state)
 - **Rationale**: React Query excels at server state, hooks sufficient for UI state, avoids Redux complexity
@@ -217,11 +235,13 @@ dynamic-channel-list-fe/
 ### 2. Technology Stack Decisions
 
 **Decision**: Testing Framework
+
 - **Prompt**: "Set up testing strategy with TDD"
 - **Claude's Recommendation**: Jest + React Testing Library with 80% coverage target
 - **Rationale**: Industry standard, excellent React support, comprehensive features
 
 **Decision**: Animation Implementation
+
 - **Prompt**: "Implement smooth animations for hover effects"
 - **Claude's Recommendation**: CSS Transforms (GPU-accelerated) over JavaScript animation
 - **Rationale**: Better performance (60 FPS), less complexity, native browser support
@@ -231,11 +251,13 @@ dynamic-channel-list-fe/
 ### 3. Project Management Decisions
 
 **Decision**: Task Granularity
+
 - **Prompt**: "Break down PRD into actionable tasks"
 - **Claude's Recommendation**: 35 medium-granularity tasks (2-4 hours each)
 - **Rationale**: Trackable progress, clear scope, not overwhelming
 
 **Decision**: Issue Structure
+
 - **Prompt**: "Design GitHub Issue template"
 - **Claude's Recommendation**: Objective + Tasks + Acceptance Criteria + References
 - **Rationale**: Clear definition of done, prevents ambiguity, links to detailed docs
@@ -305,6 +327,7 @@ As development continues, new session files will be added:
 - **Session 07**: Phase 6 - Polish & Deployment (Issues #30-#35)
 
 Each session will include:
+
 - Prompts used
 - Claude's recommendations
 - Decisions made
@@ -319,12 +342,14 @@ Each session will include:
 Claude Code helped identify and recommend:
 
 **Documentation**:
+
 - [Sendbird Chat SDK for JavaScript](https://sendbird.com/docs/chat/sdk/v4/javascript/overview)
 - [Next.js 15 Documentation](https://nextjs.org/docs)
 - [React Query (TanStack Query)](https://tanstack.com/query/latest)
 - [Jest Testing Framework](https://jestjs.io/)
 
 **Best Practices**:
+
 - Test-Driven Development (TDD)
 - SOLID Principles
 - React Performance Optimization
@@ -357,6 +382,7 @@ Developer: Park Bulhwi (@bulhwi)
 ```
 
 All commits include co-authorship:
+
 ```
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```

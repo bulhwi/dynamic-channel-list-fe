@@ -1,18 +1,19 @@
 # 기술 사양서
+
 ## 애니메이션이 적용된 동적 채널 리스트
 
 ---
 
 ## 문서 정보
 
-| 항목 | 상세 내용 |
-|------|---------|
-| **문서 유형** | 기술 사양서 |
-| **버전** | 1.0.0 |
-| **최종 수정일** | 2025-11-23 |
-| **상태** | Draft |
-| **관련 문서** | PRD_KO.md |
-| **작성자** | 개발팀 |
+| 항목            | 상세 내용   |
+| --------------- | ----------- |
+| **문서 유형**   | 기술 사양서 |
+| **버전**        | 1.0.0       |
+| **최종 수정일** | 2025-11-23  |
+| **상태**        | Draft       |
+| **관련 문서**   | PRD_KO.md   |
+| **작성자**      | 개발팀      |
 
 ---
 
@@ -91,21 +92,25 @@
 ### 1.2 계층화된 아키텍처
 
 **프레젠테이션 레이어**
+
 - 책임: UI 렌더링, 사용자 인터랙션, 애니메이션
 - 기술: React 컴포넌트, CSS Modules
 - 통신: 비즈니스 로직 레이어의 hooks 사용
 
 **비즈니스 로직 레이어**
+
 - 책임: 비즈니스 규칙, 데이터 변환, 상태 관리
 - 기술: 커스텀 React hooks, 서비스 클래스
 - 통신: 데이터 페칭에 React Query 사용
 
 **데이터 레이어**
+
 - 책임: 서버 상태 관리, 캐싱, 동기화
 - 기술: React Query (TanStack Query)
 - 통신: Sendbird SDK와 통신
 
 **외부 통합 레이어**
+
 - 책임: Sendbird SDK 통합
 - 기술: @sendbird/chat SDK
 - 통신: REST API / WebSocket
@@ -199,32 +204,37 @@ App (page.tsx)
 **파일**: `components/ChannelList/ChannelList.tsx`
 
 **책임:**
+
 - 채널 리스트 페칭 및 표시
 - 무한 스크롤 처리
 - 애니메이션을 위한 호버 상태 관리
 - 자식 컴포넌트 조정
 
 **Props 인터페이스:**
+
 ```typescript
 interface ChannelListProps {
-  className?: string;
+  className?: string
 }
 ```
 
 **내부 상태:**
+
 ```typescript
 interface ChannelListState {
-  hoveredIndex: number | null;
-  containerRef: RefObject<HTMLDivElement>;
+  hoveredIndex: number | null
+  containerRef: RefObject<HTMLDivElement>
 }
 ```
 
 **사용하는 주요 Hooks:**
+
 - `useChannelList()` - infinite query로 채널 페칭
 - `useInfiniteScroll()` - 스크롤 하단 감지
 - `useHoverAnimation()` - 호버 상태 관리
 
 **구현 패턴:**
+
 ```typescript
 export function ChannelList({ className }: ChannelListProps) {
   const {
@@ -279,28 +289,32 @@ export function ChannelList({ className }: ChannelListProps) {
 **파일**: `components/ChannelItem/ChannelItem.tsx`
 
 **책임:**
+
 - 개별 채널 렌더링
 - 호버 애니메이션 적용
 - 업데이트를 위한 클릭 이벤트 처리
 
 **Props 인터페이스:**
+
 ```typescript
 interface ChannelItemProps {
-  channel: Channel;
-  isHovered: boolean;
-  isAdjacent: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onClick?: (channel: Channel) => void;
+  channel: Channel
+  isHovered: boolean
+  isAdjacent: boolean
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+  onClick?: (channel: Channel) => void
 }
 ```
 
 **애니메이션 상태:**
+
 - 기본: `translateX(0)`
 - 호버됨: `translateX(40px)`
 - 인접: `translateX(20px)`
 
 **구현 패턴:**
+
 ```typescript
 export const ChannelItem = memo(function ChannelItem({
   channel,
@@ -339,6 +353,7 @@ export const ChannelItem = memo(function ChannelItem({
 ```
 
 **CSS Module** (`ChannelItem.module.css`):
+
 ```css
 .item {
   display: flex;
@@ -349,7 +364,9 @@ export const ChannelItem = memo(function ChannelItem({
   border-bottom: 1px solid #e0e0e0;
   background: white;
   cursor: pointer;
-  transition: transform 250ms ease-in-out, background-color 200ms ease;
+  transition:
+    transform 250ms ease-in-out,
+    background-color 200ms ease;
 }
 
 .item:hover {
@@ -371,19 +388,22 @@ export const ChannelItem = memo(function ChannelItem({
 **파일**: `components/CreateChannelButton/CreateChannelButton.tsx`
 
 **책임:**
+
 - 채널 생성 트리거
 - 생성 중 로딩 상태 표시
 - 에러 처리
 
 **Props 인터페이스:**
+
 ```typescript
 interface CreateChannelButtonProps {
-  className?: string;
-  onSuccess?: (channel: Channel) => void;
+  className?: string
+  onSuccess?: (channel: Channel) => void
 }
 ```
 
 **구현 패턴:**
+
 ```typescript
 export function CreateChannelButton({
   className,
@@ -484,16 +504,14 @@ export const queryKeys = {
   channels: {
     all: ['channels'] as const,
     lists: () => [...queryKeys.channels.all, 'list'] as const,
-    list: (filters: string) =>
-      [...queryKeys.channels.lists(), filters] as const,
+    list: (filters: string) => [...queryKeys.channels.lists(), filters] as const,
     details: () => [...queryKeys.channels.all, 'detail'] as const,
-    detail: (url: string) =>
-      [...queryKeys.channels.details(), url] as const,
+    detail: (url: string) => [...queryKeys.channels.details(), url] as const,
   },
   sendbird: {
     connection: ['sendbird', 'connection'] as const,
-  }
-} as const;
+  },
+} as const
 ```
 
 ### 4.4 커스텀 Hooks
@@ -503,30 +521,31 @@ export const queryKeys = {
 **파일**: `hooks/useChannelList.ts`
 
 ```typescript
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchChannels } from '@/services/sendbird/channel.service';
-import { queryKeys } from '@/services/api/queryKeys';
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { fetchChannels } from '@/services/sendbird/channel.service'
+import { queryKeys } from '@/services/api/queryKeys'
 
 interface UseChannelListOptions {
-  limit?: number;
+  limit?: number
 }
 
 export function useChannelList(options: UseChannelListOptions = {}) {
-  const limit = options.limit ?? 10;
+  const limit = options.limit ?? 10
 
   return useInfiniteQuery({
     queryKey: queryKeys.channels.list('alphabetical'),
-    queryFn: ({ pageParam }) => fetchChannels({
-      limit,
-      token: pageParam
-    }),
+    queryFn: ({ pageParam }) =>
+      fetchChannels({
+        limit,
+        token: pageParam,
+      }),
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => lastPage.nextToken,
-    select: (data) => ({
+    getNextPageParam: lastPage => lastPage.nextToken,
+    select: data => ({
       pages: data.pages,
-      channels: data.pages.flatMap(page => page.channels)
+      channels: data.pages.flatMap(page => page.channels),
     }),
-  });
+  })
 }
 ```
 
@@ -535,49 +554,38 @@ export function useChannelList(options: UseChannelListOptions = {}) {
 **파일**: `hooks/useCreateChannel.ts`
 
 ```typescript
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createChannel } from '@/services/sendbird/channel.service';
-import { queryKeys } from '@/services/api/queryKeys';
-import { sortChannels } from '@/utils/sortChannels';
-import type { Channel } from '@/types/channel.types';
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createChannel } from '@/services/sendbird/channel.service'
+import { queryKeys } from '@/services/api/queryKeys'
+import { sortChannels } from '@/utils/sortChannels'
+import type { Channel } from '@/types/channel.types'
 
 interface CreateChannelParams {
-  name: string;
+  name: string
 }
 
-export function useCreateChannel(options?: {
-  onSuccess?: (channel: Channel) => void;
-}) {
-  const queryClient = useQueryClient();
+export function useCreateChannel(options?: { onSuccess?: (channel: Channel) => void }) {
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (params: CreateChannelParams) => createChannel(params),
-    onSuccess: (newChannel) => {
+    onSuccess: newChannel => {
       // 새 채널을 올바른 위치에 캐시 업데이트
-      queryClient.setQueryData(
-        queryKeys.channels.list('alphabetical'),
-        (old: any) => {
-          if (!old) return old;
+      queryClient.setQueryData(queryKeys.channels.list('alphabetical'), (old: any) => {
+        if (!old) return old
 
-          const firstPage = old.pages[0];
-          const updatedChannels = sortChannels([
-            ...firstPage.channels,
-            newChannel
-          ]);
+        const firstPage = old.pages[0]
+        const updatedChannels = sortChannels([...firstPage.channels, newChannel])
 
-          return {
-            ...old,
-            pages: [
-              { ...firstPage, channels: updatedChannels },
-              ...old.pages.slice(1)
-            ]
-          };
+        return {
+          ...old,
+          pages: [{ ...firstPage, channels: updatedChannels }, ...old.pages.slice(1)],
         }
-      );
+      })
 
-      options?.onSuccess?.(newChannel);
+      options?.onSuccess?.(newChannel)
     },
-  });
+  })
 }
 ```
 
@@ -586,43 +594,40 @@ export function useCreateChannel(options?: {
 **파일**: `hooks/useUpdateChannel.ts`
 
 ```typescript
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateChannel } from '@/services/sendbird/channel.service';
-import { queryKeys } from '@/services/api/queryKeys';
-import { sortChannels } from '@/utils/sortChannels';
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateChannel } from '@/services/sendbird/channel.service'
+import { queryKeys } from '@/services/api/queryKeys'
+import { sortChannels } from '@/utils/sortChannels'
 
 interface UpdateChannelParams {
-  channelUrl: string;
-  newName: string;
+  channelUrl: string
+  newName: string
 }
 
 export function useUpdateChannel() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (params: UpdateChannelParams) => updateChannel(params),
-    onSuccess: (updatedChannel) => {
+    onSuccess: updatedChannel => {
       // 캐시 업데이트 및 재정렬
-      queryClient.setQueryData(
-        queryKeys.channels.list('alphabetical'),
-        (old: any) => {
-          if (!old) return old;
+      queryClient.setQueryData(queryKeys.channels.list('alphabetical'), (old: any) => {
+        if (!old) return old
 
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              channels: sortChannels(
-                page.channels.map((ch: Channel) =>
-                  ch.url === updatedChannel.url ? updatedChannel : ch
-                )
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            channels: sortChannels(
+              page.channels.map((ch: Channel) =>
+                ch.url === updatedChannel.url ? updatedChannel : ch
               )
-            }))
-          };
+            ),
+          })),
         }
-      );
+      })
     },
-  });
+  })
 }
 ```
 
@@ -635,52 +640,52 @@ export function useUpdateChannel() {
 **파일**: `services/sendbird/client.ts`
 
 ```typescript
-import SendbirdChat from '@sendbird/chat';
-import { GroupChannelModule } from '@sendbird/chat/groupChannel';
-import type { SendbirdGroupChat } from '@sendbird/chat/groupChannel';
+import SendbirdChat from '@sendbird/chat'
+import { GroupChannelModule } from '@sendbird/chat/groupChannel'
+import type { SendbirdGroupChat } from '@sendbird/chat/groupChannel'
 
-let sendbirdInstance: SendbirdGroupChat | null = null;
+let sendbirdInstance: SendbirdGroupChat | null = null
 
 export async function initializeSendbird(): Promise<SendbirdGroupChat> {
   if (sendbirdInstance) {
-    return sendbirdInstance;
+    return sendbirdInstance
   }
 
-  const appId = process.env.NEXT_PUBLIC_SENDBIRD_APP_ID;
+  const appId = process.env.NEXT_PUBLIC_SENDBIRD_APP_ID
   if (!appId) {
-    throw new Error('NEXT_PUBLIC_SENDBIRD_APP_ID가 정의되지 않았습니다');
+    throw new Error('NEXT_PUBLIC_SENDBIRD_APP_ID가 정의되지 않았습니다')
   }
 
   try {
     sendbirdInstance = SendbirdChat.init({
       appId,
       localCacheEnabled: false, // 과제 요구사항 필수
-      modules: [new GroupChannelModule()]
-    }) as SendbirdGroupChat;
+      modules: [new GroupChannelModule()],
+    }) as SendbirdGroupChat
 
-    return sendbirdInstance;
+    return sendbirdInstance
   } catch (error) {
-    console.error('Sendbird 초기화 실패:', error);
-    throw error;
+    console.error('Sendbird 초기화 실패:', error)
+    throw error
   }
 }
 
 export async function connectUser(userId: string): Promise<void> {
-  const sb = await initializeSendbird();
+  const sb = await initializeSendbird()
 
   try {
-    await sb.connect(userId);
+    await sb.connect(userId)
   } catch (error) {
-    console.error('사용자 연결 실패:', error);
-    throw error;
+    console.error('사용자 연결 실패:', error)
+    throw error
   }
 }
 
 export function getSendbirdInstance(): SendbirdGroupChat {
   if (!sendbirdInstance) {
-    throw new Error('Sendbird가 초기화되지 않았습니다. initializeSendbird()를 먼저 호출하세요.');
+    throw new Error('Sendbird가 초기화되지 않았습니다. initializeSendbird()를 먼저 호출하세요.')
   }
-  return sendbirdInstance;
+  return sendbirdInstance
 }
 ```
 
@@ -689,10 +694,10 @@ export function getSendbirdInstance(): SendbirdGroupChat {
 **파일**: `services/sendbird/channel.service.ts`
 
 ```typescript
-import { getSendbirdInstance } from './client';
-import { GroupChannelListOrder } from '@sendbird/chat/groupChannel';
-import type { GroupChannel } from '@sendbird/chat/groupChannel';
-import type { Channel } from '@/types/channel.types';
+import { getSendbirdInstance } from './client'
+import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
+import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import type { Channel } from '@/types/channel.types'
 
 // Sendbird GroupChannel을 Channel 타입으로 변환
 function transformChannel(groupChannel: GroupChannel): Channel {
@@ -702,17 +707,17 @@ function transformChannel(groupChannel: GroupChannel): Channel {
     createdAt: groupChannel.createdAt,
     customType: groupChannel.customType,
     data: groupChannel.data,
-  };
+  }
 }
 
 interface FetchChannelsParams {
-  limit: number;
-  token?: string;
+  limit: number
+  token?: string
 }
 
 interface FetchChannelsResult {
-  channels: Channel[];
-  nextToken?: string;
+  channels: Channel[]
+  nextToken?: string
 }
 
 /**
@@ -721,15 +726,15 @@ interface FetchChannelsResult {
  */
 export async function fetchChannels({
   limit,
-  token
+  token,
 }: FetchChannelsParams): Promise<FetchChannelsResult> {
-  const sb = getSendbirdInstance();
+  const sb = getSendbirdInstance()
 
   const query = sb.groupChannel.createMyGroupChannelListQuery({
     includeEmpty: true, // 필수
     limit, // 필수
-    order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL // 필수
-  });
+    order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL, // 필수
+  })
 
   // token이 있으면 특정 페이지 로드
   if (token) {
@@ -738,52 +743,50 @@ export async function fetchChannels({
   }
 
   if (!query.hasNext) {
-    return { channels: [], nextToken: undefined };
+    return { channels: [], nextToken: undefined }
   }
 
   try {
-    const groupChannels = await query.next();
-    const channels = groupChannels.map(transformChannel);
-    const nextToken = query.hasNext ? 'next' : undefined;
+    const groupChannels = await query.next()
+    const channels = groupChannels.map(transformChannel)
+    const nextToken = query.hasNext ? 'next' : undefined
 
-    return { channels, nextToken };
+    return { channels, nextToken }
   } catch (error) {
-    console.error('채널 가져오기 실패:', error);
-    throw error;
+    console.error('채널 가져오기 실패:', error)
+    throw error
   }
 }
 
 interface CreateChannelParams {
-  name: string;
+  name: string
 }
 
 /**
  * 새 채널 생성
  * 중요: 과제에서 허용된 SDK 함수만 사용
  */
-export async function createChannel({
-  name
-}: CreateChannelParams): Promise<Channel> {
-  const sb = getSendbirdInstance();
+export async function createChannel({ name }: CreateChannelParams): Promise<Channel> {
+  const sb = getSendbirdInstance()
 
   try {
     const params = {
       name, // 랜덤 8자 문자열
       isDistinct: false,
       operatorUserIds: [],
-    };
+    }
 
-    const groupChannel = await sb.groupChannel.createChannel(params);
-    return transformChannel(groupChannel);
+    const groupChannel = await sb.groupChannel.createChannel(params)
+    return transformChannel(groupChannel)
   } catch (error) {
-    console.error('채널 생성 실패:', error);
-    throw error;
+    console.error('채널 생성 실패:', error)
+    throw error
   }
 }
 
 interface UpdateChannelParams {
-  channelUrl: string;
-  newName: string;
+  channelUrl: string
+  newName: string
 }
 
 /**
@@ -792,20 +795,20 @@ interface UpdateChannelParams {
  */
 export async function updateChannel({
   channelUrl,
-  newName
+  newName,
 }: UpdateChannelParams): Promise<Channel> {
-  const sb = getSendbirdInstance();
+  const sb = getSendbirdInstance()
 
   try {
-    const channel = await sb.groupChannel.getChannel(channelUrl);
+    const channel = await sb.groupChannel.getChannel(channelUrl)
     const updatedChannel = await channel.updateChannel({
-      name: newName // 랜덤 8자 문자열
-    });
+      name: newName, // 랜덤 8자 문자열
+    })
 
-    return transformChannel(updatedChannel);
+    return transformChannel(updatedChannel)
   } catch (error) {
-    console.error('채널 업데이트 실패:', error);
-    throw error;
+    console.error('채널 업데이트 실패:', error)
+    throw error
   }
 }
 ```
@@ -833,8 +836,9 @@ export async function updateChannel({
 
   /* 애니메이션 속성 */
   transform: translateX(0);
-  transition: transform 250ms ease-in-out,
-              background-color 200ms ease;
+  transition:
+    transform 250ms ease-in-out,
+    background-color 200ms ease;
 
   /* 성능 최적화 */
   will-change: transform;
@@ -847,11 +851,11 @@ export async function updateChannel({
 }
 
 /* React에서 인라인 스타일로 적용되는 호버 상태 */
-.item[data-hovered="true"] {
+.item[data-hovered='true'] {
   transform: translateX(40px);
 }
 
-.item[data-adjacent="true"] {
+.item[data-adjacent='true'] {
   transform: translateX(20px);
 }
 
@@ -882,30 +886,30 @@ export async function updateChannel({
 **파일**: `hooks/useHoverAnimation.ts`
 
 ```typescript
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react'
 
 interface UseHoverAnimationReturn {
-  hoveredIndex: number | null;
-  handleHover: (index: number) => void;
-  handleLeave: () => void;
+  hoveredIndex: number | null
+  handleHover: (index: number) => void
+  handleLeave: () => void
 }
 
 export function useHoverAnimation(): UseHoverAnimationReturn {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const handleHover = useCallback((index: number) => {
-    setHoveredIndex(index);
-  }, []);
+    setHoveredIndex(index)
+  }, [])
 
   const handleLeave = useCallback(() => {
-    setHoveredIndex(null);
-  }, []);
+    setHoveredIndex(null)
+  }, [])
 
   return {
     hoveredIndex,
     handleHover,
     handleLeave,
-  };
+  }
 }
 ```
 
@@ -964,52 +968,52 @@ export function ChannelList() {
 **파일**: `hooks/useInfiniteScroll.ts`
 
 ```typescript
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react'
 
 interface UseInfiniteScrollOptions {
-  onLoadMore: () => void;
-  enabled: boolean;
-  threshold?: number;
-  rootMargin?: string;
+  onLoadMore: () => void
+  enabled: boolean
+  threshold?: number
+  rootMargin?: string
 }
 
 export function useInfiniteScroll({
   onLoadMore,
   enabled,
   threshold = 1.0,
-  rootMargin = '100px'
+  rootMargin = '100px',
 }: UseInfiniteScrollOptions) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) return
 
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
+      entries => {
+        const [entry] = entries
         if (entry.isIntersecting) {
-          onLoadMore();
+          onLoadMore()
         }
       },
       {
         root: containerRef.current,
         rootMargin,
-        threshold
+        threshold,
       }
-    );
+    )
 
-    observer.observe(sentinel);
+    observer.observe(sentinel)
 
     return () => {
-      observer.disconnect();
-    };
-  }, [enabled, onLoadMore, rootMargin, threshold]);
+      observer.disconnect()
+    }
+  }, [enabled, onLoadMore, rootMargin, threshold])
 
-  return { containerRef, sentinelRef };
+  return { containerRef, sentinelRef }
 }
 ```
 
@@ -1081,32 +1085,41 @@ export function ChannelList() {
 ### 8.1 React 최적화
 
 **메모이제이션:**
+
 ```typescript
 // ChannelItem.tsx
-export const ChannelItem = memo(function ChannelItem(props) {
-  // 컴포넌트 구현
-}, (prevProps, nextProps) => {
-  // 커스텀 비교
-  return (
-    prevProps.channel.url === nextProps.channel.url &&
-    prevProps.isHovered === nextProps.isHovered &&
-    prevProps.isAdjacent === nextProps.isAdjacent
-  );
-});
+export const ChannelItem = memo(
+  function ChannelItem(props) {
+    // 컴포넌트 구현
+  },
+  (prevProps, nextProps) => {
+    // 커스텀 비교
+    return (
+      prevProps.channel.url === nextProps.channel.url &&
+      prevProps.isHovered === nextProps.isHovered &&
+      prevProps.isAdjacent === nextProps.isAdjacent
+    )
+  }
+)
 ```
 
 **비용이 많이 드는 계산에 useMemo 사용:**
+
 ```typescript
 const sortedChannels = useMemo(() => {
-  return sortChannels(channels);
-}, [channels]);
+  return sortChannels(channels)
+}, [channels])
 ```
 
 **안정적인 함수 참조를 위한 useCallback:**
+
 ```typescript
-const handleChannelClick = useCallback((channel: Channel) => {
-  updateChannel({ channelUrl: channel.url, newName: generateRandomName() });
-}, [updateChannel]);
+const handleChannelClick = useCallback(
+  (channel: Channel) => {
+    updateChannel({ channelUrl: channel.url, newName: generateRandomName() })
+  },
+  [updateChannel]
+)
 ```
 
 ### 8.2 번들 최적화
@@ -1134,20 +1147,20 @@ const nextConfig = {
     if (!isServer) {
       // 번들 분석기 (개발용만)
       if (process.env.ANALYZE === 'true') {
-        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
         config.plugins.push(
           new BundleAnalyzerPlugin({
             analyzerMode: 'static',
             openAnalyzer: false,
           })
-        );
+        )
       }
     }
-    return config;
+    return config
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
 ```
 
 ### 8.3 CSS 성능
@@ -1212,11 +1225,11 @@ __tests__/
 **파일**: `jest.config.js`
 
 ```javascript
-const nextJest = require('next/jest');
+const nextJest = require('next/jest')
 
 const createJestConfig = nextJest({
   dir: './',
-});
+})
 
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
@@ -1242,15 +1255,15 @@ const customJestConfig = {
       statements: 80,
     },
   },
-};
+}
 
-module.exports = createJestConfig(customJestConfig);
+module.exports = createJestConfig(customJestConfig)
 ```
 
 **파일**: `jest.setup.js`
 
 ```javascript
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom'
 
 // Sendbird SDK 모킹
 jest.mock('@sendbird/chat', () => ({
@@ -1264,16 +1277,18 @@ jest.mock('@sendbird/chat', () => ({
       },
     })),
   },
-}));
+}))
 
 // IntersectionObserver 모킹
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
-  takeRecords() { return []; }
+  takeRecords() {
+    return []
+  }
   unobserve() {}
-};
+}
 ```
 
 ### 9.3 테스트 케이스 예시
@@ -1281,35 +1296,35 @@ global.IntersectionObserver = class IntersectionObserver {
 **단위 테스트**: `utils/generateRandomName.test.ts`
 
 ```typescript
-import { generateRandomName } from './generateRandomName';
+import { generateRandomName } from './generateRandomName'
 
 describe('generateRandomName', () => {
   it('길이 8의 문자열을 반환해야 함', () => {
-    const name = generateRandomName();
-    expect(name).toHaveLength(8);
-  });
+    const name = generateRandomName()
+    expect(name).toHaveLength(8)
+  })
 
   it('소문자만 포함해야 함', () => {
-    const name = generateRandomName();
-    expect(name).toMatch(/^[a-z]{8}$/);
-  });
+    const name = generateRandomName()
+    expect(name).toMatch(/^[a-z]{8}$/)
+  })
 
   it('여러 번 호출 시 다른 이름을 생성해야 함', () => {
-    const name1 = generateRandomName();
-    const name2 = generateRandomName();
+    const name1 = generateRandomName()
+    const name2 = generateRandomName()
 
     // 충돌 확률은 매우 낮음
-    expect(name1).not.toBe(name2);
-  });
+    expect(name1).not.toBe(name2)
+  })
 
   it('100개의 고유한 이름을 생성해야 함', () => {
-    const names = Array.from({ length: 100 }, () => generateRandomName());
-    const uniqueNames = new Set(names);
+    const names = Array.from({ length: 100 }, () => generateRandomName())
+    const uniqueNames = new Set(names)
 
     // 아주 작은 충돌 확률 허용
-    expect(uniqueNames.size).toBeGreaterThan(95);
-  });
-});
+    expect(uniqueNames.size).toBeGreaterThan(95)
+  })
+})
 ```
 
 **컴포넌트 테스트**: `components/ChannelItem.test.tsx`
@@ -1454,15 +1469,15 @@ export class APIError extends Error {
     public statusCode?: number,
     public code?: string
   ) {
-    super(message);
-    this.name = 'APIError';
+    super(message)
+    this.name = 'APIError'
   }
 }
 
 export class NetworkError extends Error {
   constructor(message: string = '네트워크 요청 실패') {
-    super(message);
-    this.name = 'NetworkError';
+    super(message)
+    this.name = 'NetworkError'
   }
 }
 
@@ -1471,16 +1486,16 @@ export class SendbirdError extends Error {
     message: string,
     public code?: number
   ) {
-    super(message);
-    this.name = 'SendbirdError';
+    super(message)
+    this.name = 'SendbirdError'
   }
 }
 
 export function handleSendbirdError(error: unknown): never {
   if (error instanceof Error) {
-    throw new SendbirdError(error.message);
+    throw new SendbirdError(error.message)
   }
-  throw new SendbirdError('알 수 없는 Sendbird 에러');
+  throw new SendbirdError('알 수 없는 Sendbird 에러')
 }
 ```
 
@@ -1610,6 +1625,7 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=false
 ```
 
 **단계:**
+
 1. GitHub 저장소를 Vercel에 연결
 2. Vercel 대시보드에서 환경 변수 추가
 3. main 브랜치에 푸시 시 자동 배포
@@ -1624,16 +1640,16 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=false
 ```typescript
 // 빌드 시점에 환경 변수 검증
 function validateEnv() {
-  const required = ['NEXT_PUBLIC_SENDBIRD_APP_ID'];
+  const required = ['NEXT_PUBLIC_SENDBIRD_APP_ID']
 
   for (const key of required) {
     if (!process.env[key]) {
-      throw new Error(`필수 환경 변수 누락: ${key}`);
+      throw new Error(`필수 환경 변수 누락: ${key}`)
     }
   }
 }
 
-validateEnv();
+validateEnv()
 ```
 
 ### 12.2 입력 새니타이제이션
@@ -1646,7 +1662,7 @@ export function sanitizeChannelName(name: string): string {
     .replace(/<[^>]*>/g, '')
     .replace(/[<>'"]/g, '')
     .trim()
-    .slice(0, 8); // 8자 제한 강제
+    .slice(0, 8) // 8자 제한 강제
 }
 ```
 
@@ -1674,18 +1690,21 @@ export function ChannelItem({ channel }: Props) {
 ### 13.1 코드 스타일
 
 **TypeScript:**
+
 - strict mode 사용
 - `any` 타입 피하기
 - 객체에는 type보다 interface 선호
 - 적절한 곳에 const assertion 사용
 
 **React:**
+
 - 함수형 컴포넌트만 사용
 - 상태 관리에 hooks 사용
 - 성능 최적화에 memo 사용
 - 설명적인 컴포넌트 이름 (PascalCase)
 
 **파일 네이밍:**
+
 - 컴포넌트: `ComponentName.tsx`
 - Hooks: `useHookName.ts`
 - Utils: `functionName.ts`
@@ -1736,30 +1755,28 @@ refactor: 채널 서비스 로직 추출
  * 채널 이름에 대한 과제 요구사항
  */
 export function generateRandomName(): string {
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
+  const letters = 'abcdefghijklmnopqrstuvwxyz'
+  let result = ''
 
   for (let i = 0; i < 8; i++) {
-    const randomIndex = Math.floor(Math.random() * letters.length);
-    result += letters[randomIndex];
+    const randomIndex = Math.floor(Math.random() * letters.length)
+    result += letters[randomIndex]
   }
 
-  return result;
+  return result
 }
 ```
 
 **파일**: `utils/sortChannels.ts`
 
 ```typescript
-import type { Channel } from '@/types/channel.types';
+import type { Channel } from '@/types/channel.types'
 
 /**
  * 이름으로 채널을 알파벳 순으로 정렬 (대소문자 구분 없음)
  */
 export function sortChannels(channels: Channel[]): Channel[] {
-  return [...channels].sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-  );
+  return [...channels].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
 }
 ```
 
@@ -1769,16 +1786,16 @@ export function sortChannels(channels: Channel[]): Channel[] {
 
 ```typescript
 export interface Channel {
-  url: string;
-  name: string;
-  createdAt: number;
-  customType?: string;
-  data?: string;
+  url: string
+  name: string
+  createdAt: number
+  customType?: string
+  data?: string
 }
 
 export interface ChannelListResponse {
-  channels: Channel[];
-  nextToken?: string;
+  channels: Channel[]
+  nextToken?: string
 }
 ```
 
@@ -1792,14 +1809,14 @@ export const CHANNEL_CONFIG = {
   ITEM_HEIGHT: 60, // 픽셀
   MAX_VISIBLE_ITEMS: 10,
   CONTAINER_HEIGHT: 600, // 60px × 10
-} as const;
+} as const
 
 export const ANIMATION_CONFIG = {
   HOVER_OFFSET: 40, // 픽셀
   ADJACENT_OFFSET: 20, // 픽셀
   TRANSITION_DURATION: 250, // 밀리초
   EASING: 'ease-in-out',
-} as const;
+} as const
 ```
 
 ---
@@ -1810,16 +1827,16 @@ export const ANIMATION_CONFIG = {
 
 ## 문서 변경 이력
 
-| 버전 | 날짜 | 작성자 | 변경 사항 |
-|------|------|--------|----------|
+| 버전  | 날짜       | 작성자 | 변경 사항             |
+| ----- | ---------- | ------ | --------------------- |
 | 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성 |
 
 ---
 
 ## 승인
 
-| 역할 | 이름 | 날짜 | 서명 |
-|------|------|------|------|
-| 기술 리드 | - | - | - |
-| 시니어 개발자 | - | - | - |
-| QA 리드 | - | - | - |
+| 역할          | 이름 | 날짜 | 서명 |
+| ------------- | ---- | ---- | ---- |
+| 기술 리드     | -    | -    | -    |
+| 시니어 개발자 | -    | -    | -    |
+| QA 리드       | -    | -    | -    |

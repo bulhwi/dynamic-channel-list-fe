@@ -11,6 +11,7 @@
 **Goal**: Set up comprehensive project management structure using GitHub Issues, Milestones, and Labels for tracking all development tasks.
 
 **Scope**:
+
 - Create detailed task breakdown for all 6 development phases
 - Generate GitHub Issues with proper categorization
 - Setup Milestones with due dates
@@ -36,6 +37,7 @@
 ### Initial Request
 
 **User**:
+
 ```
 실제 구현 작업을 진행하기 이전에 작업을 진행할 플랜별로 태스크를 구성하고, 태스크로 github 이슈로 등록하여 관리하자!
 todo리스트 한번 뽑아보고 이슈등록해줘
@@ -44,6 +46,7 @@ todo리스트 한번 뽑아보고 이슈등록해줘
 **Translation**: "Before starting actual implementation, let's organize tasks by plan and register them as GitHub issues for management. Create a todo list and register issues."
 
 **Claude's Understanding**:
+
 - Need to break down PRD's 6 phases into actionable tasks
 - Create GitHub Issues for project management
 - Use Milestones to track phases
@@ -115,6 +118,7 @@ Phase 6: Polish & Deployment (6 tasks)
 Created comprehensive bash script: `scripts/create-github-issues.sh`
 
 **Script Features**:
+
 1. Creates 11 Labels with colors and descriptions
 2. Creates 6 Milestones with due dates
 3. Generates 35 detailed Issues with:
@@ -137,11 +141,13 @@ Executed script using GitHub CLI (`gh`):
 ```
 
 **Results**:
+
 - ✅ 11 Labels created
 - ✅ 6 Milestones created
 - ✅ 35 Issues created (#1-#35)
 
 **Minor Issue**:
+
 - Initial run failed on last issue due to missing 'a11y' label
 - Fixed by creating 'a11y' label manually
 - Completed remaining 4 issues manually
@@ -155,6 +161,7 @@ Executed script using GitHub CLI (`gh`):
 **Context**: Need to decide how detailed each task should be.
 
 **Options Considered**:
+
 1. **High-level tasks** (e.g., "Implement Step 1")
    - Pros: Fewer issues to manage
    - Cons: Difficult to track progress, unclear scope
@@ -170,6 +177,7 @@ Executed script using GitHub CLI (`gh`):
 **Chosen**: Option 2 - Medium granularity
 
 **Rationale**:
+
 - Each task is a clear deliverable
 - Can be completed in 2-4 hours
 - Easy to track without overwhelming number of issues
@@ -182,6 +190,7 @@ Executed script using GitHub CLI (`gh`):
 **Context**: How to organize tasks into milestones.
 
 **Options Considered**:
+
 1. **By feature** (e.g., "Animation", "API Integration")
 2. **By time** (e.g., "Week 1", "Week 2")
 3. **By assignment steps** (e.g., "Step 1", "Step 2")
@@ -189,6 +198,7 @@ Executed script using GitHub CLI (`gh`):
 **Chosen**: Option 3 - By assignment steps (6 phases)
 
 **Rationale**:
+
 - Aligns with PRD structure
 - Matches assignment requirements (Step 1-4)
 - Clear progression: Setup → Step 1 → Step 2 → Step 3 → Step 4 → Polish
@@ -202,21 +212,22 @@ Executed script using GitHub CLI (`gh`):
 
 **Labels Created**:
 
-| Label | Purpose | Color | Usage |
-|-------|---------|-------|-------|
-| `setup` | Project setup tasks | Green | Phase 1 |
-| `feature` | New feature implementation | Blue | All phases |
-| `test` | Testing related tasks | Yellow | All phases |
-| `docs` | Documentation | Light Blue | Phase 6 |
-| `enhancement` | Enhancement to existing | Cyan | Improvements |
-| `step-1` | Step 1 specific | Red | Phase 2 |
-| `step-2` | Step 2 specific | Red | Phase 3 |
-| `step-3` | Step 3 specific | Red | Phase 4 |
-| `step-4` | Step 4 specific | Red | Phase 5 |
-| `tdd` | TDD approach | Purple | TDD tasks |
-| `a11y` | Accessibility | Purple | Accessibility |
+| Label         | Purpose                    | Color      | Usage         |
+| ------------- | -------------------------- | ---------- | ------------- |
+| `setup`       | Project setup tasks        | Green      | Phase 1       |
+| `feature`     | New feature implementation | Blue       | All phases    |
+| `test`        | Testing related tasks      | Yellow     | All phases    |
+| `docs`        | Documentation              | Light Blue | Phase 6       |
+| `enhancement` | Enhancement to existing    | Cyan       | Improvements  |
+| `step-1`      | Step 1 specific            | Red        | Phase 2       |
+| `step-2`      | Step 2 specific            | Red        | Phase 3       |
+| `step-3`      | Step 3 specific            | Red        | Phase 4       |
+| `step-4`      | Step 4 specific            | Red        | Phase 5       |
+| `tdd`         | TDD approach               | Purple     | TDD tasks     |
+| `a11y`        | Accessibility              | Purple     | Accessibility |
 
 **Rationale**:
+
 - Clear categorization by type and step
 - Easy filtering in GitHub UI
 - Color-coded for visual scanning
@@ -229,25 +240,31 @@ Executed script using GitHub CLI (`gh`):
 **Context**: How much detail to include in each issue.
 
 **Chosen Structure**:
+
 ```markdown
 ## Objective
+
 [Clear, concise goal statement]
 
 ## Tasks
+
 - [ ] Specific task 1
 - [ ] Specific task 2
 - [ ] Specific task 3
 
 ## Acceptance Criteria
+
 - [x] Criterion 1
 - [x] Criterion 2
 
 ## Reference
+
 - PRD: Section X
 - Tech Spec: Section Y
 ```
 
 **Rationale**:
+
 - **Objective**: Provides context and motivation
 - **Tasks**: Actionable checklist for implementation
 - **Acceptance Criteria**: Clear definition of "done"
@@ -271,18 +288,19 @@ scripts/
 
 **Milestones (6)**:
 
-| # | Title | Issues | Due Date |
-|---|-------|--------|----------|
-| 1 | Phase 1: Foundation & Setup | 8 | 2025-12-01 |
-| 2 | Phase 2: Step 1 - Animated List | 5 | 2025-12-05 |
-| 3 | Phase 3: Step 2 - Channel Creation | 6 | 2025-12-10 |
-| 4 | Phase 4: Step 3 - Pagination | 6 | 2025-12-15 |
-| 5 | Phase 5: Step 4 - Channel Update | 4 | 2025-12-20 |
-| 6 | Phase 6: Polish & Deployment | 6 | 2025-12-25 |
+| #   | Title                              | Issues | Due Date   |
+| --- | ---------------------------------- | ------ | ---------- |
+| 1   | Phase 1: Foundation & Setup        | 8      | 2025-12-01 |
+| 2   | Phase 2: Step 1 - Animated List    | 5      | 2025-12-05 |
+| 3   | Phase 3: Step 2 - Channel Creation | 6      | 2025-12-10 |
+| 4   | Phase 4: Step 3 - Pagination       | 6      | 2025-12-15 |
+| 5   | Phase 5: Step 4 - Channel Update   | 4      | 2025-12-20 |
+| 6   | Phase 6: Polish & Deployment       | 6      | 2025-12-25 |
 
 **Issues (35)**:
 
 All issues created with:
+
 - Clear titles
 - Detailed descriptions
 - Task checklists
@@ -292,6 +310,7 @@ All issues created with:
 - PRD/Tech Spec references
 
 **GitHub URLs**:
+
 - Issues: https://github.com/bulhwi/dynamic-channel-list-fe/issues
 - Milestones: https://github.com/bulhwi/dynamic-channel-list-fe/milestones
 
@@ -358,13 +377,13 @@ describe('generateRandomName', () => {
 
 ### Metrics
 
-| Metric | Value |
-|--------|-------|
-| Total Tasks | 35 |
-| Milestones | 6 |
-| Labels | 11 |
-| Script Lines | 1,130 |
-| Average Tasks per Phase | 5.8 |
+| Metric                   | Value    |
+| ------------------------ | -------- |
+| Total Tasks              | 35       |
+| Milestones               | 6        |
+| Labels                   | 11       |
+| Script Lines             | 1,130    |
+| Average Tasks per Phase  | 5.8      |
 | Estimated Total Duration | ~3 weeks |
 
 ### GitHub Activity
@@ -393,6 +412,7 @@ b483fe6 docs: initial project documentation and setup
 **Problem**: Initial script execution failed on issue #32 due to missing 'a11y' label.
 
 **Error Message**:
+
 ```
 could not add label: 'a11y' not found
 ```
@@ -400,6 +420,7 @@ could not add label: 'a11y' not found
 **Root Cause**: Forgot to create 'a11y' label in the label creation section of the script.
 
 **Solution**:
+
 1. Manually created 'a11y' label using `gh label create`
 2. Manually created remaining 4 issues (#32-#35)
 3. All issues created successfully
@@ -413,6 +434,7 @@ could not add label: 'a11y' not found
 **Problem**: Claude Code hooks (`user-prompt-submit`) not executing as expected for automatic prompt logging.
 
 **Investigation**:
+
 - Created `.claude/hooks/user-prompt-submit` script
 - Added debug logging
 - Hook never executed (no debug log file created)
@@ -420,6 +442,7 @@ could not add label: 'a11y' not found
 **Root Cause**: Hooks may not be supported in current Claude Code version, or require different configuration.
 
 **Solution**:
+
 - Decided to use **manual session documentation** instead
 - Create session files after each major phase
 - More reliable and produces higher quality documentation
@@ -433,6 +456,7 @@ could not add label: 'a11y' not found
 ### 1. Task Breakdown is Critical
 
 Breaking down PRD into 35 actionable tasks provided:
+
 - Clear roadmap for implementation
 - Easy progress tracking
 - Realistic time estimation
@@ -445,6 +469,7 @@ Breaking down PRD into 35 actionable tasks provided:
 ### 2. GitHub Issues as Single Source of Truth
 
 Using GitHub Issues provides:
+
 - Central location for all task information
 - Built-in tracking and assignment
 - Discussion threads for each task
@@ -470,6 +495,7 @@ Using GitHub Issues provides:
 ### 4. Detailed Acceptance Criteria Prevents Ambiguity
 
 Each issue includes:
+
 - Objective (why)
 - Tasks (what)
 - Acceptance criteria (definition of done)
@@ -486,6 +512,7 @@ Each issue includes:
 Attempted automatic prompt logging via hooks failed.
 
 **Discovery**: Manual session documentation:
+
 - Higher quality (curated, structured)
 - More useful for submission
 - Better for learning/review
@@ -498,6 +525,7 @@ Attempted automatic prompt logging via hooks failed.
 ## 🔗 References
 
 ### Internal Documents
+
 - [PRD (EN)](../en/PRD.md)
 - [PRD (KO)](../ko/PRD.md)
 - [Tech Spec (EN)](../en/TECH_SPEC.md)
@@ -505,11 +533,13 @@ Attempted automatic prompt logging via hooks failed.
 - [Previous Session](./00_PROJECT_INITIALIZATION.md)
 
 ### External Resources
+
 - [GitHub CLI Documentation](https://cli.github.com/manual/)
 - [GitHub Issues Guide](https://docs.github.com/en/issues)
 - [GitHub Milestones](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/about-milestones)
 
 ### Code References
+
 - `scripts/create-github-issues.sh` - Issue creation automation
 
 ---
@@ -524,6 +554,7 @@ Attempted automatic prompt logging via hooks failed.
    - Create session document for Phase 1
 
 2. **Project Initialization**
+
    ```bash
    npx create-next-app@latest . --typescript --app
    npm install @sendbird/chat @tanstack/react-query
@@ -553,6 +584,7 @@ Attempted automatic prompt logging via hooks failed.
 ### Appendix A: Full Issue List
 
 **Phase 1: Foundation & Setup**
+
 1. #1 - Initialize Next.js 15 project with TypeScript
 2. #2 - Install and configure core dependencies
 3. #3 - Configure ESLint, Prettier, and Husky
@@ -562,42 +594,15 @@ Attempted automatic prompt logging via hooks failed.
 7. #7 - Implement sortChannels() utility (TDD)
 8. #8 - Create Sendbird client service
 
-**Phase 2: Step 1 - Animated List**
-9. #9 - [Step 1] Create ChannelItem component with hover animation
-10. #10 - [Step 1] Create ChannelList component with dummy data
-11. #11 - [Step 1] Implement CSS animations for hover effects
-12. #12 - [Step 1] Create useHoverAnimation hook
-13. #13 - [Step 1] Write comprehensive component tests
+**Phase 2: Step 1 - Animated List** 9. #9 - [Step 1] Create ChannelItem component with hover animation 10. #10 - [Step 1] Create ChannelList component with dummy data 11. #11 - [Step 1] Implement CSS animations for hover effects 12. #12 - [Step 1] Create useHoverAnimation hook 13. #13 - [Step 1] Write comprehensive component tests
 
-**Phase 3: Step 2 - Channel Creation**
-14. #14 - [Step 2] Create CreateChannelButton component
-15. #15 - [Step 2] Integrate Sendbird channel creation API
-16. #16 - [Step 2] Setup React Query mutation for channel creation
-17. #17 - [Step 2] Implement dynamic list insertion with sorting
-18. #18 - [Step 2] Add loading and error states
-19. #19 - [Step 2] Write integration tests for creation flow
+**Phase 3: Step 2 - Channel Creation** 14. #14 - [Step 2] Create CreateChannelButton component 15. #15 - [Step 2] Integrate Sendbird channel creation API 16. #16 - [Step 2] Setup React Query mutation for channel creation 17. #17 - [Step 2] Implement dynamic list insertion with sorting 18. #18 - [Step 2] Add loading and error states 19. #19 - [Step 2] Write integration tests for creation flow
 
-**Phase 4: Step 3 - Pagination**
-20. #20 - [Step 3] Replace dummy data with Sendbird SDK data
-21. #21 - [Step 3] Implement useInfiniteScroll hook
-22. #22 - [Step 3] Setup React Query infinite query
-23. #23 - [Step 3] Implement container height limitation (10 items)
-24. #24 - [Step 3] Add pagination loading indicator
-25. #25 - [Step 3] Write integration tests for infinite scroll
+**Phase 4: Step 3 - Pagination** 20. #20 - [Step 3] Replace dummy data with Sendbird SDK data 21. #21 - [Step 3] Implement useInfiniteScroll hook 22. #22 - [Step 3] Setup React Query infinite query 23. #23 - [Step 3] Implement container height limitation (10 items) 24. #24 - [Step 3] Add pagination loading indicator 25. #25 - [Step 3] Write integration tests for infinite scroll
 
-**Phase 5: Step 4 - Channel Update**
-26. #26 - [Step 4] Add click event handlers to channel items
-27. #27 - [Step 4] Implement channel update mutation
-28. #28 - [Step 4] Add re-positioning animation
-29. #29 - [Step 4] Write integration tests for update flow
+**Phase 5: Step 4 - Channel Update** 26. #26 - [Step 4] Add click event handlers to channel items 27. #27 - [Step 4] Implement channel update mutation 28. #28 - [Step 4] Add re-positioning animation 29. #29 - [Step 4] Write integration tests for update flow
 
-**Phase 6: Polish & Deployment**
-30. #30 - Code refactoring and optimization
-31. #31 - Performance testing with Lighthouse
-32. #32 - Accessibility improvements (ARIA, keyboard nav)
-33. #33 - Write comprehensive README.md (EN + KO)
-34. #34 - Create deployment configuration (Vercel)
-35. #35 - Final testing and bug fixes
+**Phase 6: Polish & Deployment** 30. #30 - Code refactoring and optimization 31. #31 - Performance testing with Lighthouse 32. #32 - Accessibility improvements (ARIA, keyboard nav) 33. #33 - Write comprehensive README.md (EN + KO) 34. #34 - Create deployment configuration (Vercel) 35. #35 - Final testing and bug fixes
 
 ---
 
@@ -628,16 +633,16 @@ Attempted automatic prompt logging via hooks failed.
 
 ## 📝 Session Metadata
 
-| Field | Value |
-|-------|-------|
-| **Session Number** | 01 |
-| **Date Started** | 2025-11-23 15:00 |
-| **Date Completed** | 2025-11-23 16:00 |
-| **Total Duration** | ~1 hour |
-| **Files Created** | 1 (script) |
-| **Lines Added** | +1,130 |
+| Field                    | Value                                     |
+| ------------------------ | ----------------------------------------- |
+| **Session Number**       | 01                                        |
+| **Date Started**         | 2025-11-23 15:00                          |
+| **Date Completed**       | 2025-11-23 16:00                          |
+| **Total Duration**       | ~1 hour                                   |
+| **Files Created**        | 1 (script)                                |
+| **Lines Added**          | +1,130                                    |
 | **GitHub Items Created** | 52 (6 milestones + 11 labels + 35 issues) |
-| **Commits** | 1 |
+| **Commits**              | 1                                         |
 
 ---
 

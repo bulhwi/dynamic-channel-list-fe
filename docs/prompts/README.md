@@ -48,28 +48,29 @@ prompts/
 
 ### ✅ 완료된 세션
 
-| 번호 | 파일명 | 주제 | 날짜 | 상태 |
-|------|--------|------|------|------|
-| 00 | `sessions/00_PROJECT_INITIALIZATION.md` | 프로젝트 초기화, PRD/Tech Spec 작성 | 2025-11-23 | ✅ 완료 |
-| 01 | `sessions/01_GITHUB_ISSUES_SETUP.md` | GitHub Issues, Milestones, Labels 설정 | 2025-11-23 | ✅ 완료 |
+| 번호 | 파일명                                  | 주제                                   | 날짜       | 상태    |
+| ---- | --------------------------------------- | -------------------------------------- | ---------- | ------- |
+| 00   | `sessions/00_PROJECT_INITIALIZATION.md` | 프로젝트 초기화, PRD/Tech Spec 작성    | 2025-11-23 | ✅ 완료 |
+| 01   | `sessions/01_GITHUB_ISSUES_SETUP.md`    | GitHub Issues, Milestones, Labels 설정 | 2025-11-23 | ✅ 완료 |
 
 ### 🔄 진행 예정
 
-| 번호 | 주제 | 예상 내용 |
-|------|------|----------|
-| 02 | Project Setup | Next.js 초기화, 의존성 설치, 환경 설정 |
-| 03 | Step 1: Dummy Data & Animation | 더미 데이터, 호버 애니메이션 구현 |
-| 04 | Step 2: Channel Creation | Sendbird SDK 통합, 채널 생성 |
-| 05 | Step 3: Pagination | 무한 스크롤, 실제 데이터 교체 |
-| 06 | Step 4: Channel Update | 채널 업데이트, 재정렬 애니메이션 |
-| 07 | Testing & Refinement | 통합 테스트, 버그 수정 |
-| 08 | Deployment & Documentation | 배포, 최종 문서 정리 |
+| 번호 | 주제                           | 예상 내용                              |
+| ---- | ------------------------------ | -------------------------------------- |
+| 02   | Project Setup                  | Next.js 초기화, 의존성 설치, 환경 설정 |
+| 03   | Step 1: Dummy Data & Animation | 더미 데이터, 호버 애니메이션 구현      |
+| 04   | Step 2: Channel Creation       | Sendbird SDK 통합, 채널 생성           |
+| 05   | Step 3: Pagination             | 무한 스크롤, 실제 데이터 교체          |
+| 06   | Step 4: Channel Update         | 채널 업데이트, 재정렬 애니메이션       |
+| 07   | Testing & Refinement           | 통합 테스트, 버그 수정                 |
+| 08   | Deployment & Documentation     | 배포, 최종 문서 정리                   |
 
 ---
 
 ## 🔍 검색 가이드
 
 ### 특정 주제 찾기
+
 ```bash
 # 세션 파일에서 키워드 검색
 grep -r "animation" sessions/
@@ -82,6 +83,7 @@ grep -r "ChannelList" sessions/
 ```
 
 ### 특정 날짜의 세션 찾기
+
 ```bash
 # 세션 목록 확인
 ls -la sessions/
@@ -95,16 +97,19 @@ cat sessions/00_PROJECT_INITIALIZATION.md
 ## 📊 통계
 
 ### 현재 문서 현황
+
 - **완료된 세션**: 2개 (00_PROJECT_INITIALIZATION, 01_GITHUB_ISSUES_SETUP)
 - **총 문서 라인**: ~1,200줄
 - **작성된 PRD/Tech Spec**: ~5,400줄 (EN + KO)
 - **생성된 GitHub Issues**: 35개
 
 ### 파일 크기 가이드라인
+
 - **세션 파일**: 400-800줄 권장 (너무 길면 읽기 어려움)
 - **총 프로젝트**: ~5,000-8,000줄 예상
 
 ### 권장 사항
+
 - 세션 파일이 1,000줄 초과 시 분리 고려
 - 복잡한 주제는 여러 세션으로 나누기
 - 각 세션은 하나의 명확한 목표에 집중
@@ -115,13 +120,16 @@ cat sessions/00_PROJECT_INITIALIZATION.md
 ## 🎯 제출 시
 
 ### AI 도구 사용 문서
+
 프로젝트 루트의 `CLAUDE.md` 파일에 모든 AI 사용 내역이 정리되어 있습니다:
+
 - 사용한 도구 정보 (Claude Sonnet 4.5)
 - 세션별 작업 요약
 - 주요 기술적 결정사항과 근거
 - 통계 및 성과
 
 ### 제출 패키지
+
 ```
 docs/
 ├── CLAUDE.md                  # AI 도구 사용 종합 문서 ⭐
@@ -144,12 +152,14 @@ docs/
 ## 🔧 유지보수
 
 ### 새 세션 시작 시
+
 1. `sessions/` 디렉토리에 새 파일 생성
 2. 템플릿 사용 (아래 참조)
 3. 대화 진행하며 내용 채우기
 4. 완료 후 이 README의 테이블 업데이트
 
 ### 세션 템플릿
+
 ```markdown
 # Session NN: [TOPIC_NAME]
 
@@ -169,9 +179,11 @@ docs/
 ## 대화 요약
 
 ### User Request
+
 ...
 
 ### Claude Response
+
 ...
 
 ---

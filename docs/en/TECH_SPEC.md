@@ -1,18 +1,19 @@
 # Technical Specification
+
 ## Dynamic Channel List with Animation
 
 ---
 
 ## Document Information
 
-| Item | Details |
-|------|---------|
-| **Document Type** | Technical Specification |
-| **Version** | 1.0.0 |
-| **Last Updated** | 2025-11-23 |
-| **Status** | Draft |
-| **Related Documents** | PRD_EN.md |
-| **Authors** | Development Team |
+| Item                  | Details                 |
+| --------------------- | ----------------------- |
+| **Document Type**     | Technical Specification |
+| **Version**           | 1.0.0                   |
+| **Last Updated**      | 2025-11-23              |
+| **Status**            | Draft                   |
+| **Related Documents** | PRD_EN.md               |
+| **Authors**           | Development Team        |
 
 ---
 
@@ -91,21 +92,25 @@
 ### 1.2 Layered Architecture
 
 **Presentation Layer**
+
 - Responsible for: UI rendering, user interactions, animations
 - Technologies: React components, CSS Modules
 - Communication: Consumes hooks from Business Logic Layer
 
 **Business Logic Layer**
+
 - Responsible for: Business rules, data transformation, state management
 - Technologies: Custom React hooks, service classes
 - Communication: Uses React Query for data fetching
 
 **Data Layer**
+
 - Responsible for: Server state management, caching, synchronization
 - Technologies: React Query (TanStack Query)
 - Communication: Communicates with Sendbird SDK
 
 **External Integration Layer**
+
 - Responsible for: Sendbird SDK integration
 - Technologies: @sendbird/chat SDK
 - Communication: REST API / WebSocket
@@ -199,32 +204,37 @@ App (page.tsx)
 **File**: `components/ChannelList/ChannelList.tsx`
 
 **Responsibilities:**
+
 - Fetch and display channel list
 - Handle infinite scroll
 - Manage hover state for animations
 - Coordinate child components
 
 **Props Interface:**
+
 ```typescript
 interface ChannelListProps {
-  className?: string;
+  className?: string
 }
 ```
 
 **Internal State:**
+
 ```typescript
 interface ChannelListState {
-  hoveredIndex: number | null;
-  containerRef: RefObject<HTMLDivElement>;
+  hoveredIndex: number | null
+  containerRef: RefObject<HTMLDivElement>
 }
 ```
 
 **Key Hooks Used:**
+
 - `useChannelList()` - Fetch channels with infinite query
 - `useInfiniteScroll()` - Detect scroll bottom
 - `useHoverAnimation()` - Manage hover state
 
 **Implementation Pattern:**
+
 ```typescript
 export function ChannelList({ className }: ChannelListProps) {
   const {
@@ -279,28 +289,32 @@ export function ChannelList({ className }: ChannelListProps) {
 **File**: `components/ChannelItem/ChannelItem.tsx`
 
 **Responsibilities:**
+
 - Render individual channel
 - Apply hover animations
 - Handle click event for update
 
 **Props Interface:**
+
 ```typescript
 interface ChannelItemProps {
-  channel: Channel;
-  isHovered: boolean;
-  isAdjacent: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onClick?: (channel: Channel) => void;
+  channel: Channel
+  isHovered: boolean
+  isAdjacent: boolean
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+  onClick?: (channel: Channel) => void
 }
 ```
 
 **Animation States:**
+
 - Default: `translateX(0)`
 - Hovered: `translateX(40px)`
 - Adjacent: `translateX(20px)`
 
 **Implementation Pattern:**
+
 ```typescript
 export const ChannelItem = memo(function ChannelItem({
   channel,
@@ -339,6 +353,7 @@ export const ChannelItem = memo(function ChannelItem({
 ```
 
 **CSS Module** (`ChannelItem.module.css`):
+
 ```css
 .item {
   display: flex;
@@ -349,7 +364,9 @@ export const ChannelItem = memo(function ChannelItem({
   border-bottom: 1px solid #e0e0e0;
   background: white;
   cursor: pointer;
-  transition: transform 250ms ease-in-out, background-color 200ms ease;
+  transition:
+    transform 250ms ease-in-out,
+    background-color 200ms ease;
 }
 
 .item:hover {
@@ -371,19 +388,22 @@ export const ChannelItem = memo(function ChannelItem({
 **File**: `components/CreateChannelButton/CreateChannelButton.tsx`
 
 **Responsibilities:**
+
 - Trigger channel creation
 - Show loading state during creation
 - Handle errors
 
 **Props Interface:**
+
 ```typescript
 interface CreateChannelButtonProps {
-  className?: string;
-  onSuccess?: (channel: Channel) => void;
+  className?: string
+  onSuccess?: (channel: Channel) => void
 }
 ```
 
 **Implementation Pattern:**
+
 ```typescript
 export function CreateChannelButton({
   className,
@@ -484,16 +504,14 @@ export const queryKeys = {
   channels: {
     all: ['channels'] as const,
     lists: () => [...queryKeys.channels.all, 'list'] as const,
-    list: (filters: string) =>
-      [...queryKeys.channels.lists(), filters] as const,
+    list: (filters: string) => [...queryKeys.channels.lists(), filters] as const,
     details: () => [...queryKeys.channels.all, 'detail'] as const,
-    detail: (url: string) =>
-      [...queryKeys.channels.details(), url] as const,
+    detail: (url: string) => [...queryKeys.channels.details(), url] as const,
   },
   sendbird: {
     connection: ['sendbird', 'connection'] as const,
-  }
-} as const;
+  },
+} as const
 ```
 
 ### 4.4 Custom Hooks
@@ -503,30 +521,31 @@ export const queryKeys = {
 **File**: `hooks/useChannelList.ts`
 
 ```typescript
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchChannels } from '@/services/sendbird/channel.service';
-import { queryKeys } from '@/services/api/queryKeys';
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { fetchChannels } from '@/services/sendbird/channel.service'
+import { queryKeys } from '@/services/api/queryKeys'
 
 interface UseChannelListOptions {
-  limit?: number;
+  limit?: number
 }
 
 export function useChannelList(options: UseChannelListOptions = {}) {
-  const limit = options.limit ?? 10;
+  const limit = options.limit ?? 10
 
   return useInfiniteQuery({
     queryKey: queryKeys.channels.list('alphabetical'),
-    queryFn: ({ pageParam }) => fetchChannels({
-      limit,
-      token: pageParam
-    }),
+    queryFn: ({ pageParam }) =>
+      fetchChannels({
+        limit,
+        token: pageParam,
+      }),
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => lastPage.nextToken,
-    select: (data) => ({
+    getNextPageParam: lastPage => lastPage.nextToken,
+    select: data => ({
       pages: data.pages,
-      channels: data.pages.flatMap(page => page.channels)
+      channels: data.pages.flatMap(page => page.channels),
     }),
-  });
+  })
 }
 ```
 
@@ -535,49 +554,38 @@ export function useChannelList(options: UseChannelListOptions = {}) {
 **File**: `hooks/useCreateChannel.ts`
 
 ```typescript
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createChannel } from '@/services/sendbird/channel.service';
-import { queryKeys } from '@/services/api/queryKeys';
-import { sortChannels } from '@/utils/sortChannels';
-import type { Channel } from '@/types/channel.types';
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createChannel } from '@/services/sendbird/channel.service'
+import { queryKeys } from '@/services/api/queryKeys'
+import { sortChannels } from '@/utils/sortChannels'
+import type { Channel } from '@/types/channel.types'
 
 interface CreateChannelParams {
-  name: string;
+  name: string
 }
 
-export function useCreateChannel(options?: {
-  onSuccess?: (channel: Channel) => void;
-}) {
-  const queryClient = useQueryClient();
+export function useCreateChannel(options?: { onSuccess?: (channel: Channel) => void }) {
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (params: CreateChannelParams) => createChannel(params),
-    onSuccess: (newChannel) => {
+    onSuccess: newChannel => {
       // Update cache with new channel in correct position
-      queryClient.setQueryData(
-        queryKeys.channels.list('alphabetical'),
-        (old: any) => {
-          if (!old) return old;
+      queryClient.setQueryData(queryKeys.channels.list('alphabetical'), (old: any) => {
+        if (!old) return old
 
-          const firstPage = old.pages[0];
-          const updatedChannels = sortChannels([
-            ...firstPage.channels,
-            newChannel
-          ]);
+        const firstPage = old.pages[0]
+        const updatedChannels = sortChannels([...firstPage.channels, newChannel])
 
-          return {
-            ...old,
-            pages: [
-              { ...firstPage, channels: updatedChannels },
-              ...old.pages.slice(1)
-            ]
-          };
+        return {
+          ...old,
+          pages: [{ ...firstPage, channels: updatedChannels }, ...old.pages.slice(1)],
         }
-      );
+      })
 
-      options?.onSuccess?.(newChannel);
+      options?.onSuccess?.(newChannel)
     },
-  });
+  })
 }
 ```
 
@@ -586,43 +594,40 @@ export function useCreateChannel(options?: {
 **File**: `hooks/useUpdateChannel.ts`
 
 ```typescript
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateChannel } from '@/services/sendbird/channel.service';
-import { queryKeys } from '@/services/api/queryKeys';
-import { sortChannels } from '@/utils/sortChannels';
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateChannel } from '@/services/sendbird/channel.service'
+import { queryKeys } from '@/services/api/queryKeys'
+import { sortChannels } from '@/utils/sortChannels'
 
 interface UpdateChannelParams {
-  channelUrl: string;
-  newName: string;
+  channelUrl: string
+  newName: string
 }
 
 export function useUpdateChannel() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (params: UpdateChannelParams) => updateChannel(params),
-    onSuccess: (updatedChannel) => {
+    onSuccess: updatedChannel => {
       // Update cache and re-sort
-      queryClient.setQueryData(
-        queryKeys.channels.list('alphabetical'),
-        (old: any) => {
-          if (!old) return old;
+      queryClient.setQueryData(queryKeys.channels.list('alphabetical'), (old: any) => {
+        if (!old) return old
 
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              channels: sortChannels(
-                page.channels.map((ch: Channel) =>
-                  ch.url === updatedChannel.url ? updatedChannel : ch
-                )
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            channels: sortChannels(
+              page.channels.map((ch: Channel) =>
+                ch.url === updatedChannel.url ? updatedChannel : ch
               )
-            }))
-          };
+            ),
+          })),
         }
-      );
+      })
     },
-  });
+  })
 }
 ```
 
@@ -635,52 +640,52 @@ export function useUpdateChannel() {
 **File**: `services/sendbird/client.ts`
 
 ```typescript
-import SendbirdChat from '@sendbird/chat';
-import { GroupChannelModule } from '@sendbird/chat/groupChannel';
-import type { SendbirdGroupChat } from '@sendbird/chat/groupChannel';
+import SendbirdChat from '@sendbird/chat'
+import { GroupChannelModule } from '@sendbird/chat/groupChannel'
+import type { SendbirdGroupChat } from '@sendbird/chat/groupChannel'
 
-let sendbirdInstance: SendbirdGroupChat | null = null;
+let sendbirdInstance: SendbirdGroupChat | null = null
 
 export async function initializeSendbird(): Promise<SendbirdGroupChat> {
   if (sendbirdInstance) {
-    return sendbirdInstance;
+    return sendbirdInstance
   }
 
-  const appId = process.env.NEXT_PUBLIC_SENDBIRD_APP_ID;
+  const appId = process.env.NEXT_PUBLIC_SENDBIRD_APP_ID
   if (!appId) {
-    throw new Error('NEXT_PUBLIC_SENDBIRD_APP_ID is not defined');
+    throw new Error('NEXT_PUBLIC_SENDBIRD_APP_ID is not defined')
   }
 
   try {
     sendbirdInstance = SendbirdChat.init({
       appId,
       localCacheEnabled: false, // REQUIRED by assignment
-      modules: [new GroupChannelModule()]
-    }) as SendbirdGroupChat;
+      modules: [new GroupChannelModule()],
+    }) as SendbirdGroupChat
 
-    return sendbirdInstance;
+    return sendbirdInstance
   } catch (error) {
-    console.error('Failed to initialize Sendbird:', error);
-    throw error;
+    console.error('Failed to initialize Sendbird:', error)
+    throw error
   }
 }
 
 export async function connectUser(userId: string): Promise<void> {
-  const sb = await initializeSendbird();
+  const sb = await initializeSendbird()
 
   try {
-    await sb.connect(userId);
+    await sb.connect(userId)
   } catch (error) {
-    console.error('Failed to connect user:', error);
-    throw error;
+    console.error('Failed to connect user:', error)
+    throw error
   }
 }
 
 export function getSendbirdInstance(): SendbirdGroupChat {
   if (!sendbirdInstance) {
-    throw new Error('Sendbird not initialized. Call initializeSendbird() first.');
+    throw new Error('Sendbird not initialized. Call initializeSendbird() first.')
   }
-  return sendbirdInstance;
+  return sendbirdInstance
 }
 ```
 
@@ -689,10 +694,10 @@ export function getSendbirdInstance(): SendbirdGroupChat {
 **File**: `services/sendbird/channel.service.ts`
 
 ```typescript
-import { getSendbirdInstance } from './client';
-import { GroupChannelListOrder } from '@sendbird/chat/groupChannel';
-import type { GroupChannel } from '@sendbird/chat/groupChannel';
-import type { Channel } from '@/types/channel.types';
+import { getSendbirdInstance } from './client'
+import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
+import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import type { Channel } from '@/types/channel.types'
 
 // Transform Sendbird GroupChannel to our Channel type
 function transformChannel(groupChannel: GroupChannel): Channel {
@@ -702,17 +707,17 @@ function transformChannel(groupChannel: GroupChannel): Channel {
     createdAt: groupChannel.createdAt,
     customType: groupChannel.customType,
     data: groupChannel.data,
-  };
+  }
 }
 
 interface FetchChannelsParams {
-  limit: number;
-  token?: string;
+  limit: number
+  token?: string
 }
 
 interface FetchChannelsResult {
-  channels: Channel[];
-  nextToken?: string;
+  channels: Channel[]
+  nextToken?: string
 }
 
 /**
@@ -721,15 +726,15 @@ interface FetchChannelsResult {
  */
 export async function fetchChannels({
   limit,
-  token
+  token,
 }: FetchChannelsParams): Promise<FetchChannelsResult> {
-  const sb = getSendbirdInstance();
+  const sb = getSendbirdInstance()
 
   const query = sb.groupChannel.createMyGroupChannelListQuery({
     includeEmpty: true, // REQUIRED
     limit, // REQUIRED
-    order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL // REQUIRED
-  });
+    order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL, // REQUIRED
+  })
 
   // If token exists, load specific page
   if (token) {
@@ -738,52 +743,50 @@ export async function fetchChannels({
   }
 
   if (!query.hasNext) {
-    return { channels: [], nextToken: undefined };
+    return { channels: [], nextToken: undefined }
   }
 
   try {
-    const groupChannels = await query.next();
-    const channels = groupChannels.map(transformChannel);
-    const nextToken = query.hasNext ? 'next' : undefined;
+    const groupChannels = await query.next()
+    const channels = groupChannels.map(transformChannel)
+    const nextToken = query.hasNext ? 'next' : undefined
 
-    return { channels, nextToken };
+    return { channels, nextToken }
   } catch (error) {
-    console.error('Failed to fetch channels:', error);
-    throw error;
+    console.error('Failed to fetch channels:', error)
+    throw error
   }
 }
 
 interface CreateChannelParams {
-  name: string;
+  name: string
 }
 
 /**
  * Create a new channel
  * IMPORTANT: Only allowed SDK function per assignment
  */
-export async function createChannel({
-  name
-}: CreateChannelParams): Promise<Channel> {
-  const sb = getSendbirdInstance();
+export async function createChannel({ name }: CreateChannelParams): Promise<Channel> {
+  const sb = getSendbirdInstance()
 
   try {
     const params = {
       name, // Random 8-letter string
       isDistinct: false,
       operatorUserIds: [],
-    };
+    }
 
-    const groupChannel = await sb.groupChannel.createChannel(params);
-    return transformChannel(groupChannel);
+    const groupChannel = await sb.groupChannel.createChannel(params)
+    return transformChannel(groupChannel)
   } catch (error) {
-    console.error('Failed to create channel:', error);
-    throw error;
+    console.error('Failed to create channel:', error)
+    throw error
   }
 }
 
 interface UpdateChannelParams {
-  channelUrl: string;
-  newName: string;
+  channelUrl: string
+  newName: string
 }
 
 /**
@@ -792,20 +795,20 @@ interface UpdateChannelParams {
  */
 export async function updateChannel({
   channelUrl,
-  newName
+  newName,
 }: UpdateChannelParams): Promise<Channel> {
-  const sb = getSendbirdInstance();
+  const sb = getSendbirdInstance()
 
   try {
-    const channel = await sb.groupChannel.getChannel(channelUrl);
+    const channel = await sb.groupChannel.getChannel(channelUrl)
     const updatedChannel = await channel.updateChannel({
-      name: newName // Random 8-letter string
-    });
+      name: newName, // Random 8-letter string
+    })
 
-    return transformChannel(updatedChannel);
+    return transformChannel(updatedChannel)
   } catch (error) {
-    console.error('Failed to update channel:', error);
-    throw error;
+    console.error('Failed to update channel:', error)
+    throw error
   }
 }
 ```
@@ -833,8 +836,9 @@ export async function updateChannel({
 
   /* Animation properties */
   transform: translateX(0);
-  transition: transform 250ms ease-in-out,
-              background-color 200ms ease;
+  transition:
+    transform 250ms ease-in-out,
+    background-color 200ms ease;
 
   /* Performance optimization */
   will-change: transform;
@@ -847,11 +851,11 @@ export async function updateChannel({
 }
 
 /* Hover state applied via inline style from React */
-.item[data-hovered="true"] {
+.item[data-hovered='true'] {
   transform: translateX(40px);
 }
 
-.item[data-adjacent="true"] {
+.item[data-adjacent='true'] {
   transform: translateX(20px);
 }
 
@@ -882,30 +886,30 @@ export async function updateChannel({
 **File**: `hooks/useHoverAnimation.ts`
 
 ```typescript
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react'
 
 interface UseHoverAnimationReturn {
-  hoveredIndex: number | null;
-  handleHover: (index: number) => void;
-  handleLeave: () => void;
+  hoveredIndex: number | null
+  handleHover: (index: number) => void
+  handleLeave: () => void
 }
 
 export function useHoverAnimation(): UseHoverAnimationReturn {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const handleHover = useCallback((index: number) => {
-    setHoveredIndex(index);
-  }, []);
+    setHoveredIndex(index)
+  }, [])
 
   const handleLeave = useCallback(() => {
-    setHoveredIndex(null);
-  }, []);
+    setHoveredIndex(null)
+  }, [])
 
   return {
     hoveredIndex,
     handleHover,
     handleLeave,
-  };
+  }
 }
 ```
 
@@ -964,52 +968,52 @@ export function ChannelList() {
 **File**: `hooks/useInfiniteScroll.ts`
 
 ```typescript
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react'
 
 interface UseInfiniteScrollOptions {
-  onLoadMore: () => void;
-  enabled: boolean;
-  threshold?: number;
-  rootMargin?: string;
+  onLoadMore: () => void
+  enabled: boolean
+  threshold?: number
+  rootMargin?: string
 }
 
 export function useInfiniteScroll({
   onLoadMore,
   enabled,
   threshold = 1.0,
-  rootMargin = '100px'
+  rootMargin = '100px',
 }: UseInfiniteScrollOptions) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) return
 
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
+      entries => {
+        const [entry] = entries
         if (entry.isIntersecting) {
-          onLoadMore();
+          onLoadMore()
         }
       },
       {
         root: containerRef.current,
         rootMargin,
-        threshold
+        threshold,
       }
-    );
+    )
 
-    observer.observe(sentinel);
+    observer.observe(sentinel)
 
     return () => {
-      observer.disconnect();
-    };
-  }, [enabled, onLoadMore, rootMargin, threshold]);
+      observer.disconnect()
+    }
+  }, [enabled, onLoadMore, rootMargin, threshold])
 
-  return { containerRef, sentinelRef };
+  return { containerRef, sentinelRef }
 }
 ```
 
@@ -1081,32 +1085,41 @@ export function ChannelList() {
 ### 8.1 React Optimization
 
 **Memoization:**
+
 ```typescript
 // ChannelItem.tsx
-export const ChannelItem = memo(function ChannelItem(props) {
-  // Component implementation
-}, (prevProps, nextProps) => {
-  // Custom comparison
-  return (
-    prevProps.channel.url === nextProps.channel.url &&
-    prevProps.isHovered === nextProps.isHovered &&
-    prevProps.isAdjacent === nextProps.isAdjacent
-  );
-});
+export const ChannelItem = memo(
+  function ChannelItem(props) {
+    // Component implementation
+  },
+  (prevProps, nextProps) => {
+    // Custom comparison
+    return (
+      prevProps.channel.url === nextProps.channel.url &&
+      prevProps.isHovered === nextProps.isHovered &&
+      prevProps.isAdjacent === nextProps.isAdjacent
+    )
+  }
+)
 ```
 
 **useMemo for expensive computations:**
+
 ```typescript
 const sortedChannels = useMemo(() => {
-  return sortChannels(channels);
-}, [channels]);
+  return sortChannels(channels)
+}, [channels])
 ```
 
 **useCallback for stable function references:**
+
 ```typescript
-const handleChannelClick = useCallback((channel: Channel) => {
-  updateChannel({ channelUrl: channel.url, newName: generateRandomName() });
-}, [updateChannel]);
+const handleChannelClick = useCallback(
+  (channel: Channel) => {
+    updateChannel({ channelUrl: channel.url, newName: generateRandomName() })
+  },
+  [updateChannel]
+)
 ```
 
 ### 8.2 Bundle Optimization
@@ -1134,20 +1147,20 @@ const nextConfig = {
     if (!isServer) {
       // Bundle analyzer (development only)
       if (process.env.ANALYZE === 'true') {
-        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
         config.plugins.push(
           new BundleAnalyzerPlugin({
             analyzerMode: 'static',
             openAnalyzer: false,
           })
-        );
+        )
       }
     }
-    return config;
+    return config
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
 ```
 
 ### 8.3 CSS Performance
@@ -1230,11 +1243,11 @@ __tests__/
 **File**: `jest.config.js`
 
 ```javascript
-const nextJest = require('next/jest');
+const nextJest = require('next/jest')
 
 const createJestConfig = nextJest({
   dir: './',
-});
+})
 
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
@@ -1260,15 +1273,15 @@ const customJestConfig = {
       statements: 80,
     },
   },
-};
+}
 
-module.exports = createJestConfig(customJestConfig);
+module.exports = createJestConfig(customJestConfig)
 ```
 
 **File**: `jest.setup.js`
 
 ```javascript
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom'
 
 // Mock Sendbird SDK
 jest.mock('@sendbird/chat', () => ({
@@ -1282,16 +1295,18 @@ jest.mock('@sendbird/chat', () => ({
       },
     })),
   },
-}));
+}))
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
-  takeRecords() { return []; }
+  takeRecords() {
+    return []
+  }
   unobserve() {}
-};
+}
 ```
 
 ### 9.3 Example Test Cases
@@ -1299,35 +1314,35 @@ global.IntersectionObserver = class IntersectionObserver {
 **Unit Test**: `utils/generateRandomName.test.ts`
 
 ```typescript
-import { generateRandomName } from './generateRandomName';
+import { generateRandomName } from './generateRandomName'
 
 describe('generateRandomName', () => {
   it('should return a string of length 8', () => {
-    const name = generateRandomName();
-    expect(name).toHaveLength(8);
-  });
+    const name = generateRandomName()
+    expect(name).toHaveLength(8)
+  })
 
   it('should contain only lowercase letters', () => {
-    const name = generateRandomName();
-    expect(name).toMatch(/^[a-z]{8}$/);
-  });
+    const name = generateRandomName()
+    expect(name).toMatch(/^[a-z]{8}$/)
+  })
 
   it('should generate different names on multiple calls', () => {
-    const name1 = generateRandomName();
-    const name2 = generateRandomName();
+    const name1 = generateRandomName()
+    const name2 = generateRandomName()
 
     // Probability of collision is extremely low
-    expect(name1).not.toBe(name2);
-  });
+    expect(name1).not.toBe(name2)
+  })
 
   it('should generate 100 unique names', () => {
-    const names = Array.from({ length: 100 }, () => generateRandomName());
-    const uniqueNames = new Set(names);
+    const names = Array.from({ length: 100 }, () => generateRandomName())
+    const uniqueNames = new Set(names)
 
     // Allow very small collision probability
-    expect(uniqueNames.size).toBeGreaterThan(95);
-  });
-});
+    expect(uniqueNames.size).toBeGreaterThan(95)
+  })
+})
 ```
 
 **Component Test**: `components/ChannelItem.test.tsx`
@@ -1472,15 +1487,15 @@ export class APIError extends Error {
     public statusCode?: number,
     public code?: string
   ) {
-    super(message);
-    this.name = 'APIError';
+    super(message)
+    this.name = 'APIError'
   }
 }
 
 export class NetworkError extends Error {
   constructor(message: string = 'Network request failed') {
-    super(message);
-    this.name = 'NetworkError';
+    super(message)
+    this.name = 'NetworkError'
   }
 }
 
@@ -1489,16 +1504,16 @@ export class SendbirdError extends Error {
     message: string,
     public code?: number
   ) {
-    super(message);
-    this.name = 'SendbirdError';
+    super(message)
+    this.name = 'SendbirdError'
   }
 }
 
 export function handleSendbirdError(error: unknown): never {
   if (error instanceof Error) {
-    throw new SendbirdError(error.message);
+    throw new SendbirdError(error.message)
   }
-  throw new SendbirdError('Unknown Sendbird error');
+  throw new SendbirdError('Unknown Sendbird error')
 }
 ```
 
@@ -1628,6 +1643,7 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=false
 ```
 
 **Steps:**
+
 1. Connect GitHub repository to Vercel
 2. Add environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
@@ -1642,16 +1658,16 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=false
 ```typescript
 // Validate environment variables at build time
 function validateEnv() {
-  const required = ['NEXT_PUBLIC_SENDBIRD_APP_ID'];
+  const required = ['NEXT_PUBLIC_SENDBIRD_APP_ID']
 
   for (const key of required) {
     if (!process.env[key]) {
-      throw new Error(`Missing required environment variable: ${key}`);
+      throw new Error(`Missing required environment variable: ${key}`)
     }
   }
 }
 
-validateEnv();
+validateEnv()
 ```
 
 ### 12.2 Input Sanitization
@@ -1664,7 +1680,7 @@ export function sanitizeChannelName(name: string): string {
     .replace(/<[^>]*>/g, '')
     .replace(/[<>'"]/g, '')
     .trim()
-    .slice(0, 8); // Enforce 8-character limit
+    .slice(0, 8) // Enforce 8-character limit
 }
 ```
 
@@ -1692,18 +1708,21 @@ export function ChannelItem({ channel }: Props) {
 ### 13.1 Code Style
 
 **TypeScript:**
+
 - Use strict mode
 - Avoid `any` type
 - Prefer interfaces over types for objects
 - Use const assertions where appropriate
 
 **React:**
+
 - Functional components only
 - Hooks for state management
 - Memo for performance optimization
 - Descriptive component names (PascalCase)
 
 **File naming:**
+
 - Components: `ComponentName.tsx`
 - Hooks: `useHookName.ts`
 - Utils: `functionName.ts`
@@ -1754,30 +1773,28 @@ refactor: extract channel service logic
  * Required by assignment for channel names
  */
 export function generateRandomName(): string {
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
+  const letters = 'abcdefghijklmnopqrstuvwxyz'
+  let result = ''
 
   for (let i = 0; i < 8; i++) {
-    const randomIndex = Math.floor(Math.random() * letters.length);
-    result += letters[randomIndex];
+    const randomIndex = Math.floor(Math.random() * letters.length)
+    result += letters[randomIndex]
   }
 
-  return result;
+  return result
 }
 ```
 
 **File**: `utils/sortChannels.ts`
 
 ```typescript
-import type { Channel } from '@/types/channel.types';
+import type { Channel } from '@/types/channel.types'
 
 /**
  * Sorts channels alphabetically by name (case-insensitive)
  */
 export function sortChannels(channels: Channel[]): Channel[] {
-  return [...channels].sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-  );
+  return [...channels].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
 }
 ```
 
@@ -1787,16 +1804,16 @@ export function sortChannels(channels: Channel[]): Channel[] {
 
 ```typescript
 export interface Channel {
-  url: string;
-  name: string;
-  createdAt: number;
-  customType?: string;
-  data?: string;
+  url: string
+  name: string
+  createdAt: number
+  customType?: string
+  data?: string
 }
 
 export interface ChannelListResponse {
-  channels: Channel[];
-  nextToken?: string;
+  channels: Channel[]
+  nextToken?: string
 }
 ```
 
@@ -1810,14 +1827,14 @@ export const CHANNEL_CONFIG = {
   ITEM_HEIGHT: 60, // pixels
   MAX_VISIBLE_ITEMS: 10,
   CONTAINER_HEIGHT: 600, // 60px × 10
-} as const;
+} as const
 
 export const ANIMATION_CONFIG = {
   HOVER_OFFSET: 40, // pixels
   ADJACENT_OFFSET: 20, // pixels
   TRANSITION_DURATION: 250, // milliseconds
   EASING: 'ease-in-out',
-} as const;
+} as const
 ```
 
 ---
@@ -1828,16 +1845,16 @@ export const ANIMATION_CONFIG = {
 
 ## Document Change Log
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | 2025-11-23 | Development Team | Initial technical specification |
+| Version | Date       | Author           | Changes                         |
+| ------- | ---------- | ---------------- | ------------------------------- |
+| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification |
 
 ---
 
 ## Approval
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Tech Lead | - | - | - |
-| Senior Developer | - | - | - |
-| QA Lead | - | - | - |
+| Role             | Name | Date | Signature |
+| ---------------- | ---- | ---- | --------- |
+| Tech Lead        | -    | -    | -         |
+| Senior Developer | -    | -    | -         |
+| QA Lead          | -    | -    | -         |

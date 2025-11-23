@@ -11,6 +11,7 @@
 **Goal**: [Main objective of this session]
 
 **Scope**:
+
 - Task 1
 - Task 2
 - Task 3
@@ -30,6 +31,7 @@
 ### Initial Request
 
 **User**:
+
 ```
 [User's initial prompt]
 ```
@@ -44,6 +46,7 @@
 #### Discussion 1: [Topic]
 
 **User Question**:
+
 ```
 [Question or request]
 ```
@@ -52,6 +55,7 @@
 [Summary of response]
 
 **Decision Made**:
+
 - Decision point 1
 - Decision point 2
 
@@ -60,6 +64,7 @@
 #### Discussion 2: [Topic]
 
 **User Question**:
+
 ```
 [Question or request]
 ```
@@ -68,6 +73,7 @@
 [Summary of response]
 
 **Decision Made**:
+
 - Decision point 1
 - Decision point 2
 
@@ -80,6 +86,7 @@
 **Context**: [Why this decision was needed]
 
 **Options Considered**:
+
 1. Option A: [Description]
    - Pros: ...
    - Cons: ...
@@ -171,11 +178,11 @@ Coverage:    85%
 
 ### Metrics
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Test Coverage | 80% | 85% | ✅ |
-| Files Created | 5 | 5 | ✅ |
-| Lines of Code | ~500 | 523 | ✅ |
+| Metric        | Target | Actual | Status |
+| ------------- | ------ | ------ | ------ |
+| Test Coverage | 80%    | 85%    | ✅     |
+| Files Created | 5      | 5      | ✅     |
+| Lines of Code | ~500   | 523    | ✅     |
 
 ---
 
@@ -210,15 +217,18 @@ Coverage:    85%
 ## 🔗 References
 
 ### Internal Documents
+
 - [PRD](../en/PRD.md)
 - [Tech Spec](../en/TECH_SPEC.md)
 - [Previous Session](./XX_PREVIOUS_SESSION.md)
 
 ### External Resources
+
 - [Link 1](https://example.com) - Description
 - [Link 2](https://example.com) - Description
 
 ### Code References
+
 - `src/component/File.tsx:123` - Description
 - `src/utils/helper.ts:45` - Description
 
@@ -227,11 +237,13 @@ Coverage:    85%
 ## ➡️ Next Steps
 
 ### Immediate (Next Session)
+
 1. Task 1
 2. Task 2
 3. Task 3
 
 ### Future
+
 - [ ] Future task 1
 - [ ] Future task 2
 
@@ -257,16 +269,16 @@ Coverage:    85%
 
 ## 📝 Session Metadata
 
-| Field | Value |
-|-------|-------|
-| **Session Number** | NN |
-| **Date Started** | YYYY-MM-DD HH:MM |
-| **Date Completed** | YYYY-MM-DD HH:MM |
+| Field              | Value             |
+| ------------------ | ----------------- |
+| **Session Number** | NN                |
+| **Date Started**   | YYYY-MM-DD HH:MM  |
+| **Date Completed** | YYYY-MM-DD HH:MM  |
 | **Total Duration** | X hours Y minutes |
-| **Files Modified** | N files |
-| **Lines Added** | +XXX |
-| **Lines Removed** | -YYY |
-| **Commits** | N commits |
+| **Files Modified** | N files           |
+| **Lines Added**    | +XXX              |
+| **Lines Removed**  | -YYY              |
+| **Commits**        | N commits         |
 
 ---
 
