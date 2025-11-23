@@ -1,0 +1,73 @@
+/**
+ * ChannelItem Component Styles
+ *
+ * Hover animations as per assignment requirements:
+ * - Hovered item: translateX(40px)
+ * - Adjacent items: translateX(20px)
+ * - Duration: 250ms, easing: ease-in-out
+ */
+
+.channel-item {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: transform 250ms ease-in-out;
+  transform: translateX(0);
+}
+
+/* Hovered state - 40px translation */
+.channel-item.hovered {
+  transform: translateX(40px);
+}
+
+/* Adjacent state - 20px translation */
+.channel-item.adjacent {
+  transform: translateX(20px);
+}
+
+/* Channel information container */
+.channelInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Channel name */
+.channelName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+/* Channel URL */
+.channelUrl {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+  font-family: monospace;
+}
+
+/* Channel creation date */
+.channelDate {
+  font-size: 12px;
+  color: #999999;
+}
+
+/* Custom type badge */
+.customType {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: #5856d6;
+  background-color: #ededff;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Hover effect for the entire item */
+.channel-item:hover {
+  background-color: #f9f9f9;
+}
