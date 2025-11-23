@@ -11,9 +11,11 @@
 Implement utility functions for Phase 2 using Test-Driven Development (TDD):
 
 - [x] Issue #6: Implement `generateRandomName()` utility - ✅ COMPLETED
-- [ ] Issue #7: Implement `sortChannels()` utility
+- [x] Issue #7: Implement `sortChannels()` utility - ✅ COMPLETED
 - [x] Achieve 100% code coverage for Issue #6 - ✅ COMPLETED
+- [x] Achieve 100% code coverage for Issue #7 - ✅ COMPLETED
 - [x] Document Issue #6 implementation - ✅ COMPLETED
+- [x] Document Issue #7 implementation - ✅ COMPLETED
 - [x] Refactor project structure to use `src/` directory - ✅ COMPLETED
 
 ---
@@ -481,30 +483,339 @@ Move all development-related files to src/ directory following Next.js best prac
 
 ---
 
+### Prompt #7: Proceed with Issue #7
+
+**User**:
+
+```
+오케이 진행하자
+```
+
+**Translation**: "Okay, let's proceed"
+
+**Context**: User approved proceeding with Issue #7 (sortChannels utility) after completing folder restructuring.
+
+**Claude's Response**:
+
+Starting Issue #7 with TDD approach:
+
+1. Create TodoWrite task tracking
+2. RED phase: Write 6 tests first
+3. GREEN phase: Implement sortChannels()
+4. REFACTOR phase: Add JSDoc (done with implementation)
+5. Add 7th test for 100% branch coverage
+6. Verify 100% coverage
+7. Commit and close issue
+
+---
+
+## 🔨 Issue #7: Implement sortChannels() Utility (TDD)
+
+### Objective
+
+Implement a utility function that sorts channels alphabetically by name (case-insensitive) without mutating the original array.
+
+### Requirements (from GitHub Issue)
+
+- Sorts alphabetically by channel name
+- Case-insensitive sorting
+- Immutable (doesn't modify original array)
+- 100% code coverage
+- Follows TDD process
+
+### Implementation Plan
+
+1. **Write Tests First** (TDD Red Phase)
+   - Test: sorts alphabetically
+   - Test: case-insensitive
+   - Test: doesn't mutate original
+   - Test: handles empty array
+   - Test: handles single channel
+   - Test: preserves other properties
+   - Test: handles identical names
+
+2. **Implement Function** (TDD Green Phase)
+   - Use spread operator for immutability
+   - Use toLowerCase() for case-insensitive comparison
+   - Keep implementation clean and simple
+
+3. **Refactor** (TDD Refactor Phase)
+   - Add comprehensive JSDoc
+   - Verify code quality
+
+---
+
+### Step 1: TDD Red Phase - Write Tests First
+
+**File Modified**: `src/__tests__/lib/utils.test.ts`
+
+**Tests Written** (7 tests):
+
+```typescript
+describe('sortChannels', () => {
+  const createChannel = (name: string, url: string = name): Channel => ({
+    url,
+    name,
+    createdAt: Date.now(),
+  })
+
+  it('should sort channels alphabetically by name', () => {
+    // Test zebra, apple, mango, banana → apple, banana, mango, zebra
+  })
+
+  it('should be case-insensitive when sorting', () => {
+    // Test Zebra, apple, MANGO, Banana
+  })
+
+  it('should not mutate the original array', () => {
+    // Verify original unchanged, sorted is new array
+  })
+
+  it('should handle empty array', () => {
+    // Returns new empty array
+  })
+
+  it('should handle single channel', () => {
+    // Returns new single-item array
+  })
+
+  it('should preserve channel properties other than name', () => {
+    // Verify url, createdAt, customType, data preserved
+  })
+
+  it('should handle channels with identical names', () => {
+    // Test same name multiple times
+  })
+})
+```
+
+**Test Strategy**:
+
+- **Alphabetical sorting**: Basic functionality
+- **Case-insensitive**: Core requirement
+- **Immutability**: Critical for React state management
+- **Edge cases**: Empty, single item
+- **Data integrity**: All properties preserved
+- **Branch coverage**: Identical names (return 0 case)
+
+**Result**: Tests created, function not implemented yet (expected failures)
+
+**Verification**: Ran tests - all 6 initial tests failed with "sortChannels is not a function"
+
+---
+
+### Step 2: TDD Green Phase - Implement Function
+
+**File Modified**: `src/lib/utils.ts`
+
+**Implementation**:
+
+```typescript
+export function sortChannels(channels: Channel[]): Channel[] {
+  // Create a shallow copy to avoid mutating the original array
+  return [...channels].sort((a, b) => {
+    // Case-insensitive comparison
+    const nameA = a.name.toLowerCase()
+    const nameB = b.name.toLowerCase()
+
+    if (nameA < nameB) return -1
+    if (nameA > nameB) return 1
+    return 0
+  })
+}
+```
+
+**Implementation Details**:
+
+- Uses spread operator `[...channels]` for immutability
+- `toLowerCase()` for case-insensitive comparison
+- Standard comparator pattern for sort
+- O(n log n) time complexity
+
+**Design Decisions**:
+
+- ✅ Immutable (creates new array)
+- ✅ Case-insensitive (toLowerCase)
+- ✅ Simple and readable
+- ✅ Standard JavaScript sort
+- ✅ No external dependencies
+
+**Initial Coverage**: 75% branches (missing identical names case)
+
+**Coverage Fix**: Added 7th test for identical names → 100% coverage
+
+---
+
+### Step 3: TDD Refactor Phase - Add Documentation
+
+**Added JSDoc**:
+
+````typescript
+/**
+ * Sorts channels alphabetically by name (case-insensitive).
+ *
+ * Returns a new array without modifying the original.
+ * Used for displaying channels in alphabetical order.
+ *
+ * @param {Channel[]} channels - Array of channels to sort
+ * @returns {Channel[]} New array of channels sorted alphabetically by name
+ *
+ * @example
+ * ```typescript
+ * const channels = [
+ *   { name: 'Zebra', url: 'z', createdAt: 1000 },
+ *   { name: 'apple', url: 'a', createdAt: 2000 }
+ * ]
+ * const sorted = sortChannels(channels)
+ * // Returns: [{ name: 'apple', ... }, { name: 'Zebra', ... }]
+ * // Original array is unchanged
+ * ```
+ */
+````
+
+**Documentation Includes**:
+
+- Clear description
+- Immutability note
+- Use case explanation
+- Type information
+- Example with expected behavior
+
+---
+
+### Step 4: Run Tests and Verify Coverage
+
+**Test Execution**:
+
+```bash
+npm test -- src/__tests__/lib/utils.test.ts
+```
+
+**Result**:
+
+```
+PASS src/__tests__/lib/utils.test.ts
+  generateRandomName
+    ✓ should return a string of length 8
+    ✓ should contain only lowercase letters
+    ✓ should generate different names on multiple calls
+    ✓ should only contain characters a-z
+  sortChannels
+    ✓ should sort channels alphabetically by name
+    ✓ should be case-insensitive when sorting
+    ✓ should not mutate the original array
+    ✓ should handle empty array
+    ✓ should handle single channel
+    ✓ should preserve channel properties other than name
+    ✓ should handle channels with identical names
+
+Test Suites: 1 passed, 1 total
+Tests:       11 passed, 11 total
+Time:        0.361 s
+```
+
+**Coverage Report**:
+
+```bash
+npm run test:coverage -- src/__tests__/lib/utils.test.ts --collectCoverageFrom="src/lib/utils.ts"
+```
+
+**Result**:
+
+```
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+----------|---------|----------|---------|---------|-------------------
+All files |     100 |      100 |     100 |     100 |
+ utils.ts |     100 |      100 |     100 |     100 |
+----------|---------|----------|---------|---------|-------------------
+```
+
+**All Tests Pass**:
+
+```bash
+npm test
+```
+
+```
+PASS src/__tests__/example.test.tsx
+PASS src/__tests__/lib/utils.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       13 passed, 13 total
+Time:        0.441 s
+```
+
+✅ **100% Code Coverage Achieved**
+✅ **All 7 sortChannels tests passing**
+✅ **All 13 total tests passing**
+✅ **No regressions in existing tests**
+
+---
+
+### Step 5: Commit and Close Issue
+
+**Git Commit**:
+
+```bash
+git add src/lib/utils.ts src/__tests__/lib/utils.test.ts
+git commit -m "feat: implement sortChannels() utility with TDD (Issue #7)"
+```
+
+**Commit Details**:
+
+- Commit hash: `f58aafe`
+- Files changed: 2
+- Insertions: +165 lines
+- Deletions: -1 line
+
+**Files Modified**:
+
+- `src/lib/utils.ts` (+34 lines - function + JSDoc)
+- `src/__tests__/lib/utils.test.ts` (+131 lines - 7 tests)
+
+**GitHub Issue Closed**:
+
+```bash
+gh issue close 7 --comment "✅ Completed in commit f58aafe..."
+```
+
+**Issue Status**: ✅ CLOSED
+
+---
+
 ## 📊 Final Results
 
 ### Deliverables
 
 **Code**:
 
-- ✅ `src/lib/utils.ts` - generateRandomName() function (30 lines)
-- ✅ `src/__tests__/lib/utils.test.ts` - Comprehensive tests (42 lines)
-- ✅ JSDoc documentation
-- ✅ 100% code coverage
+- ✅ `src/lib/utils.ts` - Two utility functions (65 lines)
+  - generateRandomName() (30 lines)
+  - sortChannels() (35 lines including JSDoc)
+- ✅ `src/__tests__/lib/utils.test.ts` - Comprehensive tests (172 lines)
+  - generateRandomName tests (4 tests)
+  - sortChannels tests (7 tests)
+- ✅ JSDoc documentation for both functions
+- ✅ 100% code coverage for both functions
 
 **Tests**:
 
-- ✅ 4/4 tests passing
+- ✅ 11/11 utility tests passing (4 + 7)
+- ✅ 13/13 total tests passing (including example test)
 - ✅ 100% coverage (statements, branches, functions, lines)
 - ✅ No regressions
 
 **Git**:
 
-- ✅ 3 commits (fed0b7c, 36f9c6a, 29e3d01)
-  - feat: Issue #6 implementation
-  - docs: Session 04 documentation
-  - refactor: Folder structure to src/
+- ✅ 5 commits total:
+  - `fed0b7c` - feat: Issue #6 implementation (generateRandomName)
+  - `36f9c6a` - docs: Session 04 documentation (Issue #6)
+  - `29e3d01` - refactor: Folder structure to src/
+  - `cfb0014` - docs: Session 04 documentation (refactoring)
+  - `f58aafe` - feat: Issue #7 implementation (sortChannels)
 - ✅ Issue #6 closed on GitHub
+- ✅ Issue #7 closed on GitHub
 - ✅ Session 04 started
 - ✅ .claude/current-session updated
 
@@ -516,20 +827,32 @@ Move all development-related files to src/ directory following Next.js best prac
 
 ### Metrics
 
-| Metric         | Value  | Target | Status |
-| -------------- | ------ | ------ | ------ |
-| Tests Written  | 4      | 3+     | ✅     |
-| Tests Passing  | 4/4    | All    | ✅     |
-| Code Coverage  | 100%   | 100%   | ✅     |
-| Lines of Code  | 30     | -      | ✅     |
-| Lines of Tests | 42     | -      | ✅     |
-| Build Time     | 0.361s | <1s    | ✅     |
+| Metric                    | Value      | Target | Status |
+| ------------------------- | ---------- | ------ | ------ |
+| Utility Functions         | 2          | 2      | ✅     |
+| Tests Written (Utilities) | 11         | 10+    | ✅     |
+| Tests Written (Total)     | 13         | -      | ✅     |
+| Tests Passing             | 13/13      | All    | ✅     |
+| Code Coverage             | 100%       | 100%   | ✅     |
+| Lines of Code (Utils)     | 65         | -      | ✅     |
+| Lines of Tests            | 172        | -      | ✅     |
+| Test Execution Time       | 0.441s     | <1s    | ✅     |
+| Issues Completed          | 2 (#6, #7) | 2      | ✅     |
 
 ### TDD Process Verification
 
-- ✅ **Red**: Wrote tests first (function didn't exist)
+**Issue #6 (generateRandomName)**:
+
+- ✅ **Red**: Wrote 4 tests first (function didn't exist)
 - ✅ **Green**: Implemented to pass all tests
 - ✅ **Refactor**: Added JSDoc, verified clean code
+
+**Issue #7 (sortChannels)**:
+
+- ✅ **Red**: Wrote 6 tests first (function didn't exist), verified all failed
+- ✅ **Green**: Implemented to pass all tests
+- ✅ **Refactor**: Added JSDoc documentation (done with implementation)
+- ✅ **Coverage Fix**: Added 7th test for identical names → 100% coverage
 
 ---
 
@@ -551,6 +874,12 @@ Move all development-related files to src/ directory following Next.js best prac
 3. **Comprehensive Tests**
    - Multiple validation strategies (regex, charCode, multiple calls)
    - High confidence in correctness
+   - Edge case coverage (empty arrays, single items, duplicates)
+
+4. **Immutability Pattern**
+   - Spread operator (`[...array]`) creates shallow copy
+   - Critical for React state management
+   - Tests verify immutability explicitly
 
 ### Technical Notes
 
@@ -563,7 +892,20 @@ Move all development-related files to src/ directory following Next.js best prac
    - Loop test (10 iterations) increases confidence
    - Probabilistic test (different names) could theoretically fail, but extremely unlikely
 
-3. **Project Structure Refactoring**
+3. **Array Sorting and Immutability**
+   - Spread operator creates shallow copy before sorting
+   - `toLowerCase()` ensures case-insensitive comparison
+   - Standard comparator pattern: return -1, 0, or 1
+   - O(n log n) time complexity (JavaScript's native sort)
+   - Immutability crucial for React's rendering optimization
+
+4. **Test Coverage Completeness**
+   - Initial 75% branch coverage revealed missing test case
+   - Edge case (identical names) needed for 100% coverage
+   - Coverage tools guide test completeness
+   - Every branch in code should have corresponding test
+
+5. **Project Structure Refactoring**
    - Standard `src/` directory improves project organization
    - Git correctly tracks file moves (not delete+add)
    - Path alias updates must be synchronized across all config files
@@ -584,25 +926,39 @@ Move all development-related files to src/ directory following Next.js best prac
    - **Solution**: Systematic update and verification
    - **Key insight**: Test everything after path changes
 
+3. **Branch Coverage Gap**
+   - **Problem**: Initial implementation had 75% branch coverage
+   - **Missing case**: Return 0 when names are identical
+   - **Solution**: Added test for channels with identical names
+   - **Result**: Achieved 100% coverage
+   - **Learning**: Coverage reports guide complete testing
+
 ---
 
 ## ➡️ Next Steps
 
+### Completed in This Session
+
+- ✅ Issue #6: generateRandomName() utility
+- ✅ Issue #7: sortChannels() utility
+- ✅ Folder structure refactoring to src/
+- ✅ 100% test coverage for both utilities
+
 ### Immediate Next
 
-**Option 1**: Issue #7 - Implement sortChannels() utility
+**Option 1**: Continue with Phase 2 UI components
 
-- Similar TDD approach
-- Slightly more complex (sorting, immutability)
-- Continue momentum
+- Issue #8: Implement ChannelList component
+- Use the utility functions we just created
+- Continue TDD momentum
 
-**Option 2**: Documentation and commit Session 04
+**Option 2**: Documentation and housekeeping
 
-- Update CLAUDE.md with Issue #6
-- Update README.md if needed
-- Push commits to remote
+- Update CLAUDE.md with Issues #6 and #7
+- Commit Session 04 documentation
+- Push all commits to remote
 
-**Recommended**: Proceed with Issue #7 to complete utility functions as a unit, then document both together.
+**Recommended**: Push current work, then proceed with Issue #8 to keep implementation momentum.
 
 ---
 
@@ -610,45 +966,65 @@ Move all development-related files to src/ directory following Next.js best prac
 
 ### GitHub Issues
 
-- [Issue #6: Implement generateRandomName() utility (TDD)](https://github.com/bulhwi/dynamic-channel-list-fe/issues/6)
+- [Issue #6: Implement generateRandomName() utility (TDD)](https://github.com/bulhwi/dynamic-channel-list-fe/issues/6) - ✅ CLOSED
+- [Issue #7: Implement sortChannels() utility (TDD)](https://github.com/bulhwi/dynamic-channel-list-fe/issues/7) - ✅ CLOSED
 
 ### Internal Documents
 
-- [PRD](../../en/PRD_EN.md) - FR-005 (Random Name Generation)
+- [PRD](../../en/PRD_EN.md)
+  - FR-005 (Random Name Generation)
+  - FR-002 (Alphabetical Sorting)
 - [Tech Spec](../../en/TECH_SPEC.md) - Section 14.1 (Utility Functions)
 - [Session 03](./03_PROJECT_SETUP.md) - Previous session
+
+### Related Files
+
+- `src/lib/utils.ts` - Utility functions implementation
+- `src/__tests__/lib/utils.test.ts` - Comprehensive test suite
+- `src/types/channel.types.ts` - Channel type definitions
 
 ---
 
 ## 📝 Session Metadata
 
-| Field                     | Value                       |
-| ------------------------- | --------------------------- |
-| **Session Number**        | 04                          |
-| **Date**                  | 2025-11-23                  |
-| **Duration**              | ~2.5 hours (22:30-01:00)    |
-| **Issues Completed**      | #6                          |
-| **Issues In Progress**    | -                           |
-| **Refactoring Completed** | Folder structure (src/)     |
-| **Files Created**         | 3 (lib, tests, session doc) |
-| **Files Moved**           | 11 (to src/)                |
-| **Config Files Updated**  | 2 (tsconfig, jest.config)   |
-| **Lines Added (Code)**    | +72 (30 impl + 42 tests)    |
-| **Lines Added (Docs)**    | +550 (Session 04 doc)       |
-| **Tests Written**         | 4                           |
-| **Tests Passing**         | 4/4 (100%)                  |
-| **Coverage**              | 100% (all metrics)          |
-| **Commits**               | 3 (feat, docs, refactor)    |
-| **Prompts Documented**    | 6                           |
+| Field                     | Value                                |
+| ------------------------- | ------------------------------------ |
+| **Session Number**        | 04                                   |
+| **Date**                  | 2025-11-23                           |
+| **Duration**              | ~4 hours (22:30-02:30)               |
+| **Issues Completed**      | #6, #7                               |
+| **Issues In Progress**    | -                                    |
+| **Refactoring Completed** | Folder structure (src/)              |
+| **Utility Functions**     | 2 (generateRandomName, sortChannels) |
+| **Files Created**         | 3 (lib, tests, session doc)          |
+| **Files Moved**           | 11 (to src/)                         |
+| **Config Files Updated**  | 2 (tsconfig, jest.config)            |
+| **Lines Added (Code)**    | +237 (65 impl + 172 tests)           |
+| **Lines Added (Docs)**    | +970 (Session 04 doc)                |
+| **Tests Written**         | 11 (4 + 7)                           |
+| **Tests Passing**         | 13/13 (100%)                         |
+| **Coverage**              | 100% (all metrics)                   |
+| **Commits**               | 5                                    |
+| **Prompts Documented**    | 7                                    |
+
+**Commits Breakdown**:
+
+1. `fed0b7c` - feat: Issue #6 implementation
+2. `36f9c6a` - docs: Session 04 (Issue #6)
+3. `29e3d01` - refactor: Folder structure to src/
+4. `cfb0014` - docs: Session 04 (refactoring)
+5. `f58aafe` - feat: Issue #7 implementation
 
 ---
 
-**Session Status**: 🔄 IN PROGRESS (Issue #6 complete, refactoring complete, Issue #7 pending)
+**Session Status**: ✅ COMPLETED
 
-**Phase 2 Progress**: 1/8 issues complete (12.5%)
+**Phase 2 Progress**: 2/8 issues complete (25%)
 
-**Ready for Issue #7**: ✅ YES
+**Utility Functions**: ✅ COMPLETE (2/2)
+
+**Ready for Next Phase**: ✅ YES (UI Components)
 
 ---
 
-_Last Updated: 2025-11-23 23:10_
+_Last Updated: 2025-11-24 02:30_
