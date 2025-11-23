@@ -1,7 +1,7 @@
 /**
- * ChannelList Context
+ * ChannelList 컨텍스트
  *
- * Context API for managing channel list UI state (hover state)
+ * 채널 리스트 UI 상태(호버 상태)를 관리하는 Context API
  */
 
 'use client'

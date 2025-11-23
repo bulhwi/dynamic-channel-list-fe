@@ -1,7 +1,7 @@
 /**
- * Channels API Service
+ * 채널 API 서비스
  *
- * Fetch API functions for channel operations
+ * 채널 작업을 위한 Fetch API 함수들
  */
 
 import type { Channel } from '@/types/channel.types'
@@ -12,7 +12,7 @@ export interface ChannelsResponse {
 }
 
 /**
- * Fetch all channels
+ * 모든 채널 가져오기
  */
 export async function fetchChannels(): Promise<ChannelsResponse> {
   const response = await fetch('/api/channels')
@@ -25,7 +25,7 @@ export async function fetchChannels(): Promise<ChannelsResponse> {
 }
 
 /**
- * Create a new channel
+ * 새 채널 생성
  */
 export async function createChannel(name: string): Promise<Channel> {
   const response = await fetch('/api/channels', {
@@ -44,7 +44,7 @@ export async function createChannel(name: string): Promise<Channel> {
 }
 
 /**
- * Update a channel
+ * 채널 업데이트
  */
 export async function updateChannel(id: string, data: Partial<Channel>): Promise<Channel> {
   const response = await fetch(`/api/channels/${id}`, {

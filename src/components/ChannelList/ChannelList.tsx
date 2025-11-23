@@ -1,8 +1,8 @@
 /**
- * ChannelList Component
+ * ChannelList 컴포넌트
  *
- * Displays a list of channels with hover animations
- * Uses MSW + React Query for data fetching and Context API for state management
+ * 호버 애니메이션이 적용된 채널 리스트를 표시합니다
+ * 데이터 페칭에는 MSW + React Query를, 상태 관리에는 Context API를 사용합니다
  */
 
 'use client'

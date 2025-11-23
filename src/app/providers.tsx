@@ -1,7 +1,7 @@
 /**
- * App Providers
+ * 앱 프로바이더
  *
- * Initializes MSW and React Query for the application
+ * 애플리케이션을 위한 MSW와 React Query 초기화
  */
 
 'use client'
@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect, type ReactNode } from 'react'
 
 /**
- * Initialize MSW in development mode
+ * 개발 모드에서 MSW 초기화
  */
 const initMocks = async () => {
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
@@ -31,7 +31,7 @@ export const Providers = ({ children }: ProvidersProps) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            staleTime: 60 * 1000, // 1분
             refetchOnWindowFocus: false,
           },
         },
@@ -46,7 +46,7 @@ export const Providers = ({ children }: ProvidersProps) => {
     })
   }, [])
 
-  // Wait for MSW to be ready in development
+  // 개발 환경에서 MSW가 준비될 때까지 대기
   if (process.env.NODE_ENV === 'development' && !mswReady) {
     return null
   }

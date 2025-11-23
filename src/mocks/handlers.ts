@@ -1,7 +1,7 @@
 /**
- * MSW Request Handlers
+ * MSW 요청 핸들러
  *
- * Mock API endpoints for development and testing
+ * 개발 및 테스트를 위한 Mock API 엔드포인트
  */
 
 import { http, HttpResponse } from 'msw'
@@ -9,24 +9,24 @@ import { generateRandomName, sortChannels } from '@/lib/utils'
 import type { Channel } from '@/types/channel.types'
 
 /**
- * Generate mock channels with random names
+ * 랜덤 이름으로 모의 채널 생성
  */
 const generateMockChannels = (count: number = 10): Channel[] => {
   return Array.from({ length: count }, (_, index) => ({
     url: `channel-${index + 1}`,
     name: generateRandomName(),
-    createdAt: Date.now() - Math.random() * 10000000, // Random past timestamps
+    createdAt: Date.now() - Math.random() * 10000000, // 과거 타임스탬프 랜덤 생성
   }))
 }
 
-// Generate and sort initial mock channels
+// 초기 모의 채널 생성 및 정렬
 let mockChannels = sortChannels(generateMockChannels(10))
 
 /**
- * MSW Request Handlers
+ * MSW 요청 핸들러
  */
 export const handlers = [
-  // GET /api/channels - Fetch channel list
+  // GET /api/channels - 채널 리스트 가져오기
   http.get('/api/channels', () => {
     return HttpResponse.json({
       channels: mockChannels,
@@ -34,7 +34,7 @@ export const handlers = [
     })
   }),
 
-  // POST /api/channels - Create new channel (for Step 2)
+  // POST /api/channels - 새 채널 생성 (Step 2용)
   http.post('/api/channels', async ({ request }) => {
     const body = (await request.json()) as { name: string }
     const newChannel: Channel = {
@@ -48,7 +48,7 @@ export const handlers = [
     return HttpResponse.json(newChannel, { status: 201 })
   }),
 
-  // PATCH /api/channels/:id - Update channel (for Step 4)
+  // PATCH /api/channels/:id - 채널 업데이트 (Step 4용)
   http.patch('/api/channels/:id', async ({ params, request }) => {
     const { id } = params
     const body = (await request.json()) as Partial<Channel>
@@ -71,7 +71,7 @@ export const handlers = [
 ]
 
 /**
- * Reset mock channels (for testing)
+ * 모의 채널 재설정 (테스트용)
  */
 export const resetMockChannels = () => {
   mockChannels = sortChannels(generateMockChannels(10))
