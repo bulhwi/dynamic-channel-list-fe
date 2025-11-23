@@ -15,8 +15,6 @@ describe('Home Page', () => {
   it('renders the description', () => {
     render(<Home />)
 
-    expect(
-      screen.getByText(/sendbird uikit implementation/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/sendbird uikit implementation/i)).toBeInTheDocument()
   })
 })
