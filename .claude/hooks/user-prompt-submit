@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Claude Code Hook: User Prompt Submit
+# This hook runs when the user submits a prompt
+# It logs the conversation to the current session file
+
+# Configuration
+PROMPTS_DIR="docs/prompts"
+SESSION_DIR="$PROMPTS_DIR/sessions"
+CURRENT_SESSION_FILE=".claude/current-session"
+
+# Check if current session is set
+if [ ! -f "$CURRENT_SESSION_FILE" ]; then
+  echo "⚠️  No current session set. Create .claude/current-session file with session filename."
+  exit 0
+fi
+
+# Read current session file name
+SESSION_FILE=$(cat "$CURRENT_SESSION_FILE" | tr -d '\n' | tr -d '\r')
+
+# Full path to session file
+FULL_SESSION_PATH="$SESSION_DIR/$SESSION_FILE"
+
+# Check if session file exists
+if [ ! -f "$FULL_SESSION_PATH" ]; then
+  echo "⚠️  Session file not found: $FULL_SESSION_PATH"
+  exit 0
+fi
+
+# Get the current timestamp
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+
+# Append the user prompt to the session file
+cat >> "$FULL_SESSION_PATH" << EOF
+
+---
+
+### [$TIMESTAMP] User Prompt
+
+\`\`\`
+$PROMPT
+\`\`\`
+
+EOF
+
+# Print success message
+echo "✅ Prompt logged to $SESSION_FILE"
