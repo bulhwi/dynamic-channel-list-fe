@@ -38,10 +38,11 @@ const ChannelItem = ({ channel, isHovered = false, isAdjacent = false }: Channel
 
   return (
     <div
-      className={clsx(styles['channel-item'], {
-        [styles.hovered]: isHovered,
-        [styles.adjacent]: isAdjacent,
-      })}
+      className={clsx(
+        styles['channel-item'],
+        isHovered && styles.hovered,
+        isAdjacent && styles.adjacent
+      )}
     >
       <div className={styles.channelInfo}>
         <h3 className={styles.channelName}>{channel.name}</h3>
