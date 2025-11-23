@@ -919,7 +919,9 @@ gh issue close 5 --comment "✅ Completed in commit 4ec4c51"
 
 ## 💬 Additional Discussions
 
-### User Request #2: Check Prompt Logging
+### Discussion 1: Prompt Logging Investigation
+
+#### User Question → Claude
 
 **User**:
 
@@ -927,26 +929,72 @@ gh issue close 5 --comment "✅ Completed in commit 4ec4c51"
 프롬프트 업데이트 확인해봐
 ```
 
+**Translation**: "Check if prompts are being updated/logged"
+
+#### Claude's Answer → User
+
 **Claude's Response**:
-Hooks 상태를 확인하겠습니다.
+프롬프트가 자동으로 로깅되고 있는지 확인하겠습니다. Session 03 파일을 확인해보겠습니다.
 
-**Investigation**:
+**Investigation Performed**:
 
-1. Checked `.claude/hooks/user-prompt-submit` - ✅ File exists, executable
-2. Checked `.claude/current-session` - ✅ Points to `03_PROJECT_SETUP.md`
-3. Checked session file - ❌ No automatic prompt logging
+1. Checked `tail -100 docs/prompts/sessions/03_PROJECT_SETUP.md`
+2. Result: ❌ No automatic prompt logging detected
+3. Checked `.claude/hooks/user-prompt-submit` - ✅ File exists, executable
+4. Checked `.claude/current-session` - ✅ Points to `03_PROJECT_SETUP.md`
+5. Checked session file - ❌ No automated prompts appended
 
-**Finding**: Hooks are configured but not triggering
+**Finding**: Hooks are configured correctly but not triggering automatically
 
 **Possible Reasons**:
 
-- Claude Code version doesn't support hooks
-- Hooks require additional configuration
-- IDE-specific feature not available in CLI
+- Claude Code hooks feature may not be supported in this version
+- Hooks require additional configuration or environment setup
+- IDE-specific feature not available in CLI mode
 
-**Manual Workaround**: Added prompts manually to session file
+**Manual Workaround Applied**: Manually added prompts to session file with timestamps
 
-### User Request #3: Documentation Approach
+```bash
+cat >> docs/prompts/sessions/03_PROJECT_SETUP.md << 'EOF'
+### [2025-11-23 21:11:00] User Prompt
+```
+
+좋아, 깃헙에 등록한 이슈 확인해서 하나씩 진행해보자.
+
+```
+
+### [2025-11-23 21:44:00] User Prompt
+```
+
+프롬프트 업데이트 확인해봐
+
+```
+EOF
+```
+
+#### Claude's Question → User
+
+**Claude Asked**:
+
+```
+## 프롬프트 업데이트 현황
+
+❌ Hooks가 자동으로 작동하지 않고 있습니다.
+
+### 앞으로의 대응
+
+옵션 1: 세션마다 수동으로 프롬프트 추가
+- 매 세션 종료 시 수동으로 프롬프트 로그 작성
+
+옵션 2: Hooks 없이 세션 문서 작성
+- 대화 내용을 요약하여 세션 파일에 직접 작성 (현재 Session 00, 01, 02처럼)
+
+어떤 방식으로 진행할까요?
+```
+
+### Discussion 2: Documentation Approach Decision
+
+#### User's Answer → Claude
 
 **User**:
 
@@ -954,21 +1002,93 @@ Hooks 상태를 확인하겠습니다.
 옵션 2로 하는게 맞을거 같아 프롬프트의 전체 내용(질문/답변/실행내용등등)이 요약 정리되어 적재되어야해
 ```
 
-**Decision**: Use Option 2 - Manual Summary Documentation
+**Translation**: "Option 2 seems right. The full content of prompts (questions/answers/execution details, etc.) should be summarized and documented."
 
-**Approach**:
+**User's Requirements**:
 
-- ❌ Option 1: Automated hooks with raw prompts
-- ✅ Option 2: Manual summary of questions/answers/executions
+1. ✅ Use Option 2 (Manual summary documentation)
+2. ✅ Include full prompt content
+3. ✅ Include questions and answers
+4. ✅ Include execution details
+5. ✅ Everything should be summarized and organized
 
-**Implementation**: This comprehensive session document
+#### Claude's Confirmation → User
 
-**Benefits**:
+**Claude's Response**:
+
+```
+네, 알겠습니다! 옵션 2로 진행하겠습니다.
+Session 03 파일을 지금까지의 모든 대화 내용을 포함하여 완전히 업데이트하겠습니다.
+```
+
+**Implementation Approach**:
+
+- ❌ Option 1: Automated hooks with raw prompts (rejected)
+- ✅ Option 2: Manual comprehensive summary (accepted)
+
+**What to Include**:
+
+- All user prompts (original text)
+- All Claude responses (summarized)
+- All commands executed
+- All code created
+- All technical decisions with rationale
+- All problems encountered and solutions
+- All verification results
+
+**Benefits of Option 2**:
 
 - Higher quality, curated content
 - Better context and explanations
-- Technical decisions documented
-- Problem-solving process captured
+- Technical decisions clearly documented
+- Problem-solving process captured step-by-step
+- Easier to read and understand later
+
+**Result**: This comprehensive 1,145-line session document
+
+### Discussion 3: Documentation Quality Feedback
+
+#### User's Question → Claude
+
+**User**:
+
+```
+응 좋아, 계속 문서화 해 근데, 한가지 보완햇으면 하는게 있어,
+내가 너한테한 질문/답변, 너가 나한테한 질문/답변, 모두 정리가 되었으면 좋겟어
+내용 확인해보고 보완해보자
+```
+
+**Translation**: "Yes, good, keep documenting. But there's one thing I'd like you to improve: I want all questions/answers to be organized - both questions I asked you/your answers AND questions you asked me/my answers. Let's check the content and improve it."
+
+**User's Requirements**:
+
+1. ✅ User's questions → Claude
+2. ✅ Claude's answers → User
+3. ✅ Claude's questions → User
+4. ✅ User's answers → Claude
+5. ✅ All should be clearly organized and distinguishable
+
+#### Claude's Answer → User
+
+**Claude's Response**:
+
+```
+네, 좋은 피드백입니다! Session 03 문서를 확인해보고 질문/답변 흐름을 더 명확하게 보완하겠습니다.
+```
+
+**Actions Taken**:
+
+1. ✅ Reviewed current document structure
+2. ✅ Identified missing Q&A flows
+3. ✅ Restructured "Additional Discussions" section
+4. ✅ Added clear labels:
+   - "User Question → Claude"
+   - "Claude's Answer → User"
+   - "Claude's Question → User"
+   - "User's Answer → Claude"
+5. ✅ Made conversation flow chronological and clear
+
+**Improvement Made**: Current section now clearly shows bidirectional Q&A flow
 
 ---
 
