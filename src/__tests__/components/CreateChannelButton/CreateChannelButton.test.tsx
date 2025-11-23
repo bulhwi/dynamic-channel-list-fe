@@ -74,13 +74,13 @@ describe('CreateChannelButton', () => {
     expect(button).not.toBeDisabled()
   })
 
-  // 에러 메시지는 에러 스타일을 가져야 함
-  it('should have error styling when error is shown', () => {
+  // 에러 메시지는 ErrorMessage 컴포넌트로 렌더링되어야 함
+  it('should render ErrorMessage component when error is shown', () => {
     const mockOnClick = jest.fn()
     render(<CreateChannelButton onClick={mockOnClick} error="Some error" />)
 
-    const errorMessage = screen.getByText('Some error')
-    expect(errorMessage).toHaveClass('error')
+    const errorMessage = screen.getByTestId('error-message')
+    expect(errorMessage).toBeInTheDocument()
   })
 
   // 로딩과 에러가 동시에 있을 때 로딩 상태가 우선되어야 함
@@ -104,5 +104,36 @@ describe('CreateChannelButton', () => {
 
     expect(screen.getByText(/create channel/i)).toBeInTheDocument()
     expect(screen.queryByText(/creating/i)).not.toBeInTheDocument()
+  })
+
+  // onRetry가 제공되면 ErrorMessage에 재시도 버튼이 표시되어야 함
+  it('should show retry button in ErrorMessage when onRetry is provided', () => {
+    const mockOnClick = jest.fn()
+    const mockOnRetry = jest.fn()
+    render(<CreateChannelButton onClick={mockOnClick} error="Failed" onRetry={mockOnRetry} />)
+
+    const retryButton = screen.getByRole('button', { name: /다시 시도/i })
+    expect(retryButton).toBeInTheDocument()
+  })
+
+  // 재시도 버튼 클릭 시 onRetry가 호출되어야 함
+  it('should call onRetry when retry button is clicked', () => {
+    const mockOnClick = jest.fn()
+    const mockOnRetry = jest.fn()
+    render(<CreateChannelButton onClick={mockOnClick} error="Failed" onRetry={mockOnRetry} />)
+
+    const retryButton = screen.getByRole('button', { name: /다시 시도/i })
+    fireEvent.click(retryButton)
+
+    expect(mockOnRetry).toHaveBeenCalledTimes(1)
+  })
+
+  // LoadingSpinner가 로딩 중에 표시되어야 함
+  it('should show LoadingSpinner when loading', () => {
+    const mockOnClick = jest.fn()
+    render(<CreateChannelButton onClick={mockOnClick} isLoading={true} />)
+
+    const spinner = screen.getByTestId('loading-spinner')
+    expect(spinner).toBeInTheDocument()
   })
 })

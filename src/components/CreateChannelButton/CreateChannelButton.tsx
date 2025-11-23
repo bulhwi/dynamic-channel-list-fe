@@ -5,6 +5,8 @@
  * 로딩 상태와 에러 메시지를 표시합니다.
  */
 
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
+import ErrorMessage from '@/components/ErrorMessage/ErrorMessage'
 import styles from './CreateChannelButton.module.css'
 
 export interface CreateChannelButtonProps {
@@ -14,6 +16,8 @@ export interface CreateChannelButtonProps {
   isLoading?: boolean
   /** 에러 메시지 */
   error?: string
+  /** 재시도 핸들러 (선택사항) */
+  onRetry?: () => void
 }
 
 /**
@@ -27,16 +31,32 @@ export interface CreateChannelButtonProps {
  *   onClick={handleCreate}
  *   isLoading={isCreating}
  *   error={error?.message}
+ *   onRetry={handleRetry}
  * />
  * ```
  */
-const CreateChannelButton = ({ onClick, isLoading = false, error }: CreateChannelButtonProps) => {
+const CreateChannelButton = ({
+  onClick,
+  isLoading = false,
+  error,
+  onRetry,
+}: CreateChannelButtonProps) => {
   return (
     <div className={styles.container}>
       <button type="button" onClick={onClick} disabled={isLoading} className={styles.button}>
-        {isLoading ? 'Creating...' : 'Create Channel'}
+        {isLoading && (
+          <span className={styles.loadingContent}>
+            <LoadingSpinner size="small" />
+            <span className={styles.loadingText}>Creating...</span>
+          </span>
+        )}
+        {!isLoading && 'Create Channel'}
       </button>
-      {!isLoading && error && <p className={styles.error}>{error}</p>}
+      {!isLoading && error && (
+        <div className={styles.errorWrapper}>
+          <ErrorMessage message={error} onRetry={onRetry} />
+        </div>
+      )}
     </div>
   )
 }

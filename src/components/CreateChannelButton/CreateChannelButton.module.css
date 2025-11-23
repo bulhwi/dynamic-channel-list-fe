@@ -33,6 +33,20 @@
   cursor: not-allowed;
 }
 
+.loadingContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loadingText {
+  display: inline-block;
+}
+
+.errorWrapper {
+  margin-top: 4px;
+}
+
 .error {
   margin: 0;
   font-size: 14px;

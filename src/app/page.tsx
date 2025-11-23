@@ -5,10 +5,15 @@ import CreateChannelButton from '@/components/CreateChannelButton/CreateChannelB
 import { useCreateChannel } from '@/hooks/useCreateChannel'
 
 export default function Home() {
-  const { mutate, isPending, error } = useCreateChannel()
+  const { mutate, isPending, error, reset } = useCreateChannel()
 
   const handleCreateChannel = () => {
     mutate()
+  }
+
+  const handleRetry = () => {
+    reset() // 에러 상태 리셋
+    mutate() // 재시도
   }
 
   return (
@@ -24,6 +29,7 @@ export default function Home() {
             onClick={handleCreateChannel}
             isLoading={isPending}
             error={error?.message}
+            onRetry={error ? handleRetry : undefined}
           />
         </div>
 
