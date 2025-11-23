@@ -36,7 +36,7 @@ export default function ChannelItem({
   channel,
   isHovered = false,
   isAdjacent = false,
-}: ChannelItemProps): JSX.Element {
+}: ChannelItemProps) {
   // Build CSS class names based on state
   const classNames = [
     styles['channel-item'],

@@ -56,6 +56,7 @@ describe('Sendbird Client Service', () => {
   })
 
   describe('initializeSendbird', () => {
+    // 올바른 설정으로 Sendbird를 초기화해야 함
     it('should initialize Sendbird with correct configuration', () => {
       const instance = initializeSendbird()
 
@@ -68,6 +69,7 @@ describe('Sendbird Client Service', () => {
       expect(instance).toBeDefined()
     })
 
+    // SENDBIRD_APP_ID가 누락되었을 때 에러를 던져야 함
     it('should throw error when SENDBIRD_APP_ID is missing', () => {
       delete process.env.NEXT_PUBLIC_SENDBIRD_APP_ID
 
@@ -76,6 +78,7 @@ describe('Sendbird Client Service', () => {
       }).toThrow('NEXT_PUBLIC_SENDBIRD_APP_ID environment variable is required')
     })
 
+    // 여러 번 호출 시 같은 인스턴스를 반환해야 함 (싱글톤)
     it('should return same instance on multiple calls (singleton)', () => {
       const instance1 = initializeSendbird()
       const instance2 = initializeSendbird()
@@ -87,6 +90,7 @@ describe('Sendbird Client Service', () => {
   })
 
   describe('connectUser', () => {
+    // 사용자가 성공적으로 연결되어야 함
     it('should connect user successfully', async () => {
       const mockInstance = initializeSendbird()
       const mockUser = { userId: 'test-user', nickname: 'Test User' }
@@ -98,17 +102,20 @@ describe('Sendbird Client Service', () => {
       expect(user).toEqual(mockUser)
     })
 
+    // userId가 누락되었을 때 에러를 던져야 함
     it('should throw error when userId is missing', async () => {
       initializeSendbird()
 
       await expect(connectUser('', 'access-token')).rejects.toThrow('userId is required')
     })
 
+    // Sendbird가 초기화되지 않았을 때 에러를 던져야 함
     it('should throw error when Sendbird is not initialized', async () => {
       // Don't call initializeSendbird() - instance should be null from beforeEach
       await expect(connectUser('test-user')).rejects.toThrow('Sendbird is not initialized')
     })
 
+    // 연결 에러를 처리해야 함
     it('should handle connection error', async () => {
       const mockInstance = initializeSendbird()
       const connectionError = new Error('Connection failed')
@@ -119,6 +126,7 @@ describe('Sendbird Client Service', () => {
   })
 
   describe('getSendbirdInstance', () => {
+    // 초기화된 인스턴스를 반환해야 함
     it('should return initialized instance', () => {
       const instance = initializeSendbird()
       const retrieved = getSendbirdInstance()
@@ -126,6 +134,7 @@ describe('Sendbird Client Service', () => {
       expect(retrieved).toBe(instance)
     })
 
+    // 초기화되지 않았을 때 null을 반환해야 함
     it('should return null when not initialized', () => {
       const retrieved = getSendbirdInstance()
 
@@ -134,6 +143,7 @@ describe('Sendbird Client Service', () => {
   })
 
   describe('disconnectUser', () => {
+    // 사용자가 성공적으로 연결 해제되어야 함
     it('should disconnect user successfully', async () => {
       const mockInstance = initializeSendbird()
       ;(mockInstance.disconnect as jest.Mock).mockResolvedValue(undefined)
@@ -143,6 +153,7 @@ describe('Sendbird Client Service', () => {
       expect(mockInstance.disconnect).toHaveBeenCalled()
     })
 
+    // Sendbird가 초기화되지 않았을 때 에러를 던져야 함
     it('should throw error when Sendbird is not initialized', async () => {
       await expect(disconnectUser()).rejects.toThrow('Sendbird is not initialized')
     })

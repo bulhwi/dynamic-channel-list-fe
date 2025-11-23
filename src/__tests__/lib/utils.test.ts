@@ -8,16 +8,19 @@ import { generateRandomName, sortChannels } from '@/lib/utils'
 import type { Channel } from '@/types/channel.types'
 
 describe('generateRandomName', () => {
+  // 길이가 8인 문자열을 반환해야 함
   it('should return a string of length 8', () => {
     const name = generateRandomName()
     expect(name).toHaveLength(8)
   })
 
+  // 소문자만 포함해야 함
   it('should contain only lowercase letters', () => {
     const name = generateRandomName()
     expect(name).toMatch(/^[a-z]{8}$/)
   })
 
+  // 여러 번 호출 시 다른 이름을 생성해야 함
   it('should generate different names on multiple calls', () => {
     const name1 = generateRandomName()
     const name2 = generateRandomName()
@@ -29,6 +32,7 @@ describe('generateRandomName', () => {
     expect(name1).not.toBe(name3)
   })
 
+  // a-z 문자만 포함해야 함
   it('should only contain characters a-z', () => {
     // Run multiple times to increase confidence
     for (let i = 0; i < 10; i++) {
@@ -50,6 +54,7 @@ describe('sortChannels', () => {
     createdAt: Date.now(),
   })
 
+  // 채널을 이름순으로 알파벳 정렬해야 함
   it('should sort channels alphabetically by name', () => {
     const channels: Channel[] = [
       createChannel('zebra'),
@@ -66,6 +71,7 @@ describe('sortChannels', () => {
     expect(sorted[3].name).toBe('zebra')
   })
 
+  // 정렬 시 대소문자를 구분하지 않아야 함
   it('should be case-insensitive when sorting', () => {
     const channels: Channel[] = [
       createChannel('Zebra'),
@@ -82,6 +88,7 @@ describe('sortChannels', () => {
     expect(sorted[3].name).toBe('Zebra')
   })
 
+  // 원본 배열을 변경하지 않아야 함
   it('should not mutate the original array', () => {
     const channels: Channel[] = [
       createChannel('zebra'),
@@ -101,6 +108,7 @@ describe('sortChannels', () => {
     expect(sorted[0].name).toBe('apple')
   })
 
+  // 빈 배열을 처리해야 함
   it('should handle empty array', () => {
     const channels: Channel[] = []
     const sorted = sortChannels(channels)
@@ -109,6 +117,7 @@ describe('sortChannels', () => {
     expect(sorted).not.toBe(channels) // Should still return new array
   })
 
+  // 단일 채널을 처리해야 함
   it('should handle single channel', () => {
     const channels: Channel[] = [createChannel('single')]
     const sorted = sortChannels(channels)
@@ -118,6 +127,7 @@ describe('sortChannels', () => {
     expect(sorted).not.toBe(channels) // Should still return new array
   })
 
+  // 이름 외의 채널 속성을 보존해야 함
   it('should preserve channel properties other than name', () => {
     const channels: Channel[] = [
       {
@@ -154,6 +164,7 @@ describe('sortChannels', () => {
     })
   })
 
+  // 동일한 이름을 가진 채널들을 처리해야 함
   it('should handle channels with identical names', () => {
     const channels: Channel[] = [
       createChannel('same', 'url-1'),
