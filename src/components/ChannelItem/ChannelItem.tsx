@@ -5,6 +5,7 @@
  * Supports visual feedback for hovered state and adjacent items.
  */
 
+import clsx from 'clsx'
 import type { Channel } from '@/types/channel.types'
 import styles from './ChannelItem.module.css'
 
@@ -32,24 +33,20 @@ export interface ChannelItemProps {
  * ```
  */
 const ChannelItem = ({ channel, isHovered = false, isAdjacent = false }: ChannelItemProps) => {
-  // Build CSS class names based on state
-  const classNames = [
-    styles['channel-item'],
-    isHovered && styles.hovered,
-    isAdjacent && styles.adjacent,
-  ]
-    .filter(Boolean)
-    .join(' ')
-
   // Format timestamp for display
   const formattedDate = new Date(channel.createdAt).toLocaleString()
 
   return (
-    <div className={classNames}>
+    <div
+      className={clsx(styles['channel-item'], {
+        [styles.hovered]: isHovered,
+        [styles.adjacent]: isAdjacent,
+      })}
+    >
       <div className={styles.channelInfo}>
         <h3 className={styles.channelName}>{channel.name}</h3>
         <p className={styles.channelUrl}>{channel.url}</p>
-        <time className={styles.channelDate} dateTime={new Date(channel.createdAt).toISOString()}>
+        <time className={styles.channelDate} dateTime={formattedDate}>
           {formattedDate}
         </time>
         {channel.customType && <span className={styles.customType}>{channel.customType}</span>}
