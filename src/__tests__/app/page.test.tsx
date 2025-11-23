@@ -286,4 +286,156 @@ describe('Home Page Integration', () => {
 
     expect(mockCreateChannel).toHaveBeenCalledTimes(2)
   })
+
+  // LoadingSpinner가 로딩 중에 표시되어야 함
+  it('should show LoadingSpinner during channel creation', async () => {
+    const user = userEvent.setup()
+    let resolveCreate: (value: any) => void
+    const createPromise = new Promise(resolve => {
+      resolveCreate = resolve
+    })
+    mockCreateChannel.mockReturnValue(createPromise as any)
+
+    const Wrapper = createWrapper()
+    render(<Home />, { wrapper: Wrapper })
+
+    const button = await screen.findByRole('button', { name: /create channel/i })
+    await user.click(button)
+
+    // LoadingSpinner가 표시되는지 확인
+    await waitFor(() => {
+      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument()
+    })
+
+    // Promise resolve
+    resolveCreate!({
+      url: 'new-channel',
+      name: 'testchan',
+      createdAt: Date.now(),
+    })
+  })
+
+  // 재시도 버튼이 에러 시 표시되고 작동해야 함
+  it('should show retry button and allow retrying on error', async () => {
+    const user = userEvent.setup()
+    mockCreateChannel.mockRejectedValueOnce(new Error('Failed to create'))
+
+    const Wrapper = createWrapper()
+    render(<Home />, { wrapper: Wrapper })
+
+    const button = await screen.findByRole('button', { name: /create channel/i })
+    await user.click(button)
+
+    // 에러 메시지와 재시도 버튼이 표시되는지 확인
+    await waitFor(() => {
+      expect(screen.getByText(/failed to create/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /다시 시도/i })).toBeInTheDocument()
+    })
+
+    // 재시도 성공 시나리오
+    mockCreateChannel.mockResolvedValueOnce({
+      url: 'retry-channel',
+      name: 'retrychan',
+      createdAt: Date.now(),
+    })
+    mockFetchChannels.mockResolvedValueOnce({
+      channels: [
+        ...mockInitialChannels,
+        { url: 'retry-channel', name: 'retrychan', createdAt: Date.now() },
+      ],
+      next: null,
+    })
+
+    const retryButton = screen.getByRole('button', { name: /다시 시도/i })
+    await user.click(retryButton)
+
+    // 재시도 후 에러가 사라지고 새 채널이 표시되는지 확인
+    await waitFor(() => {
+      expect(screen.queryByText(/failed to create/i)).not.toBeInTheDocument()
+      expect(screen.getByText('retrychan')).toBeInTheDocument()
+    })
+  })
+
+  // E2E: 전체 채널 생성 플로우 (사용자 시나리오)
+  it('should complete full channel creation flow from user perspective', async () => {
+    const user = userEvent.setup()
+    let resolveCreate: (value: any) => void
+    const createPromise = new Promise(resolve => {
+      resolveCreate = resolve
+    })
+
+    const Wrapper = createWrapper()
+    render(<Home />, { wrapper: Wrapper })
+
+    // 1. 초기 채널 목록 확인
+    await waitFor(() => {
+      expect(screen.getByText('apple')).toBeInTheDocument()
+      expect(screen.getByText('banana')).toBeInTheDocument()
+      expect(screen.getByText('cherry')).toBeInTheDocument()
+    })
+
+    // 2. 생성 버튼 클릭
+    mockCreateChannel.mockReturnValue(createPromise as any)
+    const button = screen.getByRole('button', { name: /create channel/i })
+    await user.click(button)
+
+    // 3. 로딩 상태 확인
+    await waitFor(() => {
+      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /creating/i })).toBeDisabled()
+    })
+
+    // 4. 채널 생성 완료
+    mockFetchChannels.mockResolvedValueOnce({
+      channels: [
+        ...mockInitialChannels,
+        { url: 'new-channel', name: 'avocado', createdAt: Date.now() },
+      ],
+      next: null,
+    })
+
+    resolveCreate!({
+      url: 'new-channel',
+      name: 'avocado',
+      createdAt: Date.now(),
+    })
+
+    // 5. 새 채널이 올바른 알파벳 순서로 표시되는지 확인
+    await waitFor(() => {
+      const channelNames = screen.getAllByRole('heading', { level: 3 }).map(el => el.textContent)
+      expect(channelNames).toEqual(['apple', 'avocado', 'banana', 'cherry'])
+    })
+
+    // 6. 버튼이 다시 활성화되는지 확인
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /create channel/i })).not.toBeDisabled()
+    })
+  })
+
+  // E2E: 에러 발생 시 전체 플로우
+  it('should handle error flow from user perspective', async () => {
+    const user = userEvent.setup()
+    mockCreateChannel.mockRejectedValue(new Error('Network error'))
+
+    const Wrapper = createWrapper()
+    render(<Home />, { wrapper: Wrapper })
+
+    // 1. 초기 상태 확인
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /create channel/i })).toBeInTheDocument()
+    })
+
+    // 2. 버튼 클릭
+    const button = screen.getByRole('button', { name: /create channel/i })
+    await user.click(button)
+
+    // 3. 에러 메시지와 재시도 버튼 확인
+    await waitFor(() => {
+      expect(screen.getByText(/network error/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /다시 시도/i })).toBeInTheDocument()
+    })
+
+    // 4. 원래 버튼은 여전히 활성화되어 있어야 함
+    expect(screen.getByRole('button', { name: /create channel/i })).not.toBeDisabled()
+  })
 })
