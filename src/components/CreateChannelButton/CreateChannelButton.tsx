@@ -1,0 +1,44 @@
+/**
+ * CreateChannelButton 컴포넌트
+ *
+ * 채널 생성 버튼 컴포넌트
+ * 로딩 상태와 에러 메시지를 표시합니다.
+ */
+
+import styles from './CreateChannelButton.module.css'
+
+export interface CreateChannelButtonProps {
+  /** 버튼 클릭 핸들러 */
+  onClick: () => void
+  /** 로딩 상태 */
+  isLoading?: boolean
+  /** 에러 메시지 */
+  error?: string
+}
+
+/**
+ * 채널 생성 버튼 컴포넌트
+ *
+ * @param {CreateChannelButtonProps} props - 컴포넌트 props
+ *
+ * @example
+ * ```tsx
+ * <CreateChannelButton
+ *   onClick={handleCreate}
+ *   isLoading={isCreating}
+ *   error={error?.message}
+ * />
+ * ```
+ */
+const CreateChannelButton = ({ onClick, isLoading = false, error }: CreateChannelButtonProps) => {
+  return (
+    <div className={styles.container}>
+      <button type="button" onClick={onClick} disabled={isLoading} className={styles.button}>
+        {isLoading ? 'Creating...' : 'Create Channel'}
+      </button>
+      {!isLoading && error && <p className={styles.error}>{error}</p>}
+    </div>
+  )
+}
+
+export default CreateChannelButton
