@@ -1,21 +1,19 @@
 /**
  * ChannelList 컴포넌트
  *
- * 호버 애니메이션이 적용된 채널 리스트를 표시합니다
- * 데이터 페칭에는 MSW + React Query를, 상태 관리에는 Context API를 사용합니다
+ * 순수 CSS 호버 애니메이션이 적용된 채널 리스트를 표시합니다
+ * 데이터 페칭에는 MSW + React Query를 사용합니다
  */
 
 'use client'
 
 import { useChannels } from '@/hooks/useChannels'
-import { ChannelListProvider, useChannelListContext } from '@/contexts/ChannelListContext'
 import ChannelItem from '@/components/ChannelItem/ChannelItem'
 import { sortChannels } from '@/lib/utils'
 import styles from './ChannelList.module.css'
 
-const ChannelListContent = () => {
+const ChannelList = () => {
   const { data, isLoading, error } = useChannels()
-  const { hoveredIndex, setHoveredIndex } = useChannelListContext()
 
   if (isLoading) {
     return <div className={styles.loading}>Loading channels...</div>
@@ -33,28 +31,10 @@ const ChannelListContent = () => {
 
   return (
     <div className={styles.channelList}>
-      {sortedChannels.map((channel, index) => (
-        <div
-          key={channel.url}
-          onMouseEnter={() => setHoveredIndex(index)}
-          onMouseLeave={() => setHoveredIndex(null)}
-        >
-          <ChannelItem
-            channel={channel}
-            isHovered={hoveredIndex === index}
-            isAdjacent={Math.abs((hoveredIndex ?? -2) - index) === 1}
-          />
-        </div>
+      {sortedChannels.map(channel => (
+        <ChannelItem key={channel.url} channel={channel} />
       ))}
     </div>
-  )
-}
-
-const ChannelList = () => {
-  return (
-    <ChannelListProvider>
-      <ChannelListContent />
-    </ChannelListProvider>
   )
 }
 

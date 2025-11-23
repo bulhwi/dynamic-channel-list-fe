@@ -1,9 +1,9 @@
 /**
  * ChannelItem Component Styles
  *
- * Hover animations as per assignment requirements:
- * - Hovered item: translateX(40px)
- * - Adjacent items: translateX(20px)
+ * 순수 CSS를 사용한 호버 애니메이션 (과제 요구사항):
+ * - 호버된 아이템: translateX(40px)
+ * - 인접한 아이템들: translateX(20px)
  * - Duration: 250ms, easing: ease-in-out
  */
 
@@ -16,13 +16,19 @@
   transform: translateX(0);
 }
 
-/* Hovered state - 40px translation */
-.channel-item.hovered {
+/* 호버된 아이템 - 40px 이동 */
+.channel-item:hover {
   transform: translateX(40px);
+  background-color: #f9f9f9;
 }
 
-/* Adjacent state - 20px translation */
-.channel-item.adjacent {
+/* 인접한 아이템 (호버된 아이템 바로 다음) - 20px 이동 */
+.channel-item:hover + .channel-item {
+  transform: translateX(20px);
+}
+
+/* 인접한 아이템 (호버된 아이템 바로 이전) - 20px 이동 */
+.channel-item:has(+ .channel-item:hover) {
   transform: translateX(20px);
 }
 
@@ -65,9 +71,4 @@
   border-radius: 4px;
   font-weight: 500;
   text-transform: uppercase;
-}
-
-/* Hover effect for the entire item */
-.channel-item:hover {
-  background-color: #f9f9f9;
 }
