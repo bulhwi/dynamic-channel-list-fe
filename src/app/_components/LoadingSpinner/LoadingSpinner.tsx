@@ -4,11 +4,12 @@
  * 로딩 상태를 시각적으로 표시하는 스피너 컴포넌트입니다.
  */
 
-import styles from './LoadingSpinner.module.css'
+import type { Size } from '@/_styles/common.style'
+import * as S from './LoadingSpinner.style'
 
 export interface LoadingSpinnerProps {
   /** 스피너 크기 */
-  size?: 'small' | 'medium' | 'large'
+  size?: Size
 }
 
 /**
@@ -23,14 +24,9 @@ export interface LoadingSpinnerProps {
  */
 const LoadingSpinner = ({ size = 'medium' }: LoadingSpinnerProps) => {
   return (
-    <div
-      className={`${styles.spinner} ${styles[size]}`}
-      role="status"
-      aria-label="Loading"
-      data-testid="loading-spinner"
-    >
-      <div className={styles.circle}></div>
-    </div>
+    <S.SpinnerContainer role="status" aria-label="Loading" data-testid="loading-spinner">
+      <S.Circle $size={size} />
+    </S.SpinnerContainer>
   )
 }
 

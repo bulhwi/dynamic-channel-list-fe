@@ -4,7 +4,7 @@
  * 에러 상태를 사용자 친화적으로 표시하는 컴포넌트입니다.
  */
 
-import styles from './ErrorMessage.module.css'
+import * as S from './ErrorMessage.style'
 
 export interface ErrorMessageProps {
   /** 표시할 에러 메시지 */
@@ -25,15 +25,15 @@ export interface ErrorMessageProps {
  */
 const ErrorMessage = ({ message, onRetry }: ErrorMessageProps) => {
   return (
-    <div className={styles.container} role="alert" data-testid="error-message">
-      <div className={styles.icon}>⚠️</div>
-      <p className={styles.message}>{message}</p>
+    <S.Container role="alert" data-testid="error-message">
+      <S.Icon>⚠️</S.Icon>
+      <S.Message>{message}</S.Message>
       {onRetry && (
-        <button onClick={onRetry} className={styles.retryButton} type="button">
+        <S.RetryButton onClick={onRetry} type="button">
           다시 시도
-        </button>
+        </S.RetryButton>
       )}
-    </div>
+    </S.Container>
   )
 }
 

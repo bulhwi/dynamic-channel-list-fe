@@ -141,7 +141,7 @@ describe('ChannelList', () => {
     const { container } = render(<ChannelList />)
 
     // 채널 아이템들을 DOM 순서대로 가져오기
-    const channelItems = container.querySelectorAll('.channel-item')
+    const channelItems = container.querySelectorAll('[data-channel-url]')
 
     // 각 아이템 내의 채널 이름 확인
     expect(channelItems[0]).toHaveTextContent('Apple Channel')
@@ -257,9 +257,9 @@ describe('ChannelList', () => {
       fetchNextPage: jest.fn(),
     })
 
-    const { container } = render(<ChannelList />)
+    render(<ChannelList />)
 
-    const sentinel = container.querySelector('.sentinel')
+    const sentinel = screen.getByTestId('sentinel')
     expect(sentinel).toBeInTheDocument()
   })
 
@@ -277,10 +277,10 @@ describe('ChannelList', () => {
 
     const { container } = render(<ChannelList />)
 
-    const channelItems = container.querySelectorAll('.channel-item')
-    // ChannelItem이 clickable 클래스를 가지는지 확인 (onClick이 전달됨)
+    const channelItems = container.querySelectorAll('[data-channel-url]')
+    // ChannelItem이 cursor pointer를 가지는지 확인 (onClick이 전달됨)
     channelItems.forEach(item => {
-      expect(item).toHaveClass('clickable')
+      expect(item).toHaveStyle({ cursor: 'pointer' })
     })
   })
 
@@ -421,10 +421,10 @@ describe('ChannelList', () => {
     )
 
     // 다른 채널들은 updating 상태가 아니어야 함
-    const channelItems = container.querySelectorAll('.channel-item')
-    // 초기 상태에서는 모두 updating이 아님
+    const channelItems = container.querySelectorAll('[data-channel-url]')
+    // 초기 상태에서는 모두 opacity가 1이어야 함
     channelItems.forEach(item => {
-      expect(item).not.toHaveClass('updating')
+      expect(item).toHaveStyle({ opacity: '1' })
     })
   })
 })

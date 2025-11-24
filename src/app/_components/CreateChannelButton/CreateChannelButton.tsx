@@ -7,7 +7,7 @@
 
 import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
 import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
-import styles from './CreateChannelButton.module.css'
+import * as S from './CreateChannelButton.style'
 
 export interface CreateChannelButtonProps {
   /** 버튼 클릭 핸들러 */
@@ -42,22 +42,22 @@ const CreateChannelButton = ({
   onRetry,
 }: CreateChannelButtonProps) => {
   return (
-    <div className={styles.container}>
-      <button type="button" onClick={onClick} disabled={isLoading} className={styles.button}>
+    <S.Container>
+      <S.Button type="button" onClick={onClick} disabled={isLoading} $isLoading={isLoading}>
         {isLoading && (
-          <span className={styles.loadingContent}>
+          <S.LoadingContent>
             <LoadingSpinner size="small" />
-            <span className={styles.loadingText}>Creating...</span>
-          </span>
+            <S.LoadingText>Creating...</S.LoadingText>
+          </S.LoadingContent>
         )}
         {!isLoading && 'Create Channel'}
-      </button>
+      </S.Button>
       {!isLoading && error && (
-        <div className={styles.errorWrapper}>
+        <S.ErrorWrapper>
           <ErrorMessage message={error} onRetry={onRetry} />
-        </div>
+        </S.ErrorWrapper>
       )}
-    </div>
+    </S.Container>
   )
 }
 

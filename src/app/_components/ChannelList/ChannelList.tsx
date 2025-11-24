@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useChannelList } from '@/_hooks/useChannelList'
 import { useUpdateChannel } from '@/_hooks/useUpdateChannel'
@@ -18,7 +18,7 @@ import ChannelItem from '@/app/_components/ChannelItem/ChannelItem'
 import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
 import { sortChannels } from '@/_lib/utils'
 import type { Channel } from '@/_types/channel.types'
-import styles from './ChannelList.module.css'
+import * as S from './ChannelList.style'
 
 const ChannelList = () => {
   const { channels, isLoading, error, hasNextPage, isFetchingNextPage, fetchNextPage } =
@@ -40,14 +40,18 @@ const ChannelList = () => {
   })
 
   // Callback ref to set both animateRef and containerRef
-  const setRefs = (element: HTMLDivElement | null) => {
-    // Set auto-animate ref (it's always a callback function from useAutoAnimate)
-    if (typeof animateRef === 'function') {
-      animateRef(element)
-    }
-    // Set container ref for IntersectionObserver
-    containerRef.current = element
-  }
+  // useCallback으로 메모이제이션하여 무한 렌더링 방지
+  const setRefs = useCallback(
+    (element: HTMLDivElement | null) => {
+      // Set auto-animate ref (it's always a callback function from useAutoAnimate)
+      if (typeof animateRef === 'function') {
+        animateRef(element)
+      }
+      // Set container ref for IntersectionObserver
+      containerRef.current = element
+    },
+    [animateRef, containerRef]
+  )
 
   const handleChannelClick = (channel: Channel) => {
     setUpdatingChannelUrl(channel.url)
@@ -60,21 +64,21 @@ const ChannelList = () => {
   }
 
   if (isLoading) {
-    return <div className={styles.loading}>Loading channels...</div>
+    return <S.Loading>Loading channels...</S.Loading>
   }
 
   if (error) {
-    return <div className={styles.error}>Error loading channels: {error.message}</div>
+    return <S.Error>Error loading channels: {error.message}</S.Error>
   }
 
   if (channels.length === 0) {
-    return <div className={styles.empty}>No channels found</div>
+    return <S.Empty>No channels found</S.Empty>
   }
 
   const sortedChannels = sortChannels(channels)
 
   return (
-    <div ref={setRefs} className={styles.channelList}>
+    <S.StyledChannelList ref={setRefs}>
       {sortedChannels.map(channel => (
         <ChannelItem
           key={channel.url}
@@ -85,16 +89,16 @@ const ChannelList = () => {
       ))}
 
       {/* Sentinel element for infinite scroll */}
-      <div ref={sentinelRef} className={styles.sentinel} />
+      <S.Sentinel ref={sentinelRef} data-testid="sentinel" />
 
       {/* Pagination loading indicator */}
       {isFetchingNextPage && (
-        <div className={styles.loadingMore}>
+        <S.LoadingMore>
           <LoadingSpinner size="small" />
           <span>Loading more channels...</span>
-        </div>
+        </S.LoadingMore>
       )}
-    </div>
+    </S.StyledChannelList>
   )
 }
 

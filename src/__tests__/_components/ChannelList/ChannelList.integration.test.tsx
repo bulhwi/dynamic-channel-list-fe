@@ -285,7 +285,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
 
     // 채널 아이템 개수 확인 (정확히 20개)
     await waitFor(() => {
-      const channelItems = container.querySelectorAll('.channel-item')
+      const channelItems = container.querySelectorAll('[data-channel-url]')
       expect(channelItems).toHaveLength(20)
 
       // 각 채널 URL이 고유한지 확인
@@ -377,7 +377,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
 
     const testQueryClient = createTestQueryClient()
 
-    const { container } = render(
+    render(
       <QueryClientProvider client={testQueryClient}>
         <ChannelList />
       </QueryClientProvider>
@@ -389,7 +389,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     })
 
     // sentinel 요소는 렌더링되지만 observer는 생성되지 않음 (hasMore: false)
-    const sentinel = container.querySelector('.sentinel')
+    const sentinel = screen.getByTestId('sentinel')
     expect(sentinel).toBeInTheDocument()
 
     // 로딩 인디케이터가 나타나지 않는지 확인

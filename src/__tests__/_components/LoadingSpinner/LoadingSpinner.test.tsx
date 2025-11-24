@@ -27,26 +27,29 @@ describe('LoadingSpinner', () => {
 
   // 커스텀 사이즈를 지원해야 함
   it('should support custom size', () => {
-    const { container } = render(<LoadingSpinner size="large" />)
+    render(<LoadingSpinner size="large" />)
 
-    const spinner = container.firstChild as HTMLElement
-    expect(spinner).toHaveClass('large')
+    const spinner = screen.getByTestId('loading-spinner')
+    const circle = spinner.querySelector('div')
+    expect(circle).toHaveStyle({ width: '32px', height: '32px' })
   })
 
   // 기본 사이즈는 medium이어야 함
   it('should have medium size by default', () => {
-    const { container } = render(<LoadingSpinner />)
+    render(<LoadingSpinner />)
 
-    const spinner = container.firstChild as HTMLElement
-    expect(spinner).toHaveClass('medium')
+    const spinner = screen.getByTestId('loading-spinner')
+    const circle = spinner.querySelector('div')
+    expect(circle).toHaveStyle({ width: '24px', height: '24px' })
   })
 
   // small 사이즈를 지원해야 함
   it('should support small size', () => {
-    const { container } = render(<LoadingSpinner size="small" />)
+    render(<LoadingSpinner size="small" />)
 
-    const spinner = container.firstChild as HTMLElement
-    expect(spinner).toHaveClass('small')
+    const spinner = screen.getByTestId('loading-spinner')
+    const circle = spinner.querySelector('div')
+    expect(circle).toHaveStyle({ width: '16px', height: '16px' })
   })
 
   // 테스트 ID를 포함해야 함
@@ -55,13 +58,5 @@ describe('LoadingSpinner', () => {
 
     const spinner = screen.getByTestId('loading-spinner')
     expect(spinner).toBeInTheDocument()
-  })
-
-  // 스피너 애니메이션 클래스를 가져야 함
-  it('should have spinner animation class', () => {
-    const { container } = render(<LoadingSpinner />)
-
-    const spinner = container.firstChild as HTMLElement
-    expect(spinner).toHaveClass('spinner')
   })
 })

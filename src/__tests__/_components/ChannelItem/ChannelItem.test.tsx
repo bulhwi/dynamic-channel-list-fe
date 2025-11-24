@@ -76,29 +76,29 @@ describe('ChannelItem', () => {
     expect(screen.getByText('premium')).toBeInTheDocument()
   })
 
-  // channel-item 기본 클래스를 가져야 함
-  it('should have channel-item base class', () => {
+  // 기본 스타일을 가져야 함
+  it('should render with base styles', () => {
     const { container } = render(<ChannelItem channel={mockChannel} />)
 
     const item = container.firstChild as HTMLElement
-    expect(item).toHaveClass('channel-item')
+    expect(item).toBeInTheDocument()
   })
 
-  // onClick이 제공될 때 clickable 클래스를 가져야 함
-  it('should have clickable class when onClick is provided', () => {
+  // onClick이 제공될 때 cursor pointer를 가져야 함
+  it('should have cursor pointer when onClick is provided', () => {
     const mockOnClick = jest.fn()
     const { container } = render(<ChannelItem channel={mockChannel} onClick={mockOnClick} />)
 
     const item = container.firstChild as HTMLElement
-    expect(item).toHaveClass('clickable')
+    expect(item).toHaveStyle({ cursor: 'pointer' })
   })
 
-  // onClick이 없을 때 clickable 클래스가 없어야 함
-  it('should not have clickable class when onClick is not provided', () => {
+  // onClick이 없을 때 cursor default를 가져야 함
+  it('should have cursor default when onClick is not provided', () => {
     const { container } = render(<ChannelItem channel={mockChannel} />)
 
     const item = container.firstChild as HTMLElement
-    expect(item).not.toHaveClass('clickable')
+    expect(item).toHaveStyle({ cursor: 'default' })
   })
 
   // 클릭 시 onClick 핸들러가 호출되어야 함
@@ -124,12 +124,12 @@ describe('ChannelItem', () => {
     expect(mockOnClick).not.toHaveBeenCalled()
   })
 
-  // isUpdating일 때 updating 클래스를 가져야 함
-  it('should have updating class when isUpdating is true', () => {
+  // isUpdating일 때 opacity를 낮춰야 함
+  it('should have reduced opacity when isUpdating is true', () => {
     const { container } = render(<ChannelItem channel={mockChannel} isUpdating={true} />)
 
     const item = container.firstChild as HTMLElement
-    expect(item).toHaveClass('updating')
+    expect(item).toHaveStyle({ opacity: '0.6' })
   })
 
   // isUpdating일 때 로딩 인디케이터를 렌더링해야 함

@@ -7,7 +7,7 @@
 
 import { memo } from 'react'
 import type { Channel } from '@/_types/channel.types'
-import styles from './ChannelItem.module.css'
+import * as S from './ChannelItem.style'
 
 export interface ChannelItemProps {
   /** 표시할 채널 데이터 */
@@ -44,24 +44,23 @@ const ChannelItem = memo(({ channel, onClick, isUpdating = false }: ChannelItemP
   }
 
   return (
-    <div
-      className={`${styles['channel-item']} ${onClick ? styles.clickable : ''} ${isUpdating ? styles.updating : ''}`}
+    <S.StyledChannelItem
+      $clickable={!!onClick}
+      $isUpdating={isUpdating}
       data-channel-url={channel.url}
       onClick={handleClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick && !isUpdating ? 0 : undefined}
       aria-disabled={isUpdating}
     >
-      <div className={styles.channelInfo}>
-        <h3 className={styles.channelName}>{channel.name}</h3>
-        <p className={styles.channelUrl}>{channel.url}</p>
-        <time className={styles.channelDate} dateTime={formattedDate}>
-          {formattedDate}
-        </time>
-        {channel.customType && <span className={styles.customType}>{channel.customType}</span>}
-      </div>
-      {isUpdating && <div className={styles.loadingIndicator}>Updating...</div>}
-    </div>
+      <S.ChannelInfo>
+        <S.ChannelName>{channel.name}</S.ChannelName>
+        <S.ChannelUrl>{channel.url}</S.ChannelUrl>
+        <S.ChannelDate dateTime={formattedDate}>{formattedDate}</S.ChannelDate>
+        {channel.customType && <S.CustomType>{channel.customType}</S.CustomType>}
+      </S.ChannelInfo>
+      {isUpdating && <S.LoadingIndicator>Updating...</S.LoadingIndicator>}
+    </S.StyledChannelItem>
   )
 })
 

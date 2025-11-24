@@ -19,11 +19,11 @@
   "dependencies": {
     "@formkit/auto-animate": "^0.9.0",
     "@sendbird/chat": "^4.20.2",
-    "@sendbird/uikit-react": "^3.17.3",
     "@tanstack/react-query": "^5.90.10",
     "next": "^15.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.91.0",
@@ -34,7 +34,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "autoprefixer": "^10.4.20",
+    "@types/styled-components": "^5.1.36",
     "eslint": "^9",
     "eslint-config-next": "^15.0.0",
     "eslint-config-prettier": "^10.1.8",
@@ -44,9 +44,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "lint-staged": "^16.2.7",
     "msw": "^2.12.3",
-    "postcss": "^8.4.47",
     "prettier": "^3.6.2",
-    "tailwindcss": "^3.4.14",
     "typescript": "^5"
   },
   "engines": {

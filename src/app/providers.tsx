@@ -9,6 +9,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect, type ReactNode } from 'react'
 import { initializeSendbird, connectUser } from '@/services/sendbird/client'
+import * as S from './providers.style'
 
 /**
  * MSW 초기화 (NEXT_PUBLIC_USE_MSW=true일 때만)
@@ -97,34 +98,27 @@ export const Providers = ({ children }: ProvidersProps) => {
   // 초기화 대기 중
   if (!isReady) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Connecting to Sendbird...</p>
-        </div>
-      </div>
+      <S.LoadingContainer>
+        <S.LoadingContent>
+          <S.Spinner />
+          <S.LoadingText>Connecting to Sendbird...</S.LoadingText>
+        </S.LoadingContent>
+      </S.LoadingContainer>
     )
   }
 
   // 에러 발생 시
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-md">
-          <div className="text-red-600 text-4xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Connection Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <p className="text-sm text-gray-500">
-            Please check your Sendbird configuration and try again.
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
+      <S.ErrorContainer>
+        <S.ErrorCard>
+          <S.ErrorIcon>⚠️</S.ErrorIcon>
+          <S.ErrorTitle>Connection Error</S.ErrorTitle>
+          <S.ErrorMessage>{error}</S.ErrorMessage>
+          <S.ErrorHint>Please check your Sendbird configuration and try again.</S.ErrorHint>
+          <S.RetryButton onClick={() => window.location.reload()}>Retry</S.RetryButton>
+        </S.ErrorCard>
+      </S.ErrorContainer>
     )
   }
 
