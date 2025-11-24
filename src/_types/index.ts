@@ -39,3 +39,6 @@ export type {
   LoadingIndicatorProps,
   ErrorMessageProps,
 } from './component.types'
+
+// Error types
+export { ErrorType, AppError } from './error.types'

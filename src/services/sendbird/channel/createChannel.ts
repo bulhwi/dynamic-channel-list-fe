@@ -6,6 +6,8 @@
 
 import { getSendbirdInstance } from '../client'
 import { generateRandomName } from '@/_lib/utils'
+import { toAppError, logError } from '@/_lib/errorUtils'
+import { AppError, ErrorType } from '@/_types/error.types'
 import type { Channel } from '@/_types/channel.types'
 import type { GroupChannel } from '@sendbird/chat/groupChannel'
 
@@ -30,7 +32,11 @@ export async function createChannel(): Promise<Channel> {
   const sendbird = getSendbirdInstance()
 
   if (!sendbird) {
-    throw new Error('Sendbird instance not initialized')
+    throw new AppError(
+      ErrorType.SENDBIRD_INIT_FAILED,
+      '서비스 연결에 실패했습니다. 페이지를 새로고침해주세요.',
+      'Sendbird instance not initialized'
+    )
   }
 
   // 랜덤 이름 생성
@@ -50,7 +56,9 @@ export async function createChannel(): Promise<Channel> {
       ...(groupChannel.customType && { customType: groupChannel.customType }),
     }
   } catch (error) {
-    // 에러를 상위로 전파
-    throw error
+    // AppError로 변환하여 일관된 에러 처리
+    const appError = toAppError(error, ErrorType.CHANNEL_CREATE_FAILED)
+    logError(appError, 'createChannel')
+    throw appError
   }
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import StyledComponentsRegistry from '@/lib/registry'
 import { Providers } from './providers'
+import { ErrorBoundary } from '@/app/_components/ErrorBoundary/ErrorBoundary'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <StyledComponentsRegistry>
-          <Providers>{children}</Providers>
+          <Providers>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </Providers>
         </StyledComponentsRegistry>
       </body>
     </html>

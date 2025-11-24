@@ -6,6 +6,8 @@
  */
 
 import { getSendbirdInstance } from '../client'
+import { toAppError, logError } from '@/_lib/errorUtils'
+import { AppError, ErrorType } from '@/_types/error.types'
 import type { Channel } from '@/_types/channel.types'
 import type {
   GroupChannel,
@@ -59,7 +61,11 @@ export async function getChannels(options: GetChannelsOptions = {}): Promise<Get
   const sendbird = getSendbirdInstance()
 
   if (!sendbird) {
-    throw new Error('Sendbird instance not initialized')
+    throw new AppError(
+      ErrorType.SENDBIRD_INIT_FAILED,
+      '서비스 연결에 실패했습니다. 페이지를 새로고침해주세요.',
+      'Sendbird instance not initialized'
+    )
   }
 
   try {
@@ -99,7 +105,9 @@ export async function getChannels(options: GetChannelsOptions = {}): Promise<Get
       query, // query 인스턴스 반환 (다음 페이지를 위해)
     }
   } catch (error) {
-    // 에러를 상위로 전파
-    throw error
+    // AppError로 변환하여 일관된 에러 처리
+    const appError = toAppError(error, ErrorType.CHANNEL_FETCH_FAILED)
+    logError(appError, 'getChannels')
+    throw appError
   }
 }

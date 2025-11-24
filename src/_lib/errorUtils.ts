@@ -1,0 +1,193 @@
+/**
+ * 에러 처리 유틸리티
+ *
+ * 일관된 에러 처리를 위한 헬퍼 함수들을 제공합니다.
+ */
+
+import { AppError, ErrorType } from '@/_types/error.types'
+
+/**
+ * 에러 타입별 사용자 친화적 메시지 매핑
+ */
+const USER_FRIENDLY_MESSAGES: Record<ErrorType, string> = {
+  [ErrorType.SENDBIRD_INIT_FAILED]: '서비스 연결에 실패했습니다. 페이지를 새로고침해주세요.',
+  [ErrorType.SENDBIRD_CONNECTION_FAILED]: '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.',
+  [ErrorType.CHANNEL_FETCH_FAILED]: '채널 목록을 불러오지 못했습니다.',
+  [ErrorType.CHANNEL_CREATE_FAILED]: '채널 생성에 실패했습니다.',
+  [ErrorType.CHANNEL_UPDATE_FAILED]: '채널 수정에 실패했습니다.',
+  [ErrorType.CHANNEL_NOT_FOUND]: '채널을 찾을 수 없습니다.',
+  [ErrorType.NETWORK_ERROR]: '네트워크 연결을 확인해주세요.',
+  [ErrorType.TIMEOUT_ERROR]: '요청 시간이 초과되었습니다. 다시 시도해주세요.',
+  [ErrorType.UNKNOWN_ERROR]: '알 수 없는 오류가 발생했습니다.',
+}
+
+/**
+ * 에러 타입별 사용자 친화적 메시지 반환
+ *
+ * @param type - 에러 타입
+ * @returns 사용자에게 보여줄 메시지 (한글)
+ */
+function getUserFriendlyMessage(type: ErrorType): string {
+  return USER_FRIENDLY_MESSAGES[type]
+}
+
+/**
+ * 알 수 없는 에러를 AppError로 변환
+ *
+ * Sendbird SDK 에러, JavaScript Error, 문자열 등
+ * 다양한 형태의 에러를 AppError로 통일합니다.
+ *
+ * @param error - 변환할 에러 (any type)
+ * @param fallbackType - 에러 타입을 알 수 없을 때 사용할 기본 타입
+ * @returns AppError 인스턴스
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   await sendbirdAPI()
+ * } catch (error) {
+ *   const appError = toAppError(error, ErrorType.CHANNEL_FETCH_FAILED)
+ *   throw appError
+ * }
+ * ```
+ */
+export function toAppError(error: unknown, fallbackType: ErrorType): AppError {
+  // 이미 AppError인 경우 그대로 반환
+  if (error instanceof AppError) {
+    return error
+  }
+
+  // Error 객체인 경우
+  if (error instanceof Error) {
+    // Sendbird SDK 특정 에러 메시지 파싱
+    const errorMessage = error.message.toLowerCase()
+
+    // 초기화 실패
+    if (errorMessage.includes('not initialized') || errorMessage.includes('init')) {
+      return new AppError(
+        ErrorType.SENDBIRD_INIT_FAILED,
+        getUserFriendlyMessage(ErrorType.SENDBIRD_INIT_FAILED),
+        error.message,
+        error
+      )
+    }
+
+    // 연결 실패
+    if (errorMessage.includes('connect') || errorMessage.includes('connection')) {
+      return new AppError(
+        ErrorType.SENDBIRD_CONNECTION_FAILED,
+        getUserFriendlyMessage(ErrorType.SENDBIRD_CONNECTION_FAILED),
+        error.message,
+        error
+      )
+    }
+
+    // 네트워크 에러
+    if (errorMessage.includes('network') || errorMessage.includes('fetch failed')) {
+      return new AppError(
+        ErrorType.NETWORK_ERROR,
+        getUserFriendlyMessage(ErrorType.NETWORK_ERROR),
+        error.message,
+        error
+      )
+    }
+
+    // 타임아웃
+    if (errorMessage.includes('timeout') || errorMessage.includes('timed out')) {
+      return new AppError(
+        ErrorType.TIMEOUT_ERROR,
+        getUserFriendlyMessage(ErrorType.TIMEOUT_ERROR),
+        error.message,
+        error
+      )
+    }
+
+    // 채널을 찾을 수 없음
+    if (errorMessage.includes('not found') || errorMessage.includes('channel not found')) {
+      return new AppError(
+        ErrorType.CHANNEL_NOT_FOUND,
+        getUserFriendlyMessage(ErrorType.CHANNEL_NOT_FOUND),
+        error.message,
+        error
+      )
+    }
+
+    // 기타 Error 객체 - fallback 타입 사용
+    return new AppError(fallbackType, getUserFriendlyMessage(fallbackType), error.message, error)
+  }
+
+  // 문자열 에러
+  if (typeof error === 'string') {
+    return new AppError(fallbackType, getUserFriendlyMessage(fallbackType), error, error)
+  }
+
+  // 알 수 없는 타입 - 문자열로 변환
+  return new AppError(
+    ErrorType.UNKNOWN_ERROR,
+    getUserFriendlyMessage(ErrorType.UNKNOWN_ERROR),
+    String(error),
+    error
+  )
+}
+
+/**
+ * 에러 로깅
+ *
+ * 개발 환경에서는 console.error로 출력하고,
+ * 프로덕션 환경에서는 에러 추적 서비스(Sentry 등)로 전송할 수 있습니다.
+ *
+ * @param error - 로깅할 에러 (AppError 또는 Error)
+ * @param context - 에러 발생 컨텍스트 (함수명, 컴포넌트명 등)
+ *
+ * @example
+ * ```typescript
+ * catch (error) {
+ *   const appError = toAppError(error, ErrorType.CHANNEL_FETCH_FAILED)
+ *   logError(appError, 'getChannels')
+ *   throw appError
+ * }
+ * ```
+ */
+export function logError(error: AppError | Error, context?: string): void {
+  // 개발 환경에서 콘솔 출력
+  if (process.env.NODE_ENV === 'development') {
+    const prefix = context ? `[Error in ${context}]` : '[Error]'
+
+    if (error instanceof AppError) {
+      console.error(prefix, {
+        type: error.type,
+        userMessage: error.userMessage,
+        technicalMessage: error.technicalMessage,
+        originalError: error.originalError,
+        stack: error.stack,
+      })
+    } else {
+      console.error(prefix, error)
+    }
+  }
+
+  // TODO: 프로덕션 환경에서는 에러 추적 서비스로 전송
+  // if (process.env.NODE_ENV === 'production') {
+  //   Sentry.captureException(error, {
+  //     contexts: {
+  //       error: {
+  //         context,
+  //         ...(error instanceof AppError && {
+  //           type: error.type,
+  //           userMessage: error.userMessage,
+  //         }),
+  //       },
+  //     },
+  //   })
+  // }
+}
+
+/**
+ * AppError인지 확인하는 타입 가드
+ *
+ * @param error - 확인할 에러
+ * @returns AppError 여부
+ */
+export function isAppError(error: unknown): error is AppError {
+  return error instanceof AppError
+}

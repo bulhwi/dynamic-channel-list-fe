@@ -3,8 +3,11 @@
  *
  * 채널 생성 버튼 컴포넌트
  * 로딩 상태와 에러 메시지를 표시합니다.
+ *
+ * React.memo로 최적화: props가 변경되지 않으면 리렌더링 방지
  */
 
+import { memo } from 'react'
 import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
 import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
 import * as S from './CreateChannelButton.style'
@@ -35,30 +38,29 @@ export interface CreateChannelButtonProps {
  * />
  * ```
  */
-const CreateChannelButton = ({
-  onClick,
-  isLoading = false,
-  error,
-  onRetry,
-}: CreateChannelButtonProps) => {
-  return (
-    <S.Container>
-      <S.Button type="button" onClick={onClick} disabled={isLoading} $isLoading={isLoading}>
-        {isLoading && (
-          <S.LoadingContent>
-            <LoadingSpinner size="small" />
-            <S.LoadingText>Creating...</S.LoadingText>
-          </S.LoadingContent>
+const CreateChannelButton = memo(
+  ({ onClick, isLoading = false, error, onRetry }: CreateChannelButtonProps) => {
+    return (
+      <S.Container>
+        <S.Button type="button" onClick={onClick} disabled={isLoading} $isLoading={isLoading}>
+          {isLoading && (
+            <S.LoadingContent>
+              <LoadingSpinner size="small" />
+              <S.LoadingText>Creating...</S.LoadingText>
+            </S.LoadingContent>
+          )}
+          {!isLoading && 'Create Channel'}
+        </S.Button>
+        {!isLoading && error && (
+          <S.ErrorWrapper>
+            <ErrorMessage message={error} onRetry={onRetry} />
+          </S.ErrorWrapper>
         )}
-        {!isLoading && 'Create Channel'}
-      </S.Button>
-      {!isLoading && error && (
-        <S.ErrorWrapper>
-          <ErrorMessage message={error} onRetry={onRetry} />
-        </S.ErrorWrapper>
-      )}
-    </S.Container>
-  )
-}
+      </S.Container>
+    )
+  }
+)
+
+CreateChannelButton.displayName = 'CreateChannelButton'
 
 export default CreateChannelButton

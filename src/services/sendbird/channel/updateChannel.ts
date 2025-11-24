@@ -6,6 +6,8 @@
 
 import { getSendbirdInstance } from '../client'
 import { generateRandomName } from '@/_lib/utils'
+import { toAppError, logError } from '@/_lib/errorUtils'
+import { AppError, ErrorType } from '@/_types/error.types'
 import type { Channel } from '@/_types/channel.types'
 import type { GroupChannel } from '@sendbird/chat/groupChannel'
 
@@ -32,7 +34,11 @@ export async function updateChannel(channelUrl: string): Promise<Channel> {
   const sendbird = getSendbirdInstance()
 
   if (!sendbird) {
-    throw new Error('Sendbird instance not initialized')
+    throw new AppError(
+      ErrorType.SENDBIRD_INIT_FAILED,
+      '서비스 연결에 실패했습니다. 페이지를 새로고침해주세요.',
+      'Sendbird instance not initialized'
+    )
   }
 
   // 새로운 랜덤 이름 생성
@@ -51,7 +57,11 @@ export async function updateChannel(channelUrl: string): Promise<Channel> {
     const groupChannel = channels[0]
 
     if (!groupChannel) {
-      throw new Error(`Channel not found: ${channelUrl}`)
+      throw new AppError(
+        ErrorType.CHANNEL_NOT_FOUND,
+        '채널을 찾을 수 없습니다.',
+        `Channel not found: ${channelUrl}`
+      )
     }
 
     // 채널 이름 업데이트 (허용된 함수: channel.updateChannel)
@@ -68,7 +78,15 @@ export async function updateChannel(channelUrl: string): Promise<Channel> {
       ...(updatedChannel.data && { data: updatedChannel.data }),
     }
   } catch (error) {
-    // 에러를 상위로 전파
-    throw error
+    // 이미 AppError인 경우 그대로 throw (channel not found 등)
+    if (error instanceof AppError) {
+      logError(error, 'updateChannel')
+      throw error
+    }
+
+    // 기타 에러는 AppError로 변환
+    const appError = toAppError(error, ErrorType.CHANNEL_UPDATE_FAILED)
+    logError(appError, 'updateChannel')
+    throw appError
   }
 }

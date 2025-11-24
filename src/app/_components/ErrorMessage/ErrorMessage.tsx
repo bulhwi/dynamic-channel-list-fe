@@ -2,8 +2,11 @@
  * ErrorMessage 컴포넌트
  *
  * 에러 상태를 사용자 친화적으로 표시하는 컴포넌트입니다.
+ *
+ * React.memo로 최적화: props가 변경되지 않으면 리렌더링 방지
  */
 
+import { memo } from 'react'
 import * as S from './ErrorMessage.style'
 
 export interface ErrorMessageProps {
@@ -23,7 +26,7 @@ export interface ErrorMessageProps {
  * <ErrorMessage message="Failed to load data" onRetry={handleRetry} />
  * ```
  */
-const ErrorMessage = ({ message, onRetry }: ErrorMessageProps) => {
+const ErrorMessage = memo(({ message, onRetry }: ErrorMessageProps) => {
   return (
     <S.Container role="alert" data-testid="error-message">
       <S.Icon>⚠️</S.Icon>
@@ -35,6 +38,8 @@ const ErrorMessage = ({ message, onRetry }: ErrorMessageProps) => {
       )}
     </S.Container>
   )
-}
+})
+
+ErrorMessage.displayName = 'ErrorMessage'
 
 export default ErrorMessage

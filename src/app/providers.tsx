@@ -11,6 +11,8 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { useEffect, type ReactNode } from 'react'
 import { getQueryClient } from '@/lib/query-client'
 import { initializeSendbird, connectUser } from '@/services/sendbird/client'
+import { logError, toAppError } from '@/_lib/errorUtils'
+import { ErrorType } from '@/_types/error.types'
 
 /**
  * MSW 초기화 (개발 모드 전용)
@@ -42,9 +44,13 @@ const initSendbirdAsync = async () => {
     const userId = `user-${Math.random().toString(36).substring(2, 11)}`
     await connectUser(userId)
 
-    console.log('✅ Sendbird connected:', userId)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Sendbird connected:', userId)
+    }
   } catch (error) {
-    console.error('❌ Sendbird connection failed:', error)
+    // 에러를 AppError로 변환하여 로깅
+    const appError = toAppError(error, ErrorType.SENDBIRD_CONNECTION_FAILED)
+    logError(appError, 'initSendbirdAsync')
     // 에러를 throw하지 않음 - 각 API 호출에서 처리
   }
 }
