@@ -1,22 +1,21 @@
 /**
  * 앱 프로바이더
  *
- * 애플리케이션을 위한 Sendbird SDK, MSW, React Query 초기화
+ * React Query와 Sendbird SDK 초기화
+ * SSR 최적화: QueryClient는 서버/클라이언트 양쪽 지원
  */
 
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState, useEffect, type ReactNode } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { useEffect, type ReactNode } from 'react'
+import { getQueryClient } from '@/lib/query-client'
 import { initializeSendbird, connectUser } from '@/services/sendbird/client'
-import * as S from './providers.style'
 
 /**
- * MSW 초기화 (NEXT_PUBLIC_USE_MSW=true일 때만)
- * 테스트 환경에서는 스킵
+ * MSW 초기화 (개발 모드 전용)
  */
 const initMocks = async () => {
-  // 테스트 환경에서는 MSW import하지 않음
   if (process.env.NODE_ENV === 'test') {
     return
   }
@@ -30,23 +29,23 @@ const initMocks = async () => {
 }
 
 /**
- * Sendbird SDK 초기화 및 사용자 연결
+ * Sendbird SDK 초기화 (백그라운드)
+ * - 블로킹하지 않음
+ * - 초기화 실패 시 에러는 각 API 호출에서 처리
  */
-const initSendbird = async () => {
+const initSendbirdAsync = async () => {
   try {
     // SDK 초기화
     initializeSendbird()
 
     // 랜덤 userId로 연결 (데모용)
-    // 실제 앱에서는 인증된 사용자 ID 사용
     const userId = `user-${Math.random().toString(36).substring(2, 11)}`
     await connectUser(userId)
 
     console.log('✅ Sendbird connected:', userId)
-    return { success: true, userId }
   } catch (error) {
     console.error('❌ Sendbird connection failed:', error)
-    return { success: false, error }
+    // 에러를 throw하지 않음 - 각 API 호출에서 처리
   }
 }
 
@@ -55,72 +54,23 @@ interface ProvidersProps {
 }
 
 export const Providers = ({ children }: ProvidersProps) => {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000, // 1분
-            refetchOnWindowFocus: false,
-          },
-        },
-      })
-  )
-
-  const [isReady, setIsReady] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  // QueryClient 싱글톤 사용
+  const queryClient = getQueryClient()
 
   useEffect(() => {
     const init = async () => {
-      try {
-        // MSW 초기화 (옵션)
-        await initMocks()
+      // MSW 초기화 (옵션)
+      await initMocks()
 
-        // Sendbird SDK 초기화 및 연결 (MSW 사용하지 않을 때만)
-        if (process.env.NEXT_PUBLIC_USE_MSW !== 'true') {
-          const result = await initSendbird()
-          if (!result.success) {
-            setError('Failed to connect to Sendbird')
-          }
-        }
-
-        setIsReady(true)
-      } catch (err) {
-        console.error('Initialization error:', err)
-        setError('Failed to initialize application')
-        setIsReady(true) // 에러가 있어도 앱은 렌더링
+      // Sendbird 초기화 (MSW 사용하지 않을 때만)
+      if (process.env.NEXT_PUBLIC_USE_MSW !== 'true') {
+        // 백그라운드에서 초기화 (await 없음)
+        initSendbirdAsync()
       }
     }
 
     init()
   }, [])
-
-  // 초기화 대기 중
-  if (!isReady) {
-    return (
-      <S.LoadingContainer>
-        <S.LoadingContent>
-          <S.Spinner />
-          <S.LoadingText>Connecting to Sendbird...</S.LoadingText>
-        </S.LoadingContent>
-      </S.LoadingContainer>
-    )
-  }
-
-  // 에러 발생 시
-  if (error) {
-    return (
-      <S.ErrorContainer>
-        <S.ErrorCard>
-          <S.ErrorIcon>⚠️</S.ErrorIcon>
-          <S.ErrorTitle>Connection Error</S.ErrorTitle>
-          <S.ErrorMessage>{error}</S.ErrorMessage>
-          <S.ErrorHint>Please check your Sendbird configuration and try again.</S.ErrorHint>
-          <S.RetryButton onClick={() => window.location.reload()}>Retry</S.RetryButton>
-        </S.ErrorCard>
-      </S.ErrorContainer>
-    )
-  }
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }

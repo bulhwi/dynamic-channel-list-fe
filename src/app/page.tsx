@@ -1,41 +1,24 @@
-'use client'
+/**
+ * Home 페이지 (Server Component)
+ *
+ * SSR 최적화:
+ * - Server Component로 정적 콘텐츠 렌더링
+ * - Interactive 부분만 Client Component로 분리
+ * - 초기 HTML에 콘텐츠 포함 (SEO, 빠른 FCP)
+ */
 
 import ChannelList from '@/app/_components/ChannelList/ChannelList'
-import CreateChannelButton from '@/app/_components/CreateChannelButton/CreateChannelButton'
-import { useCreateChannel } from '@/_hooks/useCreateChannel'
-import * as S from './page.style'
+import ChannelActions from '@/app/_components/ChannelActions/ChannelActions'
+import PageLayout from '@/app/_components/PageLayout/PageLayout'
 
 export default function Home() {
-  const { mutate, isPending, error, reset } = useCreateChannel()
-
-  const handleCreateChannel = () => {
-    mutate()
-  }
-
-  const handleRetry = () => {
-    reset() // 에러 상태 리셋
-    mutate() // 재시도
-  }
-
   return (
-    <S.Main>
-      <S.StyledContainer>
-        <S.Title>Dynamic Channel List</S.Title>
-        <S.Description>
-          Sendbird UIKit implementation with dynamic channel list features
-        </S.Description>
-
-        <S.ButtonContainer>
-          <CreateChannelButton
-            onClick={handleCreateChannel}
-            isLoading={isPending}
-            error={error?.message}
-            onRetry={error ? handleRetry : undefined}
-          />
-        </S.ButtonContainer>
-
-        <ChannelList />
-      </S.StyledContainer>
-    </S.Main>
+    <PageLayout
+      title="Dynamic Channel List"
+      description="Sendbird UIKit implementation with dynamic channel list features"
+      actions={<ChannelActions />}
+    >
+      <ChannelList />
+    </PageLayout>
   )
 }
