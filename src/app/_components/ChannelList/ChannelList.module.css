@@ -11,7 +11,30 @@
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  /* Height limitation for 10 items (Issue #23) */
+  max-height: calc(60px * 10); /* 10 items × approximate 60px per item */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar styling (webkit browsers) */
+.channelList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.channelList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.channelList::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 4px;
+  transition: background 200ms ease;
+}
+
+.channelList::-webkit-scrollbar-thumb:hover {
+  background: #555555;
 }
 
 /* Loading state */
