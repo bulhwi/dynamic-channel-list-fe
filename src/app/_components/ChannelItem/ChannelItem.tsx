@@ -12,6 +12,10 @@ import styles from './ChannelItem.module.css'
 export interface ChannelItemProps {
   /** 표시할 채널 데이터 */
   channel: Channel
+  /** 클릭 이벤트 핸들러 (옵션) */
+  onClick?: (channel: Channel) => void
+  /** 업데이트 중 상태 (옵션) */
+  isUpdating?: boolean
 }
 
 /**
@@ -22,15 +26,32 @@ export interface ChannelItemProps {
  *
  * @example
  * ```tsx
- * <ChannelItem channel={channelData} />
+ * <ChannelItem
+ *   channel={channelData}
+ *   onClick={handleClick}
+ *   isUpdating={false}
+ * />
  * ```
  */
-const ChannelItem = memo(({ channel }: ChannelItemProps) => {
+const ChannelItem = memo(({ channel, onClick, isUpdating = false }: ChannelItemProps) => {
   // 표시를 위한 타임스탬프 포맷팅
   const formattedDate = new Date(channel.createdAt).toLocaleString()
 
+  const handleClick = () => {
+    // 로딩 중이거나 onClick 핸들러가 없으면 무시
+    if (isUpdating || !onClick) return
+    onClick(channel)
+  }
+
   return (
-    <div className={styles['channel-item']} data-channel-url={channel.url}>
+    <div
+      className={`${styles['channel-item']} ${onClick ? styles.clickable : ''} ${isUpdating ? styles.updating : ''}`}
+      data-channel-url={channel.url}
+      onClick={handleClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick && !isUpdating ? 0 : undefined}
+      aria-disabled={isUpdating}
+    >
       <div className={styles.channelInfo}>
         <h3 className={styles.channelName}>{channel.name}</h3>
         <p className={styles.channelUrl}>{channel.url}</p>
@@ -39,6 +60,7 @@ const ChannelItem = memo(({ channel }: ChannelItemProps) => {
         </time>
         {channel.customType && <span className={styles.customType}>{channel.customType}</span>}
       </div>
+      {isUpdating && <div className={styles.loadingIndicator}>Updating...</div>}
     </div>
   )
 })

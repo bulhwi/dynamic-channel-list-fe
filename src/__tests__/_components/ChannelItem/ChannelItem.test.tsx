@@ -4,7 +4,7 @@
  * TDD approach: Write tests first, then implement component
  */
 
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ChannelItem from '@/app/_components/ChannelItem/ChannelItem'
 import type { Channel } from '@/_types/channel.types'
@@ -82,5 +82,109 @@ describe('ChannelItem', () => {
 
     const item = container.firstChild as HTMLElement
     expect(item).toHaveClass('channel-item')
+  })
+
+  // onClick이 제공될 때 clickable 클래스를 가져야 함
+  it('should have clickable class when onClick is provided', () => {
+    const mockOnClick = jest.fn()
+    const { container } = render(<ChannelItem channel={mockChannel} onClick={mockOnClick} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).toHaveClass('clickable')
+  })
+
+  // onClick이 없을 때 clickable 클래스가 없어야 함
+  it('should not have clickable class when onClick is not provided', () => {
+    const { container } = render(<ChannelItem channel={mockChannel} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).not.toHaveClass('clickable')
+  })
+
+  // 클릭 시 onClick 핸들러가 호출되어야 함
+  it('should call onClick handler when clicked', () => {
+    const mockOnClick = jest.fn()
+    render(<ChannelItem channel={mockChannel} onClick={mockOnClick} />)
+
+    const item = screen.getByText('Test Channel').closest('div')
+    fireEvent.click(item!)
+
+    expect(mockOnClick).toHaveBeenCalledTimes(1)
+    expect(mockOnClick).toHaveBeenCalledWith(mockChannel)
+  })
+
+  // isUpdating이 true일 때 onClick 호출을 무시해야 함
+  it('should not call onClick when isUpdating is true', () => {
+    const mockOnClick = jest.fn()
+    render(<ChannelItem channel={mockChannel} onClick={mockOnClick} isUpdating={true} />)
+
+    const item = screen.getByText('Test Channel').closest('div')
+    fireEvent.click(item!)
+
+    expect(mockOnClick).not.toHaveBeenCalled()
+  })
+
+  // isUpdating일 때 updating 클래스를 가져야 함
+  it('should have updating class when isUpdating is true', () => {
+    const { container } = render(<ChannelItem channel={mockChannel} isUpdating={true} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).toHaveClass('updating')
+  })
+
+  // isUpdating일 때 로딩 인디케이터를 렌더링해야 함
+  it('should render loading indicator when isUpdating is true', () => {
+    render(<ChannelItem channel={mockChannel} isUpdating={true} />)
+
+    expect(screen.getByText('Updating...')).toBeInTheDocument()
+  })
+
+  // isUpdating이 false일 때 로딩 인디케이터를 렌더링하지 않아야 함
+  it('should not render loading indicator when isUpdating is false', () => {
+    render(<ChannelItem channel={mockChannel} isUpdating={false} />)
+
+    expect(screen.queryByText('Updating...')).not.toBeInTheDocument()
+  })
+
+  // onClick이 있을 때 role="button"을 가져야 함
+  it('should have role="button" when onClick is provided', () => {
+    const mockOnClick = jest.fn()
+    const { container } = render(<ChannelItem channel={mockChannel} onClick={mockOnClick} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).toHaveAttribute('role', 'button')
+  })
+
+  // onClick이 없을 때 role 속성이 없어야 함
+  it('should not have role attribute when onClick is not provided', () => {
+    const { container } = render(<ChannelItem channel={mockChannel} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).not.toHaveAttribute('role')
+  })
+
+  // onClick이 있고 isUpdating이 false일 때 tabIndex=0을 가져야 함
+  it('should have tabIndex=0 when onClick is provided and not updating', () => {
+    const mockOnClick = jest.fn()
+    const { container } = render(<ChannelItem channel={mockChannel} onClick={mockOnClick} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).toHaveAttribute('tabIndex', '0')
+  })
+
+  // isUpdating일 때 aria-disabled="true"를 가져야 함
+  it('should have aria-disabled="true" when isUpdating', () => {
+    const { container } = render(<ChannelItem channel={mockChannel} isUpdating={true} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  // data-channel-url 속성을 가져야 함
+  it('should have data-channel-url attribute', () => {
+    const { container } = render(<ChannelItem channel={mockChannel} />)
+
+    const item = container.firstChild as HTMLElement
+    expect(item).toHaveAttribute('data-channel-url', 'test-channel-url')
   })
 })
