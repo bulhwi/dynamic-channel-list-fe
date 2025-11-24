@@ -20,6 +20,9 @@ jest.mock('@/services/sendbird/channel.service')
 const mockGetChannels = channelService.getChannels as jest.MockedFunction<
   typeof channelService.getChannels
 >
+const mockUpdateChannel = channelService.updateChannel as jest.MockedFunction<
+  typeof channelService.updateChannel
+>
 
 // Mock Intersection Observer
 class MockIntersectionObserver implements IntersectionObserver {
@@ -497,5 +500,67 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
 
     // getChannels가 호출되었는지 확인
     expect(mockGetChannels).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('ChannelList Integration Tests - Channel Update Flow', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    observerInstance = null
+  })
+
+  // Test: Click channel → update → verify mutation called
+  it('should call updateChannel mutation when channel is clicked', async () => {
+    const initialChannels: Channel[] = [
+      { url: 'channel-apple', name: 'apple', createdAt: 1000 },
+      { url: 'channel-banana', name: 'banana', createdAt: 2000 },
+    ]
+
+    mockGetChannels.mockResolvedValue({
+      channels: initialChannels,
+      hasMore: false,
+      query: {} as any,
+    })
+
+    mockUpdateChannel.mockResolvedValue({
+      url: 'channel-apple',
+      name: 'apricot',
+      createdAt: 1000,
+    })
+
+    const testQueryClient = createTestQueryClient()
+
+    render(
+      <QueryClientProvider client={testQueryClient}>
+        <ChannelList />
+      </QueryClientProvider>
+    )
+
+    // 초기 채널 목록 확인
+    await waitFor(() => {
+      expect(screen.getByText('apple')).toBeInTheDocument()
+      expect(screen.getByText('banana')).toBeInTheDocument()
+    })
+
+    // apple 채널 클릭
+    act(() => {
+      screen.getByText('apple').click()
+    })
+
+    // 로딩 인디케이터 확인
+    await waitFor(() => {
+      expect(screen.getByText('Updating...')).toBeInTheDocument()
+    })
+
+    // updateChannel이 호출되었는지 확인
+    await waitFor(() => {
+      expect(mockUpdateChannel).toHaveBeenCalledTimes(1)
+      expect(mockUpdateChannel).toHaveBeenCalledWith('channel-apple', expect.any(Object))
+    })
+
+    // 로딩 인디케이터가 사라졌는지 확인
+    await waitFor(() => {
+      expect(screen.queryByText('Updating...')).not.toBeInTheDocument()
+    })
   })
 })
