@@ -11,7 +11,7 @@
 Implement Step 3: Infinite Scroll with real Sendbird SDK integration
 
 - [x] Issue #20: Replace MSW mock data with Sendbird SDK
-- [ ] Issue #21: Implement useInfiniteScroll hook
+- [x] Issue #21: Implement useInfiniteScroll hook
 - [ ] Issue #22: Setup React Query infinite query
 - [ ] Issue #23: Implement container height limitation (10 items)
 - [ ] Issue #24: Add pagination loading indicator
@@ -311,6 +311,201 @@ describe('Channels API Service', () => {
 
 ---
 
+## 🔍 Issue #21: Implement useInfiniteScroll Hook
+
+### Requirements Analysis
+
+**From GitHub Issue #21**:
+
+- Create `useInfiniteScroll` hook using Intersection Observer
+- Detect scroll to bottom and trigger data loading
+- Support container and sentinel refs
+- Configurable rootMargin and threshold
+- Cleanup observer on unmount
+- Write comprehensive tests
+
+### Implementation Steps
+
+#### Step 1: Create useInfiniteScroll Hook
+
+**File**: `src/_hooks/useInfiniteScroll.ts`
+
+Created a custom hook for infinite scroll functionality:
+
+```typescript
+export interface UseInfiniteScrollOptions {
+  onLoadMore: () => void
+  isLoading?: boolean
+  hasMore?: boolean
+  rootMargin?: string
+  threshold?: number
+}
+
+export interface UseInfiniteScrollReturn {
+  containerRef: React.RefObject<HTMLDivElement | null>
+  sentinelRef: React.RefObject<HTMLDivElement | null>
+}
+
+export function useInfiniteScroll({
+  onLoadMore,
+  isLoading = false,
+  hasMore = true,
+  rootMargin = '100px',
+  threshold = 1.0,
+}: UseInfiniteScrollOptions): UseInfiniteScrollReturn {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    const container = containerRef.current
+
+    if (!sentinel || !container) {
+      return
+    }
+
+    if (isLoading || !hasMore) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const entry = entries[0]
+        if (entry && entry.isIntersecting) {
+          onLoadMore()
+        }
+      },
+      {
+        root: container,
+        rootMargin,
+        threshold,
+      }
+    )
+
+    observer.observe(sentinel)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [onLoadMore, isLoading, hasMore, rootMargin, threshold])
+
+  return {
+    containerRef,
+    sentinelRef,
+  }
+}
+```
+
+**Key Design Decisions**:
+
+- **Intersection Observer**: Used native browser API for performance
+- **Refs Pattern**: Provides refs for container and sentinel elements
+- **Conditional Observer**: Only creates observer when not loading and has more data
+- **Configurable Options**: Supports custom rootMargin and threshold
+- **Cleanup**: Properly disconnects observer on unmount
+- **Type Safety**: Full TypeScript typing with null safety
+
+#### Step 2: Write Comprehensive Tests
+
+**File**: `src/__tests__/_hooks/useInfiniteScroll.test.tsx`
+
+Created test component to properly test the hook with actual DOM:
+
+```typescript
+function TestComponent({
+  onLoadMore,
+  isLoading = false,
+  hasMore = true,
+  rootMargin = '100px',
+  threshold = 1.0,
+}: {...}) {
+  const { containerRef, sentinelRef } = useInfiniteScroll({
+    onLoadMore,
+    isLoading,
+    hasMore,
+    rootMargin,
+    threshold,
+  })
+
+  return (
+    <div ref={containerRef} data-testid="container">
+      <div data-testid="sentinel" ref={sentinelRef} />
+    </div>
+  )
+}
+```
+
+**Test Coverage** (8 tests):
+
+1. ✅ Renders container and sentinel elements
+2. ✅ Calls onLoadMore when sentinel intersects
+3. ✅ Does not call onLoadMore when sentinel doesn't intersect
+4. ✅ Does not create observer when isLoading is true
+5. ✅ Does not create observer when hasMore is false
+6. ✅ Disconnects observer on unmount
+7. ✅ Passes rootMargin and threshold options correctly
+8. ✅ Uses default rootMargin (100px) and threshold (1.0) values
+
+**Testing Approach**:
+
+- Mocked IntersectionObserver API
+- Used actual component rendering instead of `renderHook`
+- Simulated intersection events
+- Verified observer creation, observation, and cleanup
+
+**Challenges Encountered**:
+
+- Initial approach with `renderHook` didn't work because refs weren't attached to real DOM
+- Solution: Created TestComponent to render actual DOM elements
+- This approach allows proper ref attachment and useEffect triggering
+
+#### Step 3: Fix TypeScript Type Errors
+
+**Error 1**: `entries[0]` possibly undefined
+
+```typescript
+// Before
+if (entries[0].isIntersecting) {
+
+// After
+const entry = entries[0]
+if (entry && entry.isIntersecting) {
+```
+
+**Error 2**: Return type mismatch
+
+```typescript
+// Before
+containerRef: React.RefObject<HTMLDivElement>
+
+// After
+containerRef: React.RefObject<HTMLDivElement | null>
+```
+
+### Results
+
+**Status**: ✅ Completed
+
+**Files Created**:
+
+1. `src/_hooks/useInfiniteScroll.ts` (~105 lines)
+2. `src/__tests__/_hooks/useInfiniteScroll.test.tsx` (~190 lines)
+
+**Tests**: 113/113 passing ✅ (8 new tests added)
+
+**Build**: Successful ✅
+
+**Key Achievements**:
+
+- ✅ Implemented Intersection Observer-based infinite scroll
+- ✅ Fully typed with TypeScript
+- ✅ 100% test coverage with 8 comprehensive tests
+- ✅ Proper cleanup and memory management
+- ✅ Configurable rootMargin and threshold
+- ✅ Conditional observer creation (isLoading, hasMore)
+
+---
+
 ## 📋 Related Issues
 
 - Issue #20: Replace dummy data with Sendbird SDK data
@@ -325,7 +520,7 @@ describe('Channels API Service', () => {
 ## ⏭️ Next Steps
 
 1. ✅ ~~Complete Issue #20 - SDK integration~~
-2. Implement useInfiniteScroll hook (Issue #21)
+2. ✅ ~~Implement useInfiniteScroll hook (Issue #21)~~
 3. Setup React Query infinite query (Issue #22)
 4. Implement container height limitation (Issue #23)
 5. Add pagination loading indicator (Issue #24)
@@ -343,6 +538,10 @@ describe('Channels API Service', () => {
 
 ---
 
-**Session Status**: 🔄 In Progress (1/6 issues completed)
-**Completed**: Issue #20 - Sendbird SDK Integration ✅
-**Next**: Issue #21 - Implement useInfiniteScroll hook
+**Session Status**: 🔄 In Progress (2/6 issues completed)
+**Completed**:
+
+- Issue #20 - Sendbird SDK Integration ✅
+- Issue #21 - useInfiniteScroll Hook ✅
+
+**Next**: Issue #22 - React Query infinite query
