@@ -29,35 +29,6 @@ const initMocks = async () => {
 }
 
 /**
- * localStorage에서 userId를 가져오거나 새로 생성합니다.
- * - 이미 있으면 재사용 (UX 개선)
- * - 없으면 생성하고 저장
- */
-const getUserId = (): string => {
-  const STORAGE_KEY = 'sendbird_user_id'
-
-  try {
-    // localStorage에서 기존 userId 조회
-    const existingUserId = localStorage.getItem(STORAGE_KEY)
-
-    if (existingUserId) {
-      return existingUserId
-    }
-
-    // 새로운 userId 생성
-    const newUserId = `user-${Math.random().toString(36).substring(2, 11)}`
-
-    // localStorage에 저장
-    localStorage.setItem(STORAGE_KEY, newUserId)
-
-    return newUserId
-  } catch {
-    // localStorage 접근 실패 시 (예: 프라이빗 모드) 임시 userId 생성
-    return `user-${Math.random().toString(36).substring(2, 11)}`
-  }
-}
-
-/**
  * Sendbird SDK 초기화 (백그라운드)
  * - 블로킹하지 않음
  * - 초기화 실패 시 에러는 각 API 호출에서 처리
@@ -67,13 +38,13 @@ const initSendbirdAsync = async () => {
     // SDK 초기화
     initializeSendbird()
 
-    // localStorage에서 userId 가져오기 (영구 보존)
-    const userId = getUserId()
+    // 랜덤 userId로 연결 (데모용)
+    const userId = `user-${Math.random().toString(36).substring(2, 11)}`
     await connectUser(userId)
 
-    // Sendbird 연결 성공 (로깅 제거 - 프로덕션 코드)
-  } catch {
-    // Sendbird 연결 실패 (로깅 제거 - 각 API 호출에서 에러 처리)
+    console.log('✅ Sendbird connected:', userId)
+  } catch (error) {
+    console.error('❌ Sendbird connection failed:', error)
     // 에러를 throw하지 않음 - 각 API 호출에서 처리
   }
 }
