@@ -142,12 +142,20 @@ describe('Sendbird Channel Service', () => {
     // 채널 이름을 성공적으로 업데이트해야 함
     it('should update channel with new random name', async () => {
       const mockUpdateChannel = jest.fn().mockResolvedValue(mockUpdatedChannel)
-      const mockGetChannel = jest.fn().mockResolvedValue({
-        updateChannel: mockUpdateChannel,
+      const mockNext = jest.fn().mockResolvedValue([
+        {
+          url: 'test-channel-url',
+          name: 'oldname',
+          createdAt: 1234567890000,
+          updateChannel: mockUpdateChannel,
+        },
+      ])
+      const mockCreateQuery = jest.fn().mockReturnValue({
+        next: mockNext,
       })
       mockGetSendbirdInstance.mockReturnValue({
         groupChannel: {
-          getChannel: mockGetChannel,
+          createMyGroupChannelListQuery: mockCreateQuery,
         },
       } as any)
       mockGenerateRandomName.mockReturnValue('newname')
@@ -155,7 +163,12 @@ describe('Sendbird Channel Service', () => {
       const result = await updateChannel(mockChannelUrl)
 
       expect(mockGenerateRandomName).toHaveBeenCalledTimes(1)
-      expect(mockGetChannel).toHaveBeenCalledWith(mockChannelUrl)
+      expect(mockCreateQuery).toHaveBeenCalledWith({
+        limit: 1,
+        includeEmpty: true,
+        channelUrlsFilter: [mockChannelUrl],
+      })
+      expect(mockNext).toHaveBeenCalledTimes(1)
       expect(mockUpdateChannel).toHaveBeenCalledWith({
         name: 'newname',
       })
@@ -177,10 +190,13 @@ describe('Sendbird Channel Service', () => {
 
     // 채널을 찾을 수 없을 때 에러를 던져야 함
     it('should throw error when channel is not found', async () => {
-      const mockGetChannel = jest.fn().mockRejectedValue(new Error('Channel not found'))
+      const mockNext = jest.fn().mockResolvedValue([]) // 빈 배열 반환 (채널 없음)
+      const mockCreateQuery = jest.fn().mockReturnValue({
+        next: mockNext,
+      })
       mockGetSendbirdInstance.mockReturnValue({
         groupChannel: {
-          getChannel: mockGetChannel,
+          createMyGroupChannelListQuery: mockCreateQuery,
         },
       } as any)
       mockGenerateRandomName.mockReturnValue('newname')
@@ -191,12 +207,20 @@ describe('Sendbird Channel Service', () => {
     // 채널 업데이트가 실패할 때 에러를 던져야 함
     it('should throw error when channel update fails', async () => {
       const mockUpdateChannel = jest.fn().mockRejectedValue(new Error('Update failed'))
-      const mockGetChannel = jest.fn().mockResolvedValue({
-        updateChannel: mockUpdateChannel,
+      const mockNext = jest.fn().mockResolvedValue([
+        {
+          url: 'test-channel-url',
+          name: 'oldname',
+          createdAt: 1234567890000,
+          updateChannel: mockUpdateChannel,
+        },
+      ])
+      const mockCreateQuery = jest.fn().mockReturnValue({
+        next: mockNext,
       })
       mockGetSendbirdInstance.mockReturnValue({
         groupChannel: {
-          getChannel: mockGetChannel,
+          createMyGroupChannelListQuery: mockCreateQuery,
         },
       } as any)
       mockGenerateRandomName.mockReturnValue('newname')
@@ -212,12 +236,20 @@ describe('Sendbird Channel Service', () => {
         data: '{"description":"test"}',
       }
       const mockUpdateChannel = jest.fn().mockResolvedValue(mockChannelWithData)
-      const mockGetChannel = jest.fn().mockResolvedValue({
-        updateChannel: mockUpdateChannel,
+      const mockNext = jest.fn().mockResolvedValue([
+        {
+          url: 'test-channel-url',
+          name: 'oldname',
+          createdAt: 1234567890000,
+          updateChannel: mockUpdateChannel,
+        },
+      ])
+      const mockCreateQuery = jest.fn().mockReturnValue({
+        next: mockNext,
       })
       mockGetSendbirdInstance.mockReturnValue({
         groupChannel: {
-          getChannel: mockGetChannel,
+          createMyGroupChannelListQuery: mockCreateQuery,
         },
       } as any)
       mockGenerateRandomName.mockReturnValue('newname')
@@ -231,12 +263,20 @@ describe('Sendbird Channel Service', () => {
     // 매번 다른 랜덤 이름으로 업데이트해야 함
     it('should generate different random names on multiple calls', async () => {
       const mockUpdateChannel = jest.fn().mockResolvedValue(mockUpdatedChannel)
-      const mockGetChannel = jest.fn().mockResolvedValue({
-        updateChannel: mockUpdateChannel,
+      const mockNext = jest.fn().mockResolvedValue([
+        {
+          url: 'test-channel-url',
+          name: 'oldname',
+          createdAt: 1234567890000,
+          updateChannel: mockUpdateChannel,
+        },
+      ])
+      const mockCreateQuery = jest.fn().mockReturnValue({
+        next: mockNext,
       })
       mockGetSendbirdInstance.mockReturnValue({
         groupChannel: {
-          getChannel: mockGetChannel,
+          createMyGroupChannelListQuery: mockCreateQuery,
         },
       } as any)
 
@@ -253,19 +293,31 @@ describe('Sendbird Channel Service', () => {
     // 채널 URL이 올바르게 전달되어야 함
     it('should pass correct channel URL', async () => {
       const mockUpdateChannel = jest.fn().mockResolvedValue(mockUpdatedChannel)
-      const mockGetChannel = jest.fn().mockResolvedValue({
-        updateChannel: mockUpdateChannel,
+      const mockNext = jest.fn().mockResolvedValue([
+        {
+          url: 'custom-channel-url',
+          name: 'oldname',
+          createdAt: 1234567890000,
+          updateChannel: mockUpdateChannel,
+        },
+      ])
+      const mockCreateQuery = jest.fn().mockReturnValue({
+        next: mockNext,
       })
       mockGetSendbirdInstance.mockReturnValue({
         groupChannel: {
-          getChannel: mockGetChannel,
+          createMyGroupChannelListQuery: mockCreateQuery,
         },
       } as any)
       mockGenerateRandomName.mockReturnValue('newname')
 
       await updateChannel('custom-channel-url')
 
-      expect(mockGetChannel).toHaveBeenCalledWith('custom-channel-url')
+      expect(mockCreateQuery).toHaveBeenCalledWith({
+        limit: 1,
+        includeEmpty: true,
+        channelUrlsFilter: ['custom-channel-url'],
+      })
     })
   })
 })

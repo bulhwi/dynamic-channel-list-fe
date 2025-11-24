@@ -12,6 +12,7 @@ import type {
   GroupChannelListQuery,
   GroupChannelListQueryParams,
 } from '@sendbird/chat/groupChannel'
+import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
 
 export interface GetChannelsOptions {
   /** 한 번에 가져올 채널 수 (기본값: 20) */
@@ -72,7 +73,7 @@ export async function getChannels(options: GetChannelsOptions = {}): Promise<Get
       const params: GroupChannelListQueryParams = {
         limit,
         includeEmpty: true, // 빈 채널도 포함
-        // order는 기본값 사용 (chronological)
+        order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL, // 알파벳순 정렬 (과제 요구사항)
       }
 
       // 쿼리 생성
@@ -179,10 +180,22 @@ export async function updateChannel(channelUrl: string): Promise<Channel> {
   const newRandomName = generateRandomName()
 
   try {
-    // 채널 URL로 채널 가져오기
-    const groupChannel: GroupChannel = await sendbird.groupChannel.getChannel(channelUrl)
+    // getChannel() 대신 channelUrlsFilter를 사용한 쿼리로 채널 조회
+    // (과제 요구사항: getChannel()은 허용되지 않은 함수)
+    const query = sendbird.groupChannel.createMyGroupChannelListQuery({
+      limit: 1, // 하나의 채널만 조회
+      includeEmpty: true,
+      channelUrlsFilter: [channelUrl], // 특정 채널만 필터링
+    })
 
-    // 채널 이름 업데이트
+    const channels: GroupChannel[] = await query.next()
+    const groupChannel = channels[0]
+
+    if (!groupChannel) {
+      throw new Error(`Channel not found: ${channelUrl}`)
+    }
+
+    // 채널 이름 업데이트 (허용된 함수: channel.updateChannel)
     const updatedChannel: GroupChannel = await groupChannel.updateChannel({
       name: newRandomName,
     })
