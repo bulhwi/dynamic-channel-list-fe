@@ -369,14 +369,128 @@ src/
 
 ---
 
+---
+
+### Phase 5: Dead Code 제거
+
+**개발자 (나)**:
+
+```
+readme.md에 userId localStorage 저장 이 부분은 제거 해도 될거 같아
+```
+
+**배경**:
+
+- localStorage userId 저장 기능 롤백 후 README에 아직 TODO로 남아있음
+- Phase 6에서 "⏳ userId localStorage 저장" 항목 불필요
+
+**Claude 보조**:
+
+- README.md에서 localStorage 관련 TODO 제거
+- 커밋 및 푸시 완료
+
+**Commit**: `157bc46` - README 업데이트
+
+---
+
+### Phase 6: API 파일 정리 및 구조 개선
+
+**개발자 (나)**:
+
+```
+그전에 api관련 파일들 정리를 해보자
+현재 channel.service.ts, channels.ts 이 두개 파일에서 사용되는 api 들은 ssr에서 호출되는 규격이지?
+```
+
+**문제점 발견**:
+
+1. **Dead Code 존재**:
+   - `src/services/api/channels.ts` - 사용되지 않는 wrapper layer
+   - `src/_hooks/useChannels.ts` - 어디서도 import되지 않음
+   - `src/__tests__/services/api/channels.test.ts` - 고아 테스트 파일
+
+2. **파일 구조 혼란**:
+   - `channel.service.ts` (216줄) - 3개 API가 단일 파일에 존재
+   - 가독성 저하 및 유지보수 어려움
+
+**해결 방법**:
+
+**Step 1: Dead Code 제거**
+
+```bash
+# 삭제된 파일
+- src/services/api/channels.ts
+- src/_hooks/useChannels.ts
+- src/__tests__/services/api/channels.test.ts
+- 빈 디렉토리: src/services/api/, src/__tests__/services/api/
+```
+
+**Step 2: API 파일 분리**
+
+개발자 제안:
+
+```
+channel.service.ts 이 파일 내에 있는 api들 각각 별도의 파일로 분리해보자
+그래야 가독성이 좋을거 같아.
+service/sendbird/channel/getChannels
+service/sendbird/channel/createChannel
+service/sendbird/channel/updateChannel
+```
+
+**새로운 파일 구조**:
+
+```
+src/services/sendbird/channel/
+├── getChannels.ts      (109줄) - 채널 목록 조회 + 페이지네이션
+├── createChannel.ts    (58줄)  - 랜덤 이름으로 채널 생성
+└── updateChannel.ts    (73줄)  - 채널 이름 업데이트
+```
+
+**Import 경로 변경**:
+
+```typescript
+// Before
+import * as channelService from '@/services/sendbird/channel.service'
+const mockGetChannels = channelService.getChannels as jest.MockedFunction<...>
+
+// After
+import { getChannels } from '@/services/sendbird/channel/getChannels'
+import { createChannel } from '@/services/sendbird/channel/createChannel'
+import { updateChannel } from '@/services/sendbird/channel/updateChannel'
+const mockGetChannels = getChannels as jest.MockedFunction<typeof getChannels>
+```
+
+**영향 받은 파일**:
+
+```
+수정된 파일: 13개
+- 3개 hooks: useChannelList.ts, useCreateChannel.ts, useUpdateChannel.ts
+- 6개 테스트: page.test.tsx, channel.service.test.ts, ChannelList.integration.test.tsx,
+              useChannelList.test.tsx, useCreateChannel.test.tsx, useUpdateChannel.test.tsx
+- 1개 서비스: channel.service.ts → 삭제, 3개 파일로 분리
+```
+
+**테스트 결과**:
+
+```
+✅ Tests:  152/152 passed (1 skipped)
+✅ Build:  Successful
+📦 Bundle: 304 kB (변화 없음)
+```
+
+**커밋**:
+
+- Commit 3: `157bc46` - Dead code 제거
+- Commit 4: `ffd4cc3` - API 파일 분리
+
+---
+
 ## 🔄 다음 단계
 
-현재 리팩토링을 완료하고 다음 개선사항 논의 중:
-
-1. **userId 관리 개선**
-   - 현재: 매 페이지 로드마다 랜덤 userId 생성
-   - 문제: 새로고침 시 이전 채널 사라짐
-   - 개선안: localStorage 또는 고정 userId 사용
+1. **문서 업데이트**
+   - README.md 파일 구조 업데이트 ✅
+   - TECH_SPEC.md 업데이트 (EN/KO)
+   - 세션 문서 업데이트
 
 2. **ESLint 경고 수정** (Issue #41)
    - 36개 ESLint 경고 존재
@@ -390,9 +504,39 @@ src/
 ## 📝 메모
 
 - **개발 주도**: 개발자가 리팩토링 방향 결정, Claude는 구현 보조
-- **점진적 개선**: styled-components 적용 → 버그 수정 → SSR 최적화 순으로 진행
+- **점진적 개선**: styled-components → SSR → Dead code 제거 → API 분리 순으로 진행
 - **테스트 주도**: 모든 변경 후 테스트 통과 확인
 - **문서화**: 커밋 메시지에 상세한 변경사항 기록
+- **가독성 우선**: 단일 파일(216줄) → 3개 파일(58~109줄)로 분리하여 명확성 향상
+
+---
+
+## 📊 전체 작업 통계
+
+### 커밋 이력
+
+1. `571f0cb` - styled-components 마이그레이션 및 무한 렌더링 버그 수정
+2. `131bfc4` - SSR 최적화 (Registry, QueryClient, Server Components)
+3. `157bc46` - Dead code 제거 (channels.ts, useChannels.ts)
+4. `ffd4cc3` - API 파일 분리 (channel.service.ts → 3개 파일)
+
+### 최종 결과
+
+```
+파일 변경: 52개
+추가: +1,344줄
+삭제: -1,686줄
+순 감소: -342줄 (코드 정리 효과)
+```
+
+**개선 효과**:
+
+- ✅ 스타일링 통일 (styled-components)
+- ✅ SSR 완벽 지원 (초기 로딩 최적화)
+- ✅ Dead code 제거 (유지보수성 향상)
+- ✅ API 파일 분리 (가독성 향상)
+- ✅ Single Responsibility 원칙 준수
+- ✅ 명확한 Import 경로
 
 ---
 

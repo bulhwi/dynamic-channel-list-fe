@@ -225,7 +225,10 @@ dynamic-channel-list-fe/
 │   ├── services/                 # 서비스 레이어
 │   │   └── sendbird/             # Sendbird 서비스
 │   │       ├── client.ts         # Sendbird 클라이언트
-│   │       └── channel.service.ts # 채널 서비스
+│   │       └── channel/          # 채널 API
+│   │           ├── getChannels.ts    # 채널 목록 조회
+│   │           ├── createChannel.ts  # 채널 생성
+│   │           └── updateChannel.ts  # 채널 업데이트
 │   ├── mocks/                    # MSW 목업
 │   │   ├── browser.ts            # 브라우저용 MSW
 │   │   ├── handlers.ts           # API 핸들러
