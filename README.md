@@ -208,8 +208,10 @@ dynamic-channel-list-fe/
 │   ├── _styles/                  # 공통 스타일 (private)
 │   │   └── common.style.ts       # 색상, 애니메이션, 믹스인
 │   ├── _hooks/                   # 커스텀 React 훅 (private)
-│   │   ├── useChannels.ts        # 채널 목록 조회 훅
-│   │   └── useCreateChannel.ts   # 채널 생성 훅
+│   │   ├── useChannelList.ts     # 채널 목록 조회 (무한 스크롤)
+│   │   ├── useCreateChannel.ts   # 채널 생성 훅
+│   │   ├── useUpdateChannel.ts   # 채널 업데이트 훅
+│   │   └── useInfiniteScroll.ts  # 무한 스크롤 훅
 │   ├── _lib/                     # 유틸리티 함수 (private)
 │   │   └── utils.ts              # 공통 유틸리티
 │   ├── lib/                      # 공개 라이브러리
@@ -221,8 +223,6 @@ dynamic-channel-list-fe/
 │   │   ├── component.types.ts    # 컴포넌트 props 타입
 │   │   └── index.ts              # 타입 내보내기
 │   ├── services/                 # 서비스 레이어
-│   │   ├── api/                  # API 서비스
-│   │   │   └── channels.ts       # 채널 API
 │   │   └── sendbird/             # Sendbird 서비스
 │   │       ├── client.ts         # Sendbird 클라이언트
 │   │       └── channel.service.ts # 채널 서비스
