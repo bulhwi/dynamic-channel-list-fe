@@ -395,7 +395,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### Phase 6: 마무리 및 최적화 🔄 (17% 완료)
 
 - ✅ styled-components 마이그레이션 및 SSR 최적화
-- ⏳ userId localStorage 저장
 - ⏳ Console.log 제거
 - ⏳ 성능 최적화 (React.memo, useMemo, useCallback)
 - ⏳ ESLint 경고 수정
