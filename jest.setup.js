@@ -45,3 +45,13 @@ jest.mock('@sendbird/chat', () => ({
 jest.mock('@sendbird/chat/groupChannel', () => ({
   GroupChannelModule: jest.fn(),
 }))
+
+// Mock @formkit/auto-animate
+// Returns a ref callback that can be used with DOM elements
+jest.mock('@formkit/auto-animate/react', () => ({
+  useAutoAnimate: jest.fn(() => {
+    const ref = { current: null }
+    const enable = jest.fn()
+    return [ref, enable]
+  }),
+}))

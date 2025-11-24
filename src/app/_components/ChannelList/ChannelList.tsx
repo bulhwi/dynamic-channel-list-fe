@@ -4,11 +4,13 @@
  * 무한 스크롤이 적용된 채널 리스트를 표시합니다
  * React Query useInfiniteQuery + Intersection Observer 사용
  * 클릭 시 채널 이름을 랜덤 문자열로 업데이트합니다
+ * auto-animate로 재배치 애니메이션 제공
  */
 
 'use client'
 
 import { useState } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useChannelList } from '@/_hooks/useChannelList'
 import { useUpdateChannel } from '@/_hooks/useUpdateChannel'
 import { useInfiniteScroll } from '@/_hooks/useInfiniteScroll'
@@ -25,11 +27,27 @@ const ChannelList = () => {
   const { mutate: updateChannel, isPending: isUpdating } = useUpdateChannel()
   const [updatingChannelUrl, setUpdatingChannelUrl] = useState<string | null>(null)
 
+  // auto-animate for smooth re-positioning
+  const [animateRef] = useAutoAnimate<HTMLDivElement>({
+    duration: 400, // 400ms animation duration
+    easing: 'ease-in-out',
+  })
+
   const { containerRef, sentinelRef } = useInfiniteScroll({
     onLoadMore: fetchNextPage,
     isLoading: isFetchingNextPage,
     hasMore: hasNextPage,
   })
+
+  // Callback ref to set both animateRef and containerRef
+  const setRefs = (element: HTMLDivElement | null) => {
+    // Set auto-animate ref (it's always a callback function from useAutoAnimate)
+    if (typeof animateRef === 'function') {
+      animateRef(element)
+    }
+    // Set container ref for IntersectionObserver
+    containerRef.current = element
+  }
 
   const handleChannelClick = (channel: Channel) => {
     setUpdatingChannelUrl(channel.url)
@@ -56,7 +74,7 @@ const ChannelList = () => {
   const sortedChannels = sortChannels(channels)
 
   return (
-    <div ref={containerRef} className={styles.channelList}>
+    <div ref={setRefs} className={styles.channelList}>
       {sortedChannels.map(channel => (
         <ChannelItem
           key={channel.url}
