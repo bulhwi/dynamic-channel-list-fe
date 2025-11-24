@@ -30,7 +30,7 @@ const ChannelItem = memo(({ channel }: ChannelItemProps) => {
   const formattedDate = new Date(channel.createdAt).toLocaleString()
 
   return (
-    <div className={styles['channel-item']}>
+    <div className={styles['channel-item']} data-channel-url={channel.url}>
       <div className={styles.channelInfo}>
         <h3 className={styles.channelName}>{channel.name}</h3>
         <p className={styles.channelUrl}>{channel.url}</p>
