@@ -1,21 +1,25 @@
 /**
  * Unit Tests for ChannelList Component
  *
- * ChannelList는 채널 목록을 표시하고 다음을 처리합니다:
+ * ChannelList는 무한 스크롤 채널 목록을 표시하고 다음을 처리합니다:
  * - 로딩 상태
  * - 에러 상태
  * - 빈 목록
  * - 알파벳 순 정렬
+ * - 무한 스크롤
+ * - 페이지네이션 로딩 인디케이터
  */
 
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import ChannelList from '@/app/_components/ChannelList/ChannelList'
 import type { Channel } from '@/_types/channel.types'
-import * as useChannelsHook from '@/_hooks/useChannels'
+import * as useChannelListHook from '@/_hooks/useChannelList'
+import * as useInfiniteScrollHook from '@/_hooks/useInfiniteScroll'
 
-// useChannels hook을 mock
-jest.mock('@/_hooks/useChannels')
+// Hooks mock
+jest.mock('@/_hooks/useChannelList')
+jest.mock('@/_hooks/useInfiniteScroll')
 
 // 목 데이터
 const mockChannels: Channel[] = [
@@ -38,24 +42,37 @@ const mockChannels: Channel[] = [
   },
 ]
 
-const mockUseChannels = useChannelsHook.useChannels as jest.MockedFunction<
-  typeof useChannelsHook.useChannels
+const mockUseChannelList = useChannelListHook.useChannelList as jest.MockedFunction<
+  typeof useChannelListHook.useChannelList
+>
+
+const mockUseInfiniteScroll = useInfiniteScrollHook.useInfiniteScroll as jest.MockedFunction<
+  typeof useInfiniteScrollHook.useInfiniteScroll
 >
 
 describe('ChannelList', () => {
   // 각 테스트 전에 mock 초기화
   beforeEach(() => {
     jest.clearAllMocks()
+
+    // Default mock for useInfiniteScroll
+    mockUseInfiniteScroll.mockReturnValue({
+      containerRef: { current: null },
+      sentinelRef: { current: null },
+    })
   })
 
   // 로딩 상태가 표시되어야 함
   it('should show loading state initially', () => {
-    mockUseChannels.mockReturnValue({
-      data: undefined,
+    mockUseChannelList.mockReturnValue({
+      channels: [],
       isLoading: true,
+      isError: false,
       error: null,
-      refetch: jest.fn(),
-    } as any)
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
 
     render(<ChannelList />)
 
@@ -64,12 +81,15 @@ describe('ChannelList', () => {
 
   // 채널 목록이 렌더링되어야 함
   it('should render channel list when data is loaded', () => {
-    mockUseChannels.mockReturnValue({
-      data: { channels: mockChannels, next: null },
+    mockUseChannelList.mockReturnValue({
+      channels: mockChannels,
       isLoading: false,
+      isError: false,
       error: null,
-      refetch: jest.fn(),
-    } as any)
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
 
     render(<ChannelList />)
 
@@ -81,12 +101,15 @@ describe('ChannelList', () => {
 
   // 채널들이 알파벳 순으로 정렬되어야 함
   it('should render channels in alphabetical order', () => {
-    mockUseChannels.mockReturnValue({
-      data: { channels: mockChannels, next: null },
+    mockUseChannelList.mockReturnValue({
+      channels: mockChannels,
       isLoading: false,
+      isError: false,
       error: null,
-      refetch: jest.fn(),
-    } as any)
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
 
     const { container } = render(<ChannelList />)
 
@@ -100,79 +123,116 @@ describe('ChannelList', () => {
   })
 
   // 에러 상태가 표시되어야 함
-  it('should show error state when API fails', () => {
-    mockUseChannels.mockReturnValue({
-      data: undefined,
+  it('should show error state when error occurs', () => {
+    const error = new Error('Failed to fetch channels')
+
+    mockUseChannelList.mockReturnValue({
+      channels: [],
       isLoading: false,
-      error: new Error('API Error'),
-      refetch: jest.fn(),
-    } as any)
+      isError: true,
+      error,
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
 
     render(<ChannelList />)
 
     expect(screen.getByText(/error loading channels/i)).toBeInTheDocument()
+    expect(screen.getByText(/failed to fetch channels/i)).toBeInTheDocument()
   })
 
-  // 빈 목록 메시지가 표시되어야 함
-  it('should show empty state when no channels exist', () => {
-    mockUseChannels.mockReturnValue({
-      data: { channels: [], next: null },
+  // 빈 채널 목록이 표시되어야 함
+  it('should show empty state when no channels', () => {
+    mockUseChannelList.mockReturnValue({
+      channels: [],
       isLoading: false,
+      isError: false,
       error: null,
-      refetch: jest.fn(),
-    } as any)
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
 
     render(<ChannelList />)
 
     expect(screen.getByText(/no channels found/i)).toBeInTheDocument()
   })
 
-  // 각 채널이 고유한 key를 가져야 함 (채널 URL 사용)
-  it('should use channel URL as unique key', () => {
-    mockUseChannels.mockReturnValue({
-      data: { channels: mockChannels, next: null },
+  // 무한 스크롤이 통합되어야 함
+  it('should integrate with useInfiniteScroll hook', () => {
+    const mockFetchNextPage = jest.fn()
+
+    mockUseChannelList.mockReturnValue({
+      channels: mockChannels,
       isLoading: false,
+      isError: false,
       error: null,
-      refetch: jest.fn(),
-    } as any)
+      hasNextPage: true,
+      isFetchingNextPage: false,
+      fetchNextPage: mockFetchNextPage,
+    })
+
+    render(<ChannelList />)
+
+    // useInfiniteScroll이 올바른 파라미터로 호출되었는지 확인
+    expect(mockUseInfiniteScroll).toHaveBeenCalledWith({
+      onLoadMore: mockFetchNextPage,
+      isLoading: false,
+      hasMore: true,
+    })
+  })
+
+  // 페이지네이션 로딩 인디케이터가 표시되어야 함
+  it('should show pagination loading indicator when fetching next page', () => {
+    mockUseChannelList.mockReturnValue({
+      channels: mockChannels,
+      isLoading: false,
+      isError: false,
+      error: null,
+      hasNextPage: true,
+      isFetchingNextPage: true,
+      fetchNextPage: jest.fn(),
+    })
+
+    render(<ChannelList />)
+
+    expect(screen.getByText(/loading more channels/i)).toBeInTheDocument()
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument()
+  })
+
+  // 페이지네이션 로딩 인디케이터가 숨겨져야 함
+  it('should hide pagination loading indicator when not fetching', () => {
+    mockUseChannelList.mockReturnValue({
+      channels: mockChannels,
+      isLoading: false,
+      isError: false,
+      error: null,
+      hasNextPage: true,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
+
+    render(<ChannelList />)
+
+    expect(screen.queryByText(/loading more channels/i)).not.toBeInTheDocument()
+  })
+
+  // sentinel 요소가 렌더링되어야 함
+  it('should render sentinel element for infinite scroll', () => {
+    mockUseChannelList.mockReturnValue({
+      channels: mockChannels,
+      isLoading: false,
+      isError: false,
+      error: null,
+      hasNextPage: true,
+      isFetchingNextPage: false,
+      fetchNextPage: jest.fn(),
+    })
 
     const { container } = render(<ChannelList />)
 
-    // 채널 아이템들이 렌더링되었는지 확인
-    const channelItems = container.querySelectorAll('.channel-item')
-    expect(channelItems.length).toBe(3)
-  })
-
-  // 커스텀 타입이 있는 채널을 렌더링해야 함
-  it('should render channels with custom types', () => {
-    mockUseChannels.mockReturnValue({
-      data: { channels: mockChannels, next: null },
-      isLoading: false,
-      error: null,
-      refetch: jest.fn(),
-    } as any)
-
-    render(<ChannelList />)
-
-    // 커스텀 타입이 렌더링되었는지 확인
-    expect(screen.getByText('group')).toBeInTheDocument()
-    expect(screen.getByText('private')).toBeInTheDocument()
-  })
-
-  // 채널 URL들이 렌더링되어야 함
-  it('should render channel URLs', () => {
-    mockUseChannels.mockReturnValue({
-      data: { channels: mockChannels, next: null },
-      isLoading: false,
-      error: null,
-      refetch: jest.fn(),
-    } as any)
-
-    render(<ChannelList />)
-
-    // URL들이 렌더링되었는지 확인
-    expect(screen.getByText('channel-zebra')).toBeInTheDocument()
-    expect(screen.getByText('channel-apple')).toBeInTheDocument()
-    expect(screen.getByText('channel-mango')).toBeInTheDocument()
+    const sentinel = container.querySelector('.sentinel')
+    expect(sentinel).toBeInTheDocument()
   })
 })

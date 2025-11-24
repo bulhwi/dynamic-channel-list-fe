@@ -19,6 +19,9 @@ jest.mock('@/services/api/channels')
 const mockCreateChannel = channelService.createChannel as jest.MockedFunction<
   typeof channelService.createChannel
 >
+const mockGetChannels = channelService.getChannels as jest.MockedFunction<
+  typeof channelService.getChannels
+>
 const mockFetchChannels = channelsApi.fetchChannels as jest.MockedFunction<
   typeof channelsApi.fetchChannels
 >
@@ -50,7 +53,13 @@ describe('Home Page Integration', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    // 기본 채널 목록 mock
+    // 기본 채널 목록 mock (useChannelList용)
+    mockGetChannels.mockResolvedValue({
+      channels: mockInitialChannels,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
+    // 기본 채널 목록 mock (fetchChannels는 향후 제거 예정)
     mockFetchChannels.mockResolvedValue({
       channels: mockInitialChannels,
       next: null,
@@ -134,9 +143,15 @@ describe('Home Page Integration', () => {
       expect(screen.getByText('apple')).toBeInTheDocument()
     })
 
-    // 새 채널 생성 시 fetchChannels가 다시 호출될 때 새 채널 포함
+    // 새 채널 생성 시 getChannels가 다시 호출될 때 새 채널 포함
+    const updatedChannels = [...mockInitialChannels, mockNewChannel]
+    mockGetChannels.mockResolvedValue({
+      channels: updatedChannels,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
     mockFetchChannels.mockResolvedValue({
-      channels: [...mockInitialChannels, mockNewChannel],
+      channels: updatedChannels,
       next: null,
     })
 
@@ -167,8 +182,14 @@ describe('Home Page Integration', () => {
     })
 
     // 새 채널 생성 후 목록 업데이트
+    const updatedChannels2 = [...mockInitialChannels, mockNewChannel]
+    mockGetChannels.mockResolvedValue({
+      channels: updatedChannels2,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
     mockFetchChannels.mockResolvedValue({
-      channels: [...mockInitialChannels, mockNewChannel],
+      channels: updatedChannels2,
       next: null,
     })
 
@@ -248,11 +269,17 @@ describe('Home Page Integration', () => {
       name: 'dragon',
       createdAt: Date.now(),
     })
+    const withDragon = [
+      ...mockInitialChannels,
+      { url: 'channel-4', name: 'dragon', createdAt: Date.now() },
+    ]
+    mockGetChannels.mockResolvedValueOnce({
+      channels: withDragon,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
     mockFetchChannels.mockResolvedValueOnce({
-      channels: [
-        ...mockInitialChannels,
-        { url: 'channel-4', name: 'dragon', createdAt: Date.now() },
-      ],
+      channels: withDragon,
       next: null,
     })
 
@@ -269,12 +296,18 @@ describe('Home Page Integration', () => {
       name: 'elephant',
       createdAt: Date.now(),
     })
+    const withElephant = [
+      ...mockInitialChannels,
+      { url: 'channel-4', name: 'dragon', createdAt: Date.now() },
+      { url: 'channel-5', name: 'elephant', createdAt: Date.now() },
+    ]
+    mockGetChannels.mockResolvedValueOnce({
+      channels: withElephant,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
     mockFetchChannels.mockResolvedValueOnce({
-      channels: [
-        ...mockInitialChannels,
-        { url: 'channel-4', name: 'dragon', createdAt: Date.now() },
-        { url: 'channel-5', name: 'elephant', createdAt: Date.now() },
-      ],
+      channels: withElephant,
       next: null,
     })
 
@@ -338,11 +371,17 @@ describe('Home Page Integration', () => {
       name: 'retrychan',
       createdAt: Date.now(),
     })
+    const withRetry = [
+      ...mockInitialChannels,
+      { url: 'retry-channel', name: 'retrychan', createdAt: Date.now() },
+    ]
+    mockGetChannels.mockResolvedValueOnce({
+      channels: withRetry,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
     mockFetchChannels.mockResolvedValueOnce({
-      channels: [
-        ...mockInitialChannels,
-        { url: 'retry-channel', name: 'retrychan', createdAt: Date.now() },
-      ],
+      channels: withRetry,
       next: null,
     })
 
@@ -386,11 +425,17 @@ describe('Home Page Integration', () => {
     })
 
     // 4. 채널 생성 완료
+    const withAvocado = [
+      ...mockInitialChannels,
+      { url: 'new-channel', name: 'avocado', createdAt: Date.now() },
+    ]
+    mockGetChannels.mockResolvedValueOnce({
+      channels: withAvocado,
+      hasMore: false,
+      query: { hasNext: false } as any,
+    })
     mockFetchChannels.mockResolvedValueOnce({
-      channels: [
-        ...mockInitialChannels,
-        { url: 'new-channel', name: 'avocado', createdAt: Date.now() },
-      ],
+      channels: withAvocado,
       next: null,
     })
 
