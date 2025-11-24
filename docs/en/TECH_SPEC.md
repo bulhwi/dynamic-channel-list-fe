@@ -201,7 +201,7 @@ App (page.tsx)
 
 #### 3.2.1 ChannelList Component
 
-**File**: `components/ChannelList/ChannelList.tsx`
+**File**: `app/_components/ChannelList/ChannelList.tsx`
 
 **Responsibilities:**
 
@@ -286,7 +286,7 @@ export function ChannelList({ className }: ChannelListProps) {
 
 #### 3.2.2 ChannelItem Component
 
-**File**: `components/ChannelItem/ChannelItem.tsx`
+**File**: `app/_components/ChannelItem/ChannelItem.tsx`
 
 **Responsibilities:**
 
@@ -385,7 +385,7 @@ export const ChannelItem = memo(function ChannelItem({
 
 #### 3.2.3 CreateChannelButton Component
 
-**File**: `components/CreateChannelButton/CreateChannelButton.tsx`
+**File**: `app/_components/CreateChannelButton/CreateChannelButton.tsx`
 
 **Responsibilities:**
 
@@ -518,7 +518,7 @@ export const queryKeys = {
 
 #### 4.4.1 useChannelList Hook
 
-**File**: `hooks/useChannelList.ts`
+**File**: `_hooks/useChannelList.ts`
 
 ```typescript
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -551,14 +551,14 @@ export function useChannelList(options: UseChannelListOptions = {}) {
 
 #### 4.4.2 useCreateChannel Hook
 
-**File**: `hooks/useCreateChannel.ts`
+**File**: `_hooks/useCreateChannel.ts`
 
 ```typescript
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createChannel } from '@/services/sendbird/channel.service'
 import { queryKeys } from '@/services/api/queryKeys'
 import { sortChannels } from '@/utils/sortChannels'
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 
 interface CreateChannelParams {
   name: string
@@ -591,7 +591,7 @@ export function useCreateChannel(options?: { onSuccess?: (channel: Channel) => v
 
 #### 4.4.3 useUpdateChannel Hook
 
-**File**: `hooks/useUpdateChannel.ts`
+**File**: `_hooks/useUpdateChannel.ts`
 
 ```typescript
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -697,7 +697,7 @@ export function getSendbirdInstance(): SendbirdGroupChat {
 import { getSendbirdInstance } from './client'
 import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
 import type { GroupChannel } from '@sendbird/chat/groupChannel'
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 
 // Transform Sendbird GroupChannel to our Channel type
 function transformChannel(groupChannel: GroupChannel): Channel {
@@ -821,7 +821,7 @@ export async function updateChannel({
 
 **Strategy**: Use CSS transforms for GPU acceleration and optimal performance.
 
-**File**: `components/ChannelItem/ChannelItem.module.css`
+**File**: `app/_components/ChannelItem/ChannelItem.module.css`
 
 ```css
 .item {
@@ -883,7 +883,7 @@ export async function updateChannel({
 
 ### 6.2 Hover Animation State Management
 
-**File**: `hooks/useHoverAnimation.ts`
+**File**: `_hooks/useHoverAnimation.ts`
 
 ```typescript
 import { useState, useCallback } from 'react'
@@ -965,7 +965,7 @@ export function ChannelList() {
 
 ### 7.1 Intersection Observer Approach
 
-**File**: `hooks/useInfiniteScroll.ts`
+**File**: `_hooks/useInfiniteScroll.ts`
 
 ```typescript
 import { useEffect, useRef } from 'react'
@@ -1222,7 +1222,7 @@ __tests__/
 │   ├── utils/
 │   │   ├── generateRandomName.test.ts
 │   │   └── sortChannels.test.ts
-│   ├── hooks/
+│   ├── _hooks/
 │   │   ├── useSendbird.test.ts
 │   │   ├── useChannelList.test.ts
 │   │   └── useHoverAnimation.test.ts
@@ -1232,7 +1232,7 @@ __tests__/
 │   ├── channel-creation-flow.test.tsx
 │   ├── channel-update-flow.test.tsx
 │   └── infinite-scroll-flow.test.tsx
-└── components/
+└── app/_components/
     ├── ChannelItem.test.tsx
     ├── ChannelList.test.tsx
     └── CreateChannelButton.test.tsx
@@ -1257,8 +1257,8 @@ const customJestConfig = {
   },
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
-    'components/**/*.{js,jsx,ts,tsx}',
-    'hooks/**/*.{js,jsx,ts,tsx}',
+    'app/_components/**/*.{js,jsx,ts,tsx}',
+    '_hooks/**/*.{js,jsx,ts,tsx}',
     'services/**/*.{js,jsx,ts,tsx}',
     'utils/**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
@@ -1345,12 +1345,12 @@ describe('generateRandomName', () => {
 })
 ```
 
-**Component Test**: `components/ChannelItem.test.tsx`
+**Component Test**: `app/_components/ChannelItem.test.tsx`
 
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChannelItem } from './ChannelItem';
-import type { Channel } from '@/types/channel.types';
+import type { Channel } from '@/_types/channel.types';
 
 const mockChannel: Channel = {
   url: 'channel-123',
@@ -1427,7 +1427,7 @@ describe('ChannelItem', () => {
 
 ### 10.1 Error Boundary
 
-**File**: `components/ErrorBoundary.tsx`
+**File**: `app/_components/ErrorBoundary.tsx`
 
 ```typescript
 'use client';
@@ -1519,7 +1519,7 @@ export function handleSendbirdError(error: unknown): never {
 
 ### 10.3 User-Facing Error Messages
 
-**File**: `components/ErrorMessage/ErrorMessage.tsx`
+**File**: `app/_components/ErrorMessage/ErrorMessage.tsx`
 
 ```typescript
 interface ErrorMessageProps {
@@ -1788,7 +1788,7 @@ export function generateRandomName(): string {
 **File**: `utils/sortChannels.ts`
 
 ```typescript
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 
 /**
  * Sorts channels alphabetically by name (case-insensitive)

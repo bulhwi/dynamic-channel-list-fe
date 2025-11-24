@@ -302,6 +302,41 @@ propmts/daily 하위 내용은 필요가 없어진거 같은데?? 맞으면 해�
 
 ```
 dynamic-channel-list-fe/
+├── src/
+│   ├── app/
+│   │   ├── _components/          # Private 폴더 (라우팅 제외)
+│   │   │   ├── ChannelItem/
+│   │   │   ├── ChannelList/
+│   │   │   ├── CreateChannelButton/
+│   │   │   ├── ErrorMessage/
+│   │   │   └── LoadingSpinner/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── providers.tsx
+│   ├── _hooks/                   # Private 폴더
+│   │   ├── useChannels.ts
+│   │   └── useCreateChannel.ts
+│   ├── _lib/                     # Private 폴더
+│   │   └── utils.ts
+│   ├── _types/                   # Private 폴더
+│   │   ├── channel.types.ts
+│   │   ├── sendbird.types.ts
+│   │   ├── component.types.ts
+│   │   └── index.ts
+│   ├── services/
+│   │   ├── api/
+│   │   │   └── channels.ts
+│   │   └── sendbird/
+│   │       ├── client.ts
+│   │       └── channel.service.ts
+│   ├── mocks/
+│   │   ├── browser.ts
+│   │   ├── handlers.ts
+│   │   └── server.ts
+│   └── __tests__/
+│       ├── _components/
+│       ├── _hooks/
+│       └── services/
 ├── docs/
 │   ├── en/
 │   │   ├── PRD_EN.md
@@ -313,7 +348,12 @@ dynamic-channel-list-fe/
 │   ├── prompts/
 │   │   ├── sessions/
 │   │   │   ├── 00_PROJECT_INITIALIZATION.md
-│   │   │   └── 01_GITHUB_ISSUES_SETUP.md
+│   │   │   ├── 01_GITHUB_ISSUES_SETUP.md
+│   │   │   ├── 02_DOCUMENTATION_CLEANUP.md
+│   │   │   ├── 03_PROJECT_SETUP.md
+│   │   │   ├── 04_PHASE2_UTILITIES.md
+│   │   │   ├── 05_SERVICES_LAYER.md
+│   │   │   └── 06_PROJECT_RESTRUCTURE.md
 │   │   ├── SESSION_TEMPLATE.md
 │   │   └── README.md
 │   └── _JS__EN__Assignment...pdf
@@ -432,6 +472,9 @@ dynamic-channel-list-fe/
 - **Session 01**: GitHub Issues 설정 (35개 이슈, 6개 마일스톤, 11개 레이블)
 - **Session 02**: 문서 정리 (CLAUDE.md, hooks 설정)
 - **Session 03**: Phase 1 완료 (Issues #1-5 완료)
+- **Session 04**: Phase 2 시작 - 유틸리티 및 Sendbird 클라이언트 (Issues #6-7)
+- **Session 05**: Services Layer - Sendbird 통합 및 컴포넌트 개발 (Issue #8-9)
+- **Session 06**: 프로젝트 구조 리팩토링 - Private 폴더 전환 (components, hooks, types, lib → \_prefix)
 
 ### 🔄 현재 상태
 
@@ -449,12 +492,11 @@ dynamic-channel-list-fe/
 
 ### 📋 예정된 세션
 
-- **Session 04**: Phase 2 - 유틸리티 및 Sendbird 서비스 (Issues #6-8)
-- **Session 05**: Phase 2 - Step 1 컴포넌트 (Issues #9-13)
-- **Session 06**: Phase 3 - Step 2 구현 (Issues #14-19)
-- **Session 07**: Phase 4 - Step 3 구현 (Issues #20-25)
-- **Session 08**: Phase 5 - Step 4 구현 (Issues #26-29)
-- **Session 09**: Phase 6 - 마무리 및 배포 (Issues #30-35)
+- **Session 07**: Phase 2 계속 - Step 1 컴포넌트 완료 (Issues #10-13)
+- **Session 08**: Phase 3 - Step 2 구현 (Issues #14-19)
+- **Session 09**: Phase 4 - Step 3 구현 (Issues #20-25)
+- **Session 10**: Phase 5 - Step 4 구현 (Issues #26-29)
+- **Session 11**: Phase 6 - 마무리 및 배포 (Issues #30-35)
 
 ### 📊 전체 진행률
 
@@ -536,10 +578,10 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ---
 
-**최종 업데이트**: 2025-11-23 22:00
-**상태**: Phase 1 완료 ✅ (5/35 이슈, 14.3%)
-**현재**: Phase 2 시작 준비 완료
-**다음**: 유틸리티 및 Sendbird 서비스 구현 (Issues #6-8)
+**최종 업데이트**: 2025-11-24 11:00
+**상태**: Phase 1 완료 ✅, Phase 2 진행 중 (9/35 이슈, 25.7%)
+**현재**: 프로젝트 구조 리팩토링 완료 (Private 폴더 전환)
+**다음**: Phase 2 계속 - Step 1 컴포넌트 완료 (Issues #10-13)
 
 ---
 

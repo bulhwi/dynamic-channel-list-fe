@@ -355,8 +355,8 @@ Create a ChannelItem component with hover animations following assignment requir
 
 **Files Created:**
 
-- `src/components/ChannelItem/ChannelItem.tsx`
-- `src/components/ChannelItem/ChannelItem.module.css`
+- `src/app/_components/ChannelItem/ChannelItem.tsx`
+- `src/app/_components/ChannelItem/ChannelItem.module.css`
 - `src/__tests__/components/ChannelItem/ChannelItem.test.tsx`
 
 **Commit**: 8c7998a
@@ -484,12 +484,12 @@ Create a ChannelItem component with hover animations following assignment requir
   - `src/services/sendbird/client.ts`
   - `src/services/api/channels.ts`
   - `src/contexts/ChannelListContext.tsx`
-  - `src/components/ChannelList/ChannelList.tsx`
-  - `src/components/ChannelItem/ChannelItem.tsx`
+  - `src/app/_components/ChannelList/ChannelList.tsx`
+  - `src/app/_components/ChannelItem/ChannelItem.tsx`
   - `src/mocks/handlers.ts`
   - `src/mocks/browser.ts`
   - `src/app/providers.tsx`
-  - `src/lib/utils.ts`
+  - `src/_lib/utils.ts`
 - Improved code readability for Korean developers
 - Build successful
 

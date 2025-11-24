@@ -606,7 +606,7 @@ describe('sortChannels', () => {
 
 ### Step 2: TDD Green Phase - Implement Function
 
-**File Modified**: `src/lib/utils.ts`
+**File Modified**: `src/_lib/utils.ts`
 
 **Implementation**:
 
@@ -717,7 +717,7 @@ Time:        0.361 s
 **Coverage Report**:
 
 ```bash
-npm run test:coverage -- src/__tests__/lib/utils.test.ts --collectCoverageFrom="src/lib/utils.ts"
+npm run test:coverage -- src/__tests__/lib/utils.test.ts --collectCoverageFrom="src/_lib/utils.ts"
 ```
 
 **Result**:
@@ -758,7 +758,7 @@ Time:        0.441 s
 **Git Commit**:
 
 ```bash
-git add src/lib/utils.ts src/__tests__/lib/utils.test.ts
+git add src/_lib/utils.ts src/__tests__/lib/utils.test.ts
 git commit -m "feat: implement sortChannels() utility with TDD (Issue #7)"
 ```
 
@@ -771,7 +771,7 @@ git commit -m "feat: implement sortChannels() utility with TDD (Issue #7)"
 
 **Files Modified**:
 
-- `src/lib/utils.ts` (+34 lines - function + JSDoc)
+- `src/_lib/utils.ts` (+34 lines - function + JSDoc)
 - `src/__tests__/lib/utils.test.ts` (+131 lines - 7 tests)
 
 **GitHub Issue Closed**:
@@ -790,7 +790,7 @@ gh issue close 7 --comment "✅ Completed in commit f58aafe..."
 
 **Code**:
 
-- ✅ `src/lib/utils.ts` - Two utility functions (65 lines)
+- ✅ `src/_lib/utils.ts` - Two utility functions (65 lines)
   - generateRandomName() (30 lines)
   - sortChannels() (35 lines including JSDoc)
 - ✅ `src/__tests__/lib/utils.test.ts` - Comprehensive tests (172 lines)
@@ -979,9 +979,9 @@ gh issue close 7 --comment "✅ Completed in commit f58aafe..."
 
 ### Related Files
 
-- `src/lib/utils.ts` - Utility functions implementation
+- `src/_lib/utils.ts` - Utility functions implementation
 - `src/__tests__/lib/utils.test.ts` - Comprehensive test suite
-- `src/types/channel.types.ts` - Channel type definitions
+- `src/_types/channel.types.ts` - Channel type definitions
 
 ---
 
