@@ -7,7 +7,7 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@testing-library/jest-dom'
-import { useCreateChannel } from '@/hooks/useCreateChannel'
+import { useCreateChannel } from '@/_hooks/useCreateChannel'
 import * as channelService from '@/services/sendbird/channel.service'
 
 // Mock channel service

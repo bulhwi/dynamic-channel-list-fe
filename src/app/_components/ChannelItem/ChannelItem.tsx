@@ -6,7 +6,7 @@
  */
 
 import { memo } from 'react'
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 import styles from './ChannelItem.module.css'
 
 export interface ChannelItemProps {

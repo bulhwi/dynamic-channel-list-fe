@@ -5,8 +5,8 @@
  */
 
 import { http, HttpResponse } from 'msw'
-import { generateRandomName, sortChannels } from '@/lib/utils'
-import type { Channel } from '@/types/channel.types'
+import { generateRandomName, sortChannels } from '@/_lib/utils'
+import type { Channel } from '@/_types/channel.types'
 
 /**
  * 랜덤 이름으로 모의 채널 생성

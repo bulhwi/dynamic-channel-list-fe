@@ -4,8 +4,8 @@
  * TDD approach: Write tests first, then implement
  */
 
-import { generateRandomName, sortChannels } from '@/lib/utils'
-import type { Channel } from '@/types/channel.types'
+import { generateRandomName, sortChannels } from '@/_lib/utils'
+import type { Channel } from '@/_types/channel.types'
 
 describe('generateRandomName', () => {
   // 길이가 8인 문자열을 반환해야 함

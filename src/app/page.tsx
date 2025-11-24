@@ -1,8 +1,8 @@
 'use client'
 
-import ChannelList from '@/components/ChannelList/ChannelList'
-import CreateChannelButton from '@/components/CreateChannelButton/CreateChannelButton'
-import { useCreateChannel } from '@/hooks/useCreateChannel'
+import ChannelList from '@/app/_components/ChannelList/ChannelList'
+import CreateChannelButton from '@/app/_components/CreateChannelButton/CreateChannelButton'
+import { useCreateChannel } from '@/_hooks/useCreateChannel'
 
 export default function Home() {
   const { mutate, isPending, error, reset } = useCreateChannel()

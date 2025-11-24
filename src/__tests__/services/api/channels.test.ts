@@ -6,7 +6,7 @@
 
 import '@testing-library/jest-dom'
 import { fetchChannels, createChannel, updateChannel } from '@/services/api/channels'
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 
 // Fetch API mock
 global.fetch = jest.fn()

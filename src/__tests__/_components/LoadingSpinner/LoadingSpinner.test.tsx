@@ -6,7 +6,7 @@
 
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
+import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
 
 describe('LoadingSpinner', () => {
   // 스피너가 렌더링되어야 함

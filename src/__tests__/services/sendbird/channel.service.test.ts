@@ -7,11 +7,11 @@
 import '@testing-library/jest-dom'
 import { createChannel } from '@/services/sendbird/channel.service'
 import { getSendbirdInstance } from '@/services/sendbird/client'
-import { generateRandomName } from '@/lib/utils'
+import { generateRandomName } from '@/_lib/utils'
 
 // Mock dependencies
 jest.mock('@/services/sendbird/client')
-jest.mock('@/lib/utils')
+jest.mock('@/_lib/utils')
 
 const mockGetSendbirdInstance = getSendbirdInstance as jest.MockedFunction<
   typeof getSendbirdInstance

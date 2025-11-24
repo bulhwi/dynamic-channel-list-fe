@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import type { Channel, ChannelListProps } from '@/types'
+ * import type { Channel, ChannelListProps } from '@/_types'
  * ```
  */
 

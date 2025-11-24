@@ -4,7 +4,7 @@
  * 애플리케이션에서 재사용 가능한 유틸리티 함수 모음
  */
 
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 
 /**
  * 8자리 소문자 영문 랜덤 문자열을 생성합니다.

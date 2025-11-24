@@ -6,7 +6,7 @@
 
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import CreateChannelButton from '@/components/CreateChannelButton/CreateChannelButton'
+import CreateChannelButton from '@/app/_components/CreateChannelButton/CreateChannelButton'
 
 describe('CreateChannelButton', () => {
   // 버튼이 렌더링되어야 함

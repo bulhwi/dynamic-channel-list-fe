@@ -7,7 +7,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
-import ErrorMessage from '@/components/ErrorMessage/ErrorMessage'
+import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
 
 describe('ErrorMessage', () => {
   // 에러 메시지가 렌더링되어야 함

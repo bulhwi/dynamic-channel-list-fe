@@ -7,9 +7,9 @@
 
 'use client'
 
-import { useChannels } from '@/hooks/useChannels'
-import ChannelItem from '@/components/ChannelItem/ChannelItem'
-import { sortChannels } from '@/lib/utils'
+import { useChannels } from '@/_hooks/useChannels'
+import ChannelItem from '@/app/_components/ChannelItem/ChannelItem'
+import { sortChannels } from '@/_lib/utils'
 import styles from './ChannelList.module.css'
 
 const ChannelList = () => {

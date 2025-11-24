@@ -10,12 +10,12 @@
 
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import ChannelList from '@/components/ChannelList/ChannelList'
-import type { Channel } from '@/types/channel.types'
-import * as useChannelsHook from '@/hooks/useChannels'
+import ChannelList from '@/app/_components/ChannelList/ChannelList'
+import type { Channel } from '@/_types/channel.types'
+import * as useChannelsHook from '@/_hooks/useChannels'
 
 // useChannels hook을 mock
-jest.mock('@/hooks/useChannels')
+jest.mock('@/_hooks/useChannels')
 
 // 목 데이터
 const mockChannels: Channel[] = [

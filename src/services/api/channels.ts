@@ -4,7 +4,7 @@
  * 채널 작업을 위한 Fetch API 함수들
  */
 
-import type { Channel } from '@/types/channel.types'
+import type { Channel } from '@/_types/channel.types'
 
 export interface ChannelsResponse {
   channels: Channel[]

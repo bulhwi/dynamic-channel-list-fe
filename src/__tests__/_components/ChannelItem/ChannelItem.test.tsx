@@ -6,8 +6,8 @@
 
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import ChannelItem from '@/components/ChannelItem/ChannelItem'
-import type { Channel } from '@/types/channel.types'
+import ChannelItem from '@/app/_components/ChannelItem/ChannelItem'
+import type { Channel } from '@/_types/channel.types'
 
 describe('ChannelItem', () => {
   const mockChannel: Channel = {

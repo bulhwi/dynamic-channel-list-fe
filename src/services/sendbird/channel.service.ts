@@ -5,8 +5,8 @@
  */
 
 import { getSendbirdInstance } from './client'
-import { generateRandomName } from '@/lib/utils'
-import type { Channel } from '@/types/channel.types'
+import { generateRandomName } from '@/_lib/utils'
+import type { Channel } from '@/_types/channel.types'
 import type { GroupChannel } from '@sendbird/chat/groupChannel'
 
 /**

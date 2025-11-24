@@ -5,8 +5,8 @@
  * 로딩 상태와 에러 메시지를 표시합니다.
  */
 
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner'
-import ErrorMessage from '@/components/ErrorMessage/ErrorMessage'
+import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
+import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
 import styles from './CreateChannelButton.module.css'
 
 export interface CreateChannelButtonProps {
