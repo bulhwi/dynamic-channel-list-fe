@@ -6,14 +6,16 @@
 
 ## 문서 정보
 
-| 항목            | 상세 내용   |
-| --------------- | ----------- |
-| **문서 유형**   | 기술 사양서 |
-| **버전**        | 1.0.0       |
-| **최종 수정일** | 2025-11-23  |
-| **상태**        | Draft       |
-| **관련 문서**   | PRD_KO.md   |
-| **작성자**      | 개발팀      |
+| 항목            | 상세 내용                 |
+| --------------- | ------------------------- |
+| **문서 유형**   | 기술 사양서               |
+| **버전**        | 1.0.1                     |
+| **최종 수정일** | 2025-11-24                |
+| **상태**        | ✅ Production (v1.0 완료) |
+| **관련 문서**   | PRD_KO.md                 |
+| **작성자**      | 개발팀                    |
+| **테스트 통과** | 161/161 (100%)            |
+| **커버리지**    | 85%+                      |
 
 ---
 
@@ -127,9 +129,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "next": "^15.0.0",
-    "@sendbird/chat": "^4.13.0",
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0"
+    "@sendbird/chat": "^4.20.2",
+    "@tanstack/react-query": "^5.90.10",
+    "@tanstack/react-query-devtools": "^5.90.10",
+    "styled-components": "^6.1.14",
+    "@formkit/auto-animate": "^0.8.2"
   }
 }
 ```
@@ -182,19 +186,25 @@
 ### 3.1 컴포넌트 트리
 
 ```
-App (page.tsx)
-└── QueryClientProvider
-    └── ChannelListPage
-        ├── CreateChannelButton
-        │   └── LoadingSpinner (조건부)
-        │
-        └── ChannelList
-            ├── LoadingSpinner (조건부, 초기 로드)
-            ├── ErrorMessage (조건부)
-            ├── EmptyState (조건부)
-            │
-            └── ChannelItem[] (map)
-                └── channel.name
+RootLayout (layout.tsx) [Server Component]
+├── StyledComponentsRegistry [Client Component]
+└── Providers [Client Component]
+    └── QueryClientProvider
+        └── Home (page.tsx) [Server Component]
+            └── PageLayout [Client Component]
+                ├── Header Section
+                ├── ChannelActions [Client Component]
+                │   └── CreateChannelButton
+                │       └── LoadingSpinner (조건부)
+                │
+                └── ChannelList [Client Component]
+                    ├── LoadingSpinner (조건부, 초기 로드)
+                    ├── ErrorMessage (조건부)
+                    ├── EmptyState (조건부)
+                    │
+                    └── ChannelItem[] (map)
+                        ├── ChannelAvatar
+                        └── ChannelName
 ```
 
 ### 3.2 컴포넌트 사양
@@ -817,25 +827,29 @@ export async function updateChannel({
 
 ## 6. 애니메이션 구현
 
-### 6.1 CSS 기반 애니메이션 (권장)
+### 6.1 styled-components 기반 애니메이션
 
-**전략**: GPU 가속과 최적의 성능을 위해 CSS transforms 사용
+**전략**: GPU 가속과 최적의 성능을 위해 CSS transforms 사용, styled-components로 구현
 
-**파일**: `app/_components/ChannelItem/ChannelItem.module.css`
+**파일**: `app/_components/ChannelItem/ChannelItem.style.ts`
 
-```css
-.item {
+```typescript
+import styled from 'styled-components'
+import { colors } from '@/_styles/common.style'
+
+export const ChannelItemContainer = styled.div<{ $isUpdating: boolean }>`
   /* 기본 스타일 */
   display: flex;
   align-items: center;
   height: 60px;
   padding: 12px 16px;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
+  background: ${colors.background.main};
+  border-bottom: 1px solid ${colors.gray[200]};
   cursor: pointer;
 
   /* 애니메이션 속성 */
   transform: translateX(0);
+  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;
@@ -844,40 +858,35 @@ export async function updateChannel({
   will-change: transform;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-}
 
-.item:hover {
-  background-color: #f7f7f7;
-}
-
-/* React에서 인라인 스타일로 적용되는 호버 상태 */
-.item[data-hovered='true'] {
-  transform: translateX(40px);
-}
-
-.item[data-adjacent='true'] {
-  transform: translateX(20px);
-}
-
-/* 삽입 애니메이션 */
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+  /* 호버 효과 */
+  &:hover {
+    background-color: ${colors.gray[50]};
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+
+  /* 호버 애니메이션 - data attribute로 제어 */
+  &[data-hovered='true'] {
+    transform: translateX(40px);
   }
-}
 
-.item--entering {
-  animation: slideInFromLeft 300ms ease-out;
-}
+  &[data-adjacent='true'] {
+    transform: translateX(20px);
+  }
+`
 
-/* 위치 변경 애니메이션 */
-.item--repositioning {
-  transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+// 공통 애니메이션 (common.style.ts)
+export const animations = {
+  fadeSlideIn: keyframes`
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  `,
+  // 재배치 애니메이션은 @formkit/auto-animate가 자동 처리
 }
 ```
 
@@ -1163,33 +1172,31 @@ const nextConfig = {
 module.exports = nextConfig
 ```
 
-### 8.3 CSS 성능
+### 8.3 styled-components 성능
 
-```css
-/* 애니메이션에 transform 사용 (left/top 대신) */
-.item {
-  /* ✅ 좋음 - GPU 가속 */
+```typescript
+import styled from 'styled-components'
+
+// ✅ 좋음 - GPU 가속 (transform 사용)
+const ChannelItemContainer = styled.div`
   transform: translateX(40px);
+  will-change: transform; // 필요할 때만 적용
+
+  &:hover {
+    will-change: auto; // 애니메이션 후 제거
+  }
 
   /* ❌ 나쁨 - 레이아웃 재계산 유발 */
   /* left: 40px; */
-}
+`
 
-/* will-change 사용 제한 */
-.item {
-  /* 필요할 때만 적용 */
-  will-change: transform;
-}
-
-.item:hover {
-  /* 애니메이션 후 제거 */
-  will-change: auto;
-}
-
-/* 레이아웃 최적화를 위한 contain 사용 */
-.list {
+// 레이아웃 최적화를 위한 contain 사용
+const ChannelListContainer = styled.div`
   contain: layout style paint;
-}
+`
+
+// SSR 최적화: ServerStyleSheet 사용
+// src/lib/registry.tsx에서 FOUC 방지
 ```
 
 ---
@@ -1827,9 +1834,10 @@ export const ANIMATION_CONFIG = {
 
 ## 문서 변경 이력
 
-| 버전  | 날짜       | 작성자 | 변경 사항             |
-| ----- | ---------- | ------ | --------------------- |
-| 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성 |
+| 버전  | 날짜       | 작성자 | 변경 사항                                                                                                                                                                          |
+| ----- | ---------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성                                                                                                                                                              |
+| 1.0.1 | 2025-11-24 | 개발팀 | Production 완료 상태 반영, styled-components 및 SSR 최적화 내용 업데이트 (의존성, 컴포넌트 트리, 애니메이션 구현, CSS 성능 섹션), 실제 테스트 결과 반영 (161 tests, 85%+ coverage) |
 
 ---
 

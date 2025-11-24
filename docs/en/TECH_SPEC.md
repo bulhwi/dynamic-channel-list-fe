@@ -6,14 +6,16 @@
 
 ## Document Information
 
-| Item                  | Details                 |
-| --------------------- | ----------------------- |
-| **Document Type**     | Technical Specification |
-| **Version**           | 1.0.0                   |
-| **Last Updated**      | 2025-11-23              |
-| **Status**            | Draft                   |
-| **Related Documents** | PRD_EN.md               |
-| **Authors**           | Development Team        |
+| Item                  | Details                       |
+| --------------------- | ----------------------------- |
+| **Document Type**     | Technical Specification       |
+| **Version**           | 1.0.1                         |
+| **Last Updated**      | 2025-11-24                    |
+| **Status**            | ✅ Production (v1.0 Complete) |
+| **Related Documents** | PRD_EN.md                     |
+| **Authors**           | Development Team              |
+| **Tests Passed**      | 161/161 (100%)                |
+| **Coverage**          | 85%+                          |
 
 ---
 
@@ -127,9 +129,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "next": "^15.0.0",
-    "@sendbird/chat": "^4.13.0",
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0"
+    "@sendbird/chat": "^4.20.2",
+    "@tanstack/react-query": "^5.90.10",
+    "@tanstack/react-query-devtools": "^5.90.10",
+    "styled-components": "^6.1.14",
+    "@formkit/auto-animate": "^0.8.2"
   }
 }
 ```
@@ -182,19 +186,25 @@
 ### 3.1 Component Tree
 
 ```
-App (page.tsx)
-└── QueryClientProvider
-    └── ChannelListPage
-        ├── CreateChannelButton
-        │   └── LoadingSpinner (conditional)
-        │
-        └── ChannelList
-            ├── LoadingSpinner (conditional, initial load)
-            ├── ErrorMessage (conditional)
-            ├── EmptyState (conditional)
-            │
-            └── ChannelItem[] (map)
-                └── channel.name
+RootLayout (layout.tsx) [Server Component]
+├── StyledComponentsRegistry [Client Component]
+└── Providers [Client Component]
+    └── QueryClientProvider
+        └── Home (page.tsx) [Server Component]
+            └── PageLayout [Client Component]
+                ├── Header Section
+                ├── ChannelActions [Client Component]
+                │   └── CreateChannelButton
+                │       └── LoadingSpinner (conditional)
+                │
+                └── ChannelList [Client Component]
+                    ├── LoadingSpinner (conditional, initial load)
+                    ├── ErrorMessage (conditional)
+                    ├── EmptyState (conditional)
+                    │
+                    └── ChannelItem[] (map)
+                        ├── ChannelAvatar
+                        └── ChannelName
 ```
 
 ### 3.2 Component Specifications
@@ -817,25 +827,29 @@ export async function updateChannel({
 
 ## 6. Animation Implementation
 
-### 6.1 CSS-Based Animations (Preferred)
+### 6.1 styled-components Based Animations
 
-**Strategy**: Use CSS transforms for GPU acceleration and optimal performance.
+**Strategy**: Use CSS transforms for GPU acceleration and optimal performance, implemented with styled-components.
 
-**File**: `app/_components/ChannelItem/ChannelItem.module.css`
+**File**: `app/_components/ChannelItem/ChannelItem.style.ts`
 
-```css
-.item {
+```typescript
+import styled from 'styled-components'
+import { colors } from '@/_styles/common.style'
+
+export const ChannelItemContainer = styled.div<{ $isUpdating: boolean }>`
   /* Base styles */
   display: flex;
   align-items: center;
   height: 60px;
   padding: 12px 16px;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
+  background: ${colors.background.main};
+  border-bottom: 1px solid ${colors.gray[200]};
   cursor: pointer;
 
   /* Animation properties */
   transform: translateX(0);
+  opacity: ${props => props.$isUpdating ? 0.6 : 1};
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;
@@ -844,27 +858,29 @@ export async function updateChannel({
   will-change: transform;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-}
 
-.item:hover {
-  background-color: #f7f7f7;
-}
-
-/* Hover state applied via inline style from React */
-.item[data-hovered='true'] {
-  transform: translateX(40px);
-}
-
-.item[data-adjacent='true'] {
-  transform: translateX(20px);
-}
-
-/* Insertion animation */
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+  /* Hover effect */
+  &:hover {
+    background-color: ${colors.gray[50]};
   }
+
+  /* Hover animation - controlled via data attributes */
+  &[data-hovered='true'] {
+    transform: translateX(40px);
+  }
+
+  &[data-adjacent='true'] {
+    transform: translateX(20px);
+  }
+`
+
+// Common animations (common.style.ts)
+export const animations = {
+  fadeSlideIn: keyframes`
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1845,9 +1861,10 @@ export const ANIMATION_CONFIG = {
 
 ## Document Change Log
 
-| Version | Date       | Author           | Changes                         |
-| ------- | ---------- | ---------------- | ------------------------------- |
-| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification |
+| Version | Date       | Author           | Changes                                                                                                                                                                                                                                 |
+| ------- | ---------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification                                                                                                                                                                                                         |
+| 1.0.1   | 2025-11-24 | Development Team | Production completion status update, styled-components and SSR optimization content updates (dependencies, component tree, animation implementation, CSS performance section), actual test results reflected (161 tests, 85%+ coverage) |
 
 ---
 
