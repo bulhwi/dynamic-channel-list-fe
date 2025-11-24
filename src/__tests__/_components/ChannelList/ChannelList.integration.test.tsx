@@ -12,17 +12,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@testing-library/jest-dom'
 import ChannelList from '@/app/_components/ChannelList/ChannelList'
 import type { Channel } from '@/_types/channel.types'
-import * as channelService from '@/services/sendbird/channel.service'
+import { getChannels } from '@/services/sendbird/channel/getChannels'
+import { updateChannel } from '@/services/sendbird/channel/updateChannel'
 
 // Mock Sendbird service
-jest.mock('@/services/sendbird/channel.service')
+jest.mock('@/services/sendbird/channel/getChannels')
+jest.mock('@/services/sendbird/channel/updateChannel')
 
-const mockGetChannels = channelService.getChannels as jest.MockedFunction<
-  typeof channelService.getChannels
->
-const mockUpdateChannel = channelService.updateChannel as jest.MockedFunction<
-  typeof channelService.updateChannel
->
+const mockGetChannels = getChannels as jest.MockedFunction<typeof getChannels>
+const mockUpdateChannel = updateChannel as jest.MockedFunction<typeof updateChannel>
 
 // Mock Intersection Observer
 class MockIntersectionObserver implements IntersectionObserver {

@@ -6,7 +6,7 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createChannel } from '@/services/sendbird/channel.service'
+import { createChannel } from '@/services/sendbird/channel/createChannel'
 
 /**
  * 채널 생성 mutation hook

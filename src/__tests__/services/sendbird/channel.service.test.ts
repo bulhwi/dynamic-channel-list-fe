@@ -5,7 +5,8 @@
  */
 
 import '@testing-library/jest-dom'
-import { createChannel, updateChannel } from '@/services/sendbird/channel.service'
+import { createChannel } from '@/services/sendbird/channel/createChannel'
+import { updateChannel } from '@/services/sendbird/channel/updateChannel'
 import { getSendbirdInstance } from '@/services/sendbird/client'
 import { generateRandomName } from '@/_lib/utils'
 

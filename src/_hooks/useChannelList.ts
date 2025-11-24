@@ -5,7 +5,7 @@
  */
 
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getChannels } from '@/services/sendbird/channel.service'
+import { getChannels } from '@/services/sendbird/channel/getChannels'
 import type { Channel } from '@/_types/channel.types'
 import type { GroupChannelListQuery } from '@sendbird/chat/groupChannel'
 

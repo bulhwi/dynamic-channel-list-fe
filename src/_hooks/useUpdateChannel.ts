@@ -6,7 +6,7 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { updateChannel } from '@/services/sendbird/channel.service'
+import { updateChannel } from '@/services/sendbird/channel/updateChannel'
 import type { Channel } from '@/_types/channel.types'
 
 /**

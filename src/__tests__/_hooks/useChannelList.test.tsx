@@ -8,15 +8,13 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@testing-library/jest-dom'
 import { useChannelList } from '@/_hooks/useChannelList'
-import * as channelService from '@/services/sendbird/channel.service'
+import { getChannels } from '@/services/sendbird/channel/getChannels'
 import type { Channel } from '@/_types/channel.types'
 
 // Mock channel service
-jest.mock('@/services/sendbird/channel.service')
+jest.mock('@/services/sendbird/channel/getChannels')
 
-const mockGetChannels = channelService.getChannels as jest.MockedFunction<
-  typeof channelService.getChannels
->
+const mockGetChannels = getChannels as jest.MockedFunction<typeof getChannels>
 
 // 테스트용 QueryClient 생성 헬퍼
 function createTestQueryClient() {
