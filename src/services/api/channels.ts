@@ -1,10 +1,11 @@
 /**
  * 채널 API 서비스
  *
- * 채널 작업을 위한 Fetch API 함수들
+ * Sendbird SDK를 사용한 채널 작업을 위한 API 함수들
  */
 
 import type { Channel } from '@/_types/channel.types'
+import { getChannels as getChannelsFromSDK } from '@/services/sendbird/channel.service'
 
 export interface ChannelsResponse {
   channels: Channel[]
@@ -12,16 +13,25 @@ export interface ChannelsResponse {
 }
 
 /**
- * 모든 채널 가져오기
+ * Sendbird SDK를 사용하여 채널 목록을 가져옵니다.
+ *
+ * @returns {Promise<ChannelsResponse>} 채널 목록과 hasMore 플래그
+ * @throws {Error} Sendbird SDK에서 에러 발생 시
  */
 export async function fetchChannels(): Promise<ChannelsResponse> {
-  const response = await fetch('/api/channels')
+  try {
+    // Sendbird SDK에서 채널 가져오기
+    const result = await getChannelsFromSDK({ limit: 20 })
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch channels')
+    return {
+      channels: result.channels,
+      hasMore: result.hasMore,
+    }
+  } catch (error) {
+    // 에러 메시지 개선
+    const message = error instanceof Error ? error.message : 'Failed to fetch channels'
+    throw new Error(message)
   }
-
-  return response.json()
 }
 
 /**

@@ -7,12 +7,21 @@
 import '@testing-library/jest-dom'
 import { fetchChannels, createChannel, updateChannel } from '@/services/api/channels'
 import type { Channel } from '@/_types/channel.types'
+import * as channelService from '@/services/sendbird/channel.service'
 
-// Fetch API mock
+// Mock Sendbird SDK channel service
+jest.mock('@/services/sendbird/channel.service', () => ({
+  getChannels: jest.fn(),
+}))
+
+// Fetch API mock (for createChannel and updateChannel)
 global.fetch = jest.fn()
 
 describe('Channels API Service', () => {
   const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>
+  const mockGetChannels = channelService.getChannels as jest.MockedFunction<
+    typeof channelService.getChannels
+  >
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -38,25 +47,20 @@ describe('Channels API Service', () => {
         hasMore: false,
       }
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response)
+      mockGetChannels.mockResolvedValueOnce(mockResponse)
 
       const result = await fetchChannels()
 
       expect(result).toEqual(mockResponse)
-      expect(mockFetch).toHaveBeenCalledWith('/api/channels')
+      expect(mockGetChannels).toHaveBeenCalledWith({ limit: 20 })
     })
 
-    // API 요청이 실패할 때 에러를 던져야 함
-    it('should throw error when API request fails', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-      } as Response)
+    // SDK 요청이 실패할 때 에러를 던져야 함
+    it('should throw error when SDK request fails', async () => {
+      const error = new Error('Sendbird instance not initialized')
+      mockGetChannels.mockRejectedValueOnce(error)
 
-      await expect(fetchChannels()).rejects.toThrow('Failed to fetch channels')
+      await expect(fetchChannels()).rejects.toThrow('Sendbird instance not initialized')
     })
 
     // 빈 채널 목록을 처리해야 함
@@ -66,10 +70,7 @@ describe('Channels API Service', () => {
         hasMore: false,
       }
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response)
+      mockGetChannels.mockResolvedValueOnce(mockResponse)
 
       const result = await fetchChannels()
 
