@@ -5,6 +5,12 @@
  */
 
 import { AppError, ErrorType } from '@/_types/error.types'
+import {
+  isSendbirdError,
+  getSendbirdErrorMessage,
+  SendbirdClientErrorCode,
+  SendbirdServerErrorCode,
+} from '@/_types/sendbirdError.types'
 
 /**
  * 에러 타입별 사용자 친화적 메시지 매핑
@@ -29,6 +35,64 @@ const USER_FRIENDLY_MESSAGES: Record<ErrorType, string> = {
  */
 function getUserFriendlyMessage(type: ErrorType): string {
   return USER_FRIENDLY_MESSAGES[type]
+}
+
+/**
+ * Sendbird 에러 코드를 ErrorType으로 매핑
+ */
+function mapSendbirdCodeToErrorType(code: number, fallbackType: ErrorType): ErrorType {
+  // Client Errors (800xxx)
+  if (code === SendbirdClientErrorCode.INVALID_INITIALIZATION) {
+    return ErrorType.SENDBIRD_INIT_FAILED
+  }
+  if (
+    code === SendbirdClientErrorCode.CONNECTION_REQUIRED ||
+    code === SendbirdClientErrorCode.CONNECTION_CANCELED ||
+    code === SendbirdClientErrorCode.WEBSOCKET_CONNECTION_CLOSED ||
+    code === SendbirdClientErrorCode.WEBSOCKET_CONNECTION_FAILED
+  ) {
+    return ErrorType.SENDBIRD_CONNECTION_FAILED
+  }
+  if (
+    code === SendbirdClientErrorCode.NETWORK_ERROR ||
+    code === SendbirdClientErrorCode.NETWORK_ROUTING_ERROR
+  ) {
+    return ErrorType.NETWORK_ERROR
+  }
+  if (
+    code === SendbirdClientErrorCode.ACK_TIMEOUT ||
+    code === SendbirdClientErrorCode.LOGIN_TIMEOUT
+  ) {
+    return ErrorType.TIMEOUT_ERROR
+  }
+
+  // Server Errors - Channel Not Found
+  if (
+    code === SendbirdServerErrorCode.RESOURCE_NOT_FOUND ||
+    code === SendbirdServerErrorCode.REQUEST_FAILED_CHANNEL_NOT_FOUND
+  ) {
+    return ErrorType.CHANNEL_NOT_FOUND
+  }
+
+  // Server Errors - Network/Connection
+  if (
+    code === SendbirdServerErrorCode.SERVICE_UNAVAILABLE ||
+    code === SendbirdServerErrorCode.WEBSOCKET_CONNECTION_LIMIT_EXCEEDED ||
+    code === SendbirdServerErrorCode.TOO_MANY_WEBSOCKET_CONNECTIONS
+  ) {
+    return ErrorType.NETWORK_ERROR
+  }
+
+  // Server Errors - Rate Limit
+  if (
+    code === SendbirdServerErrorCode.RATE_LIMIT_EXCEEDED ||
+    code === SendbirdClientErrorCode.MARK_AS_READ_RATE_LIMIT_EXCEEDED
+  ) {
+    return ErrorType.TIMEOUT_ERROR
+  }
+
+  // 그 외는 fallback 타입 사용
+  return fallbackType
 }
 
 /**
@@ -57,9 +121,26 @@ export function toAppError(error: unknown, fallbackType: ErrorType): AppError {
     return error
   }
 
+  // Sendbird 에러 객체인 경우 (공식 에러 코드 사용)
+  if (isSendbirdError(error)) {
+    const errorCode = error.code!
+    const sendbirdMessage = getSendbirdErrorMessage(errorCode)
+    const errorType = mapSendbirdCodeToErrorType(errorCode, fallbackType)
+
+    if (sendbirdMessage) {
+      return new AppError(
+        errorType,
+        sendbirdMessage,
+        error.message || `Sendbird error code: ${errorCode}`,
+        error,
+        errorCode
+      )
+    }
+  }
+
   // Error 객체인 경우
   if (error instanceof Error) {
-    // Sendbird SDK 특정 에러 메시지 파싱
+    // Sendbird SDK 특정 에러 메시지 파싱 (코드가 없는 경우)
     const errorMessage = error.message.toLowerCase()
 
     // 초기화 실패

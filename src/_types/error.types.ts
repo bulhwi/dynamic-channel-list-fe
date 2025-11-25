@@ -37,12 +37,14 @@ export class AppError extends Error {
    * @param userMessage - 사용자에게 보여줄 메시지 (한글)
    * @param technicalMessage - 개발자용 메시지 (영문, 선택)
    * @param originalError - 원본 에러 (디버깅용, 선택)
+   * @param code - Sendbird 에러 코드 (선택)
    */
   constructor(
     public type: ErrorType,
     public userMessage: string,
     public technicalMessage?: string,
-    public originalError?: unknown
+    public originalError?: unknown,
+    public code?: number
   ) {
     super(technicalMessage || userMessage)
     this.name = 'AppError'
@@ -61,6 +63,7 @@ export class AppError extends Error {
     return {
       name: this.name,
       type: this.type,
+      code: this.code,
       userMessage: this.userMessage,
       technicalMessage: this.technicalMessage,
       stack: this.stack,

@@ -127,6 +127,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <p>
                   <strong>Error Type:</strong> {appError ? appError.type : this.state.error.name}
                 </p>
+                {appError?.code && (
+                  <p>
+                    <strong>Sendbird Error Code:</strong> {appError.code}
+                  </p>
+                )}
                 <p>
                   <strong>Technical Message:</strong>{' '}
                   {appError?.technicalMessage || this.state.error.message}

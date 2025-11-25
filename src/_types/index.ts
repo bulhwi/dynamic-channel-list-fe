@@ -42,3 +42,13 @@ export type {
 
 // Error types
 export { ErrorType, AppError } from './error.types'
+
+// Sendbird error codes
+export {
+  SendbirdClientErrorCode,
+  SendbirdServerErrorCode,
+  SENDBIRD_ERROR_MESSAGES,
+  isSendbirdError,
+  getSendbirdErrorMessage,
+} from './sendbirdError.types'
+export type { SendbirdErrorCode, SendbirdErrorObject } from './sendbirdError.types'
