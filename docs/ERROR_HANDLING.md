@@ -403,24 +403,217 @@ throw new AppError(
 
 ## 📊 에러 플로우 다이어그램
 
+### 1️⃣ 전체 에러 처리 시퀀스 다이어그램
+
+서비스에서 에러가 발생했을 때부터 UI에 표시되기까지의 전체 흐름을 보여줍니다.
+
+```mermaid
+sequenceDiagram
+    participant Service as Sendbird Service<br/>(createChannel, getChannels)
+    participant Component as Component<br/>(ChannelList/ChannelActions)
+    participant ErrorUtils as errorUtils.ts<br/>(toAppError, isCriticalError)
+    participant ErrorBoundary as ErrorBoundary<br/>(전체 화면 교체)
+    participant ErrorMessage as ErrorMessage<br/>(인라인 표시)
+    participant User as 사용자
+
+    Service->>Component: ❌ Error 발생<br/>(Sendbird Error or JS Error)
+
+    Note over Component: React Query가<br/>error 상태 반환
+
+    Component->>ErrorUtils: toAppError(error, fallbackType)
+    Note over ErrorUtils: Sendbird 에러 코드 파싱<br/>에러 타입 매핑<br/>사용자 친화적 메시지 생성
+    ErrorUtils-->>Component: AppError 객체 반환
+
+    Component->>ErrorUtils: isCriticalError(appError)
+
+    alt 심각한 에러 (Critical)
+        ErrorUtils-->>Component: true
+        Note over Component: Render phase에서<br/>throw appError
+        Component->>ErrorBoundary: throw appError
+        ErrorBoundary->>User: 🔴 전체 화면 교체<br/>"문제가 발생했습니다"<br/>[다시 시도] [홈으로 이동]
+        User->>ErrorBoundary: "다시 시도" 클릭
+        ErrorBoundary->>Component: reset() 호출
+        Note over Component: 컴포넌트 재렌더링
+    else 복구 가능한 에러 (Recoverable)
+        ErrorUtils-->>Component: false
+        Component->>ErrorMessage: appError.userMessage 전달
+        ErrorMessage->>User: 🟡 인라인 메시지 표시<br/>⚠️ "채널 목록을 불러오지 못했습니다"<br/>[다시 시도]
+        User->>ErrorMessage: "다시 시도" 클릭
+        ErrorMessage->>Component: onRetry() 콜백 실행
+        Component->>Service: 재시도 (refetch/mutate)
+    end
 ```
-에러 발생
-    ↓
-toAppError() 변환
-    ↓
-isCriticalError() 체크
-    ↓
-┌───────────────┬────────────────┐
-│               │                │
-│  Critical     │  Recoverable   │
-│  (심각한 에러) │  (복구 가능)    │
-│               │                │
-↓               ↓                ↓
-throw           ErrorMessage
-    ↓           + 재시도 버튼
-ErrorBoundary
-또는
-error.tsx
+
+---
+
+### 2️⃣ 에러 심각도 판단 플로우차트
+
+`isCriticalError()` 함수의 판단 로직을 상세히 보여줍니다.
+
+```mermaid
+flowchart TD
+    Start([에러 발생]) --> ToAppError[toAppError 변환]
+    ToAppError --> CheckType{ErrorType 체크}
+
+    CheckType -->|SENDBIRD_INIT_FAILED| Critical1[🔴 Critical]
+    CheckType -->|UNKNOWN_ERROR| Critical2[🔴 Critical]
+    CheckType -->|기타| CheckCode{Sendbird<br/>에러 코드<br/>존재?}
+
+    CheckCode -->|Yes| CheckClientCode{Client Code<br/>800100?}
+    CheckCode -->|No| CheckErrorType2{ErrorType<br/>복구 가능?}
+
+    CheckClientCode -->|Yes<br/>800100| Critical3[🔴 Critical<br/>초기화 실패]
+    CheckClientCode -->|No| CheckServerCode{Server Code<br/>체크}
+
+    CheckServerCode -->|400108<br/>인증 실패| Critical4[🔴 Critical]
+    CheckServerCode -->|400303<br/>토큰 무효| Critical5[🔴 Critical]
+    CheckServerCode -->|403100<br/>앱 사용 불가| Critical6[🔴 Critical]
+    CheckServerCode -->|503<br/>서비스 사용 불가| Critical7[🔴 Critical]
+    CheckServerCode -->|900010/40/50/60<br/>권한/앱 문제| Critical8[🔴 Critical]
+    CheckServerCode -->|기타| Recoverable1[🟡 Recoverable]
+
+    CheckErrorType2 -->|NETWORK_ERROR<br/>TIMEOUT_ERROR<br/>CHANNEL_*| Recoverable2[🟡 Recoverable]
+    CheckErrorType2 -->|기타| Recoverable3[🟡 Recoverable<br/>기본값]
+
+    Critical1 --> ThrowError[throw appError]
+    Critical2 --> ThrowError
+    Critical3 --> ThrowError
+    Critical4 --> ThrowError
+    Critical5 --> ThrowError
+    Critical6 --> ThrowError
+    Critical7 --> ThrowError
+    Critical8 --> ThrowError
+
+    ThrowError --> ErrorBoundaryUI[ErrorBoundary<br/>전체 화면 교체]
+
+    Recoverable1 --> ShowMessage[ErrorMessage 표시]
+    Recoverable2 --> ShowMessage
+    Recoverable3 --> ShowMessage
+
+    ShowMessage --> InlineUI[인라인 에러 메시지<br/>+ 재시도 버튼]
+
+    style Critical1 fill:#ff6b6b
+    style Critical2 fill:#ff6b6b
+    style Critical3 fill:#ff6b6b
+    style Critical4 fill:#ff6b6b
+    style Critical5 fill:#ff6b6b
+    style Critical6 fill:#ff6b6b
+    style Critical7 fill:#ff6b6b
+    style Critical8 fill:#ff6b6b
+    style Recoverable1 fill:#ffd93d
+    style Recoverable2 fill:#ffd93d
+    style Recoverable3 fill:#ffd93d
+```
+
+---
+
+### 3️⃣ 컴포넌트 상호작용 다이어그램
+
+컴포넌트들이 에러 유틸리티 및 에러 UI와 어떻게 상호작용하는지 보여줍니다.
+
+```mermaid
+graph TB
+    subgraph Services["🔌 Sendbird Services"]
+        SB1[channelService.ts<br/>getChannels]
+        SB2[channelService.ts<br/>createChannel]
+        SB3[channelService.ts<br/>updateChannel]
+    end
+
+    subgraph Hooks["🪝 React Query Hooks"]
+        Hook1[useChannelList<br/>useInfiniteQuery]
+        Hook2[useCreateChannel<br/>useMutation]
+        Hook3[useUpdateChannel<br/>useMutation]
+    end
+
+    subgraph Components["⚛️ React Components"]
+        Comp1[ChannelList.tsx]
+        Comp2[ChannelActions.tsx<br/>CreateChannelButton]
+    end
+
+    subgraph ErrorUtils["🛠️ Error Utilities"]
+        EU1[errorUtils.ts]
+        EU2[toAppError]
+        EU3[isCriticalError]
+        EU4[isRecoverableError]
+        EU5[logError]
+    end
+
+    subgraph ErrorUI["🎨 Error UI Components"]
+        UI1[ErrorBoundary.tsx<br/>🔴 전체 화면]
+        UI2[ErrorMessage.tsx<br/>🟡 인라인]
+        UI3[error.tsx<br/>Next.js 에러 페이지]
+    end
+
+    SB1 -->|throw Error| Hook1
+    SB2 -->|throw Error| Hook2
+    SB3 -->|throw Error| Hook3
+
+    Hook1 -->|error state| Comp1
+    Hook2 -->|error state| Comp2
+    Hook3 -->|error state| Comp1
+
+    Comp1 -->|toAppError| EU1
+    Comp2 -->|toAppError| EU1
+
+    EU1 --> EU2
+    EU1 --> EU3
+    EU1 --> EU4
+    EU1 --> EU5
+
+    EU3 -->|true<br/>Critical| Comp1
+    EU3 -->|true<br/>Critical| Comp2
+
+    Comp1 -->|throw appError| UI1
+    Comp2 -->|throw appError| UI1
+
+    EU3 -->|false<br/>Recoverable| Comp1
+    EU3 -->|false<br/>Recoverable| Comp2
+
+    Comp1 -->|render| UI2
+    Comp2 -->|render| UI2
+
+    UI1 -->|catch unhandled| UI3
+
+    style SB1 fill:#e3f2fd
+    style SB2 fill:#e3f2fd
+    style SB3 fill:#e3f2fd
+    style Hook1 fill:#f3e5f5
+    style Hook2 fill:#f3e5f5
+    style Hook3 fill:#f3e5f5
+    style Comp1 fill:#e8f5e9
+    style Comp2 fill:#e8f5e9
+    style EU1 fill:#fff3e0
+    style EU2 fill:#fff3e0
+    style EU3 fill:#fff3e0
+    style EU4 fill:#fff3e0
+    style EU5 fill:#fff3e0
+    style UI1 fill:#ffebee
+    style UI2 fill:#fff9c4
+    style UI3 fill:#fce4ec
+```
+
+---
+
+### 4️⃣ 간단한 요약 다이어그램
+
+```mermaid
+flowchart LR
+    Error([에러 발생]) --> Convert[toAppError<br/>변환]
+    Convert --> Check{isCriticalError<br/>체크}
+
+    Check -->|Critical<br/>🔴| Throw[throw appError]
+    Check -->|Recoverable<br/>🟡| Show[ErrorMessage 표시]
+
+    Throw --> EB[ErrorBoundary<br/>전체 화면 교체]
+    Show --> EM[인라인 메시지<br/>+ 재시도 버튼]
+
+    style Error fill:#e0e0e0
+    style Convert fill:#90caf9
+    style Check fill:#fff59d
+    style Throw fill:#ef5350
+    style Show fill:#ffd54f
+    style EB fill:#ff6b6b
+    style EM fill:#ffd93d
 ```
 
 ---
