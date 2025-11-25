@@ -31,6 +31,16 @@ export const Error = styled.div`
   background-color: ${colors.error.light};
 `
 
+export const ErrorContainer = styled(Card)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+`
+
 export const Empty = styled.div`
   padding: 40px 20px;
   text-align: center;

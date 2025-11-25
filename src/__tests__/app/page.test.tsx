@@ -473,11 +473,15 @@ describe('Home Page Integration', () => {
     const button = screen.getByRole('button', { name: /create channel/i })
     await user.click(button)
 
-    // 3. 에러 메시지와 재시도 버튼 확인
-    await waitFor(() => {
-      expect(screen.getByText(/network error/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /다시 시도/i })).toBeInTheDocument()
-    })
+    // 3. 에러 메시지와 재시도 버튼 확인 (사용자 친화적 메시지로 변환됨)
+    await waitFor(
+      () => {
+        expect(screen.getByTestId('error-message')).toBeInTheDocument()
+        expect(screen.getByText(/채널 생성에 실패했습니다/i)).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /다시 시도/i })).toBeInTheDocument()
+      },
+      { timeout: 3000 }
+    )
 
     // 4. 원래 버튼은 여전히 활성화되어 있어야 함
     expect(screen.getByRole('button', { name: /create channel/i })).not.toBeDisabled()

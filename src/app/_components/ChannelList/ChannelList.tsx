@@ -16,7 +16,10 @@ import { useUpdateChannel } from '@/_hooks/useUpdateChannel'
 import { useInfiniteScroll } from '@/_hooks/useInfiniteScroll'
 import ChannelItem from '@/app/_components/ChannelItem/ChannelItem'
 import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
+import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
 import { sortChannels } from '@/_lib/utils'
+import { toAppError, isCriticalError } from '@/_lib/errorUtils'
+import { ErrorType } from '@/_types/error.types'
 import type { Channel } from '@/_types/channel.types'
 import * as S from './ChannelList.style'
 
@@ -63,12 +66,26 @@ const ChannelList = () => {
     })
   }
 
-  if (isLoading) {
-    return <S.Loading>Loading channels...</S.Loading>
+  // 에러 처리: 심각도에 따라 다르게 처리
+  // render phase에서 체크하여 ErrorBoundary로 전달
+  if (error) {
+    const appError = toAppError(error, ErrorType.CHANNEL_FETCH_FAILED)
+
+    // 심각한 에러는 ErrorBoundary로 전달 (throw)
+    if (isCriticalError(appError)) {
+      throw appError
+    }
+
+    // 복구 가능한 에러는 ErrorMessage 표시
+    return (
+      <S.ErrorContainer>
+        <ErrorMessage message={appError.userMessage} onRetry={() => window.location.reload()} />
+      </S.ErrorContainer>
+    )
   }
 
-  if (error) {
-    return <S.Error>Error loading channels: {error.message}</S.Error>
+  if (isLoading) {
+    return <S.Loading>Loading channels...</S.Loading>
   }
 
   if (channels.length === 0) {

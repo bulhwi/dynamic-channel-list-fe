@@ -74,7 +74,10 @@ export default function ErrorTester() {
       </S.Header>
 
       <S.Section>
-        <S.SectionTitle>1. ErrorBoundary 테스트</S.SectionTitle>
+        <S.SectionTitle>1. ErrorBoundary 테스트 (심각한 에러)</S.SectionTitle>
+        <S.Description>
+          심각한 에러는 ErrorBoundary로 전체 화면을 교체합니다. 페이지 새로고침이 필요합니다.
+        </S.Description>
         <S.ButtonGrid>
           <S.TestButton
             onClick={() =>
@@ -82,25 +85,44 @@ export default function ErrorTester() {
                 new AppError(
                   ErrorType.SENDBIRD_INIT_FAILED,
                   '서비스 연결에 실패했습니다.',
-                  'Sendbird initialization failed'
+                  'Sendbird initialization failed',
+                  null,
+                  SendbirdClientErrorCode.INVALID_INITIALIZATION
                 )
               )
             }
           >
-            초기화 실패
+            초기화 실패 (800100)
           </S.TestButton>
           <S.TestButton
             onClick={() =>
               throwError(
                 new AppError(
-                  ErrorType.NETWORK_ERROR,
-                  '네트워크 연결을 확인해주세요.',
-                  'Network connection failed'
+                  ErrorType.CHANNEL_FETCH_FAILED,
+                  '인증에 실패했습니다.',
+                  'Unauthorized request',
+                  null,
+                  SendbirdServerErrorCode.UNAUTHORIZED_REQUEST
                 )
               )
             }
           >
-            네트워크 에러
+            인증 실패 (400108)
+          </S.TestButton>
+          <S.TestButton
+            onClick={() =>
+              throwError(
+                new AppError(
+                  ErrorType.CHANNEL_FETCH_FAILED,
+                  '서비스를 사용할 수 없습니다.',
+                  'Application not available',
+                  null,
+                  SendbirdServerErrorCode.APPLICATION_NOT_AVAILABLE
+                )
+              )
+            }
+          >
+            앱 사용 불가 (403100)
           </S.TestButton>
           <S.TestButton
             onClick={() =>
@@ -119,7 +141,10 @@ export default function ErrorTester() {
       </S.Section>
 
       <S.Section>
-        <S.SectionTitle>2. Sendbird 클라이언트 에러 (800xxx)</S.SectionTitle>
+        <S.SectionTitle>2. 복구 가능한 에러 (Recoverable)</S.SectionTitle>
+        <S.Description>
+          복구 가능한 에러는 ErrorMessage로 인라인 표시되며, 재시도 버튼이 제공됩니다.
+        </S.Description>
         <S.ButtonGrid>
           <S.TestButton
             onClick={() => simulateClientError(SendbirdClientErrorCode.INVALID_INITIALIZATION)}
@@ -153,7 +178,10 @@ export default function ErrorTester() {
       </S.Section>
 
       <S.Section>
-        <S.SectionTitle>3. Sendbird 서버 에러 (400xxx, 500xxx, 900xxx)</S.SectionTitle>
+        <S.SectionTitle>3. 서버 에러 시뮬레이션 (400xxx, 500xxx, 900xxx)</S.SectionTitle>
+        <S.Description>
+          일부 서버 에러는 심각도에 따라 ErrorBoundary 또는 ErrorMessage로 처리됩니다.
+        </S.Description>
         <S.ButtonGrid>
           <S.TestButton
             onClick={() => simulateServerError(SendbirdServerErrorCode.RESOURCE_NOT_FOUND)}
@@ -248,8 +276,12 @@ export default function ErrorTester() {
 
       <S.Footer>
         <S.Note>
-          💡 <strong>Tip:</strong> ErrorBoundary 테스트 버튼은 페이지를 새로고침해야 재시도할 수
-          있습니다. 다른 버튼들은 콘솔에서 결과를 확인할 수 있습니다.
+          💡 <strong>Tip:</strong>
+          <br />- <strong>심각한 에러 (섹션 1)</strong>: ErrorBoundary가 화면 전체를 교체합니다.
+          페이지 새로고침이 필요합니다.
+          <br />- <strong>복구 가능한 에러 (섹션 2, 3)</strong>: 콘솔과 하단 결과 패널에서 확인할 수
+          있습니다.
+          <br />- 실제 앱에서는 ChannelList나 CreateChannelButton에서 에러를 확인할 수 있습니다.
         </S.Note>
       </S.Footer>
     </S.Container>

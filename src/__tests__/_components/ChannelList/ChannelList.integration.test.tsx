@@ -490,11 +490,15 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
       </QueryClientProvider>
     )
 
-    // 에러 메시지 확인
+    // ErrorMessage 컴포넌트가 표시되는지 확인
     await waitFor(() => {
-      expect(screen.getByText(/error loading channels/i)).toBeInTheDocument()
-      expect(screen.getByText(/network error/i)).toBeInTheDocument()
+      expect(screen.getByTestId('error-message')).toBeInTheDocument()
+      // 사용자 친화적 메시지 확인 (toAppError에 의해 변환됨)
+      expect(screen.getByText(/채널 목록을 불러오지 못했습니다/i)).toBeInTheDocument()
     })
+
+    // 재시도 버튼 확인
+    expect(screen.getByText(/다시 시도/i)).toBeInTheDocument()
 
     // getChannels가 호출되었는지 확인
     expect(mockGetChannels).toHaveBeenCalledTimes(1)

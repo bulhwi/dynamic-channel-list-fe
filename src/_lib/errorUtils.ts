@@ -272,3 +272,125 @@ export function logError(error: AppError | Error, context?: string): void {
 export function isAppError(error: unknown): error is AppError {
   return error instanceof AppError
 }
+
+/**
+ * 심각한 에러인지 판단 (Critical Error)
+ *
+ * 심각한 에러는 사용자가 재시도해도 해결되지 않는 에러로,
+ * ErrorBoundary로 전체 화면을 교체해야 합니다.
+ *
+ * @param error - 확인할 에러
+ * @returns 심각한 에러 여부
+ *
+ * @example
+ * ```typescript
+ * if (isCriticalError(appError)) {
+ *   throw appError // ErrorBoundary가 캐치
+ * }
+ * ```
+ */
+export function isCriticalError(error: AppError): boolean {
+  // 에러 타입으로 먼저 판단
+  if (error.type === ErrorType.SENDBIRD_INIT_FAILED || error.type === ErrorType.UNKNOWN_ERROR) {
+    return true
+  }
+
+  // Sendbird 에러 코드가 있는 경우 코드로 판단
+  if (error.code) {
+    // Client Errors - Critical
+    if (error.code === SendbirdClientErrorCode.INVALID_INITIALIZATION) {
+      return true
+    }
+
+    // Server Errors - Critical
+    const criticalServerCodes = [
+      SendbirdServerErrorCode.UNAUTHORIZED_REQUEST, // 400108: 인증 실패
+      SendbirdServerErrorCode.ACCESS_TOKEN_NOT_VALID, // 400303: 토큰 무효
+      SendbirdServerErrorCode.APPLICATION_NOT_AVAILABLE, // 403100: 앱 사용 불가
+      SendbirdServerErrorCode.SERVICE_UNAVAILABLE, // 503: 서비스 사용 불가
+      SendbirdServerErrorCode.REQUEST_FAILED_UNAUTHORIZED, // 900010: 권한 없음
+      SendbirdServerErrorCode.REQUEST_FAILED_UNAPPROVED_APP, // 900040: 승인되지 않은 앱
+      SendbirdServerErrorCode.REQUEST_FAILED_APP_DISABLED, // 900050: 앱 비활성화
+      SendbirdServerErrorCode.REQUEST_FAILED_APP_DELETED, // 900060: 앱 삭제됨
+    ]
+
+    if (criticalServerCodes.includes(error.code)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * 복구 가능한 에러인지 판단 (Recoverable Error)
+ *
+ * 복구 가능한 에러는 사용자가 재시도하면 해결될 수 있는 에러로,
+ * ErrorMessage 컴포넌트로 인라인 표시합니다.
+ *
+ * @param error - 확인할 에러
+ * @returns 복구 가능한 에러 여부
+ *
+ * @example
+ * ```typescript
+ * if (isRecoverableError(appError)) {
+ *   return <ErrorMessage message={appError.userMessage} onRetry={refetch} />
+ * }
+ * ```
+ */
+export function isRecoverableError(error: AppError): boolean {
+  // 심각한 에러는 복구 불가능
+  if (isCriticalError(error)) {
+    return false
+  }
+
+  // 에러 타입으로 판단
+  const recoverableTypes = [
+    ErrorType.NETWORK_ERROR,
+    ErrorType.TIMEOUT_ERROR,
+    ErrorType.CHANNEL_FETCH_FAILED,
+    ErrorType.CHANNEL_CREATE_FAILED,
+    ErrorType.CHANNEL_UPDATE_FAILED,
+    ErrorType.CHANNEL_NOT_FOUND,
+    ErrorType.SENDBIRD_CONNECTION_FAILED,
+  ]
+
+  if (recoverableTypes.includes(error.type)) {
+    return true
+  }
+
+  // Sendbird 에러 코드로 판단
+  if (error.code) {
+    // Client Errors - Recoverable
+    const recoverableClientCodes = [
+      SendbirdClientErrorCode.CONNECTION_REQUIRED, // 800101: 연결 필요
+      SendbirdClientErrorCode.CONNECTION_CANCELED, // 800102: 연결 취소
+      SendbirdClientErrorCode.NETWORK_ERROR, // 800120: 네트워크 에러
+      SendbirdClientErrorCode.NETWORK_ROUTING_ERROR, // 800121: 라우팅 에러
+      SendbirdClientErrorCode.MARK_AS_READ_RATE_LIMIT_EXCEEDED, // 800160: Rate limit
+      SendbirdClientErrorCode.ACK_TIMEOUT, // 800180: ACK 타임아웃
+      SendbirdClientErrorCode.LOGIN_TIMEOUT, // 800190: 로그인 타임아웃
+      SendbirdClientErrorCode.WEBSOCKET_CONNECTION_CLOSED, // 800200: WebSocket 종료
+      SendbirdClientErrorCode.WEBSOCKET_CONNECTION_FAILED, // 800210: WebSocket 실패
+      SendbirdClientErrorCode.REQUEST_FAILED, // 800220: 요청 실패
+    ]
+
+    if (recoverableClientCodes.includes(error.code)) {
+      return true
+    }
+
+    // Server Errors - Recoverable
+    const recoverableServerCodes = [
+      SendbirdServerErrorCode.RESOURCE_NOT_FOUND, // 400201: 리소스 없음
+      SendbirdServerErrorCode.RATE_LIMIT_EXCEEDED, // 500910: Rate limit
+      SendbirdServerErrorCode.REQUEST_FAILED_CHANNEL_NOT_FOUND, // 900200: 채널 없음
+    ]
+
+    if (recoverableServerCodes.includes(error.code)) {
+      return true
+    }
+  }
+
+  // 기타 에러는 복구 가능한 것으로 간주 (안전한 기본값)
+  return true
+}
