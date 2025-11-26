@@ -371,7 +371,7 @@ export function isSendbirdError(error: unknown): error is SendbirdErrorWithCode 
     typeof error === 'object' &&
     error !== null &&
     'code' in error &&
-    typeof (error as SendbirdErrorObject).code === 'number'
+    typeof (error as { code: unknown }).code === 'number'
   )
 }
 
