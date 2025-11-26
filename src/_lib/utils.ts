@@ -4,14 +4,16 @@
  * 애플리케이션에서 재사용 가능한 유틸리티 함수 모음
  */
 
+import { CHANNEL_CONFIG } from '@/_constants/config'
 import type { Channel } from '@/_types/channel.types'
 
 /**
- * 8자리 소문자 영문 랜덤 문자열을 생성합니다.
+ * 소문자 영문 랜덤 문자열을 생성합니다.
  *
  * 사용자 지정 이름이 제공되지 않을 때 랜덤 채널 이름을 생성하는 데 사용됩니다.
+ * 길이는 CHANNEL_CONFIG.RANDOM_NAME_LENGTH로 설정됩니다.
  *
- * @returns {string} 소문자(a-z)만 포함하는 8자 문자열
+ * @returns {string} 소문자(a-z)만 포함하는 문자열
  *
  * @example
  * ```typescript
@@ -23,7 +25,7 @@ export function generateRandomName(): string {
   const letters = 'abcdefghijklmnopqrstuvwxyz'
   let result = ''
 
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < CHANNEL_CONFIG.RANDOM_NAME_LENGTH; i++) {
     const randomIndex = Math.floor(Math.random() * letters.length)
     result += letters[randomIndex]
   }

@@ -20,20 +20,21 @@ import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
 import { sortChannels } from '@/_lib/utils'
 import { toAppError, isCriticalError } from '@/_lib/errorUtils'
 import { ErrorType } from '@/_types/error.types'
+import { CHANNEL_CONFIG, ANIMATION_CONFIG } from '@/_constants/config'
 import type { Channel } from '@/_types/channel.types'
 import * as S from './ChannelList.style'
 
 const ChannelList = () => {
   const { channels, isLoading, error, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useChannelList({ limit: 10 })
+    useChannelList({ limit: CHANNEL_CONFIG.DEFAULT_PAGE_SIZE })
 
   const { mutate: updateChannel, isPending: isUpdating } = useUpdateChannel()
   const [updatingChannelUrl, setUpdatingChannelUrl] = useState<string | null>(null)
 
   // auto-animate for smooth re-positioning
   const [animateRef] = useAutoAnimate<HTMLDivElement>({
-    duration: 400, // 400ms animation duration
-    easing: 'ease-in-out',
+    duration: ANIMATION_CONFIG.DURATION_MS,
+    easing: ANIMATION_CONFIG.EASING,
   })
 
   const { containerRef, sentinelRef } = useInfiniteScroll({

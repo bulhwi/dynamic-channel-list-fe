@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useRef } from 'react'
+import { SCROLL_CONFIG } from '@/_constants/config'
 
 export interface UseInfiniteScrollOptions {
   /** 더 많은 데이터를 로드할 때 호출될 콜백 */
@@ -14,9 +15,9 @@ export interface UseInfiniteScrollOptions {
   isLoading?: boolean
   /** 더 많은 데이터가 있는지 여부 */
   hasMore?: boolean
-  /** Intersection Observer rootMargin (기본값: '100px') */
+  /** Intersection Observer rootMargin (기본값: SCROLL_CONFIG.ROOT_MARGIN) */
   rootMargin?: string
-  /** Intersection Observer threshold (기본값: 1.0) */
+  /** Intersection Observer threshold (기본값: SCROLL_CONFIG.THRESHOLD) */
   threshold?: number
 }
 
@@ -53,8 +54,8 @@ export function useInfiniteScroll({
   onLoadMore,
   isLoading = false,
   hasMore = true,
-  rootMargin = '100px',
-  threshold = 1.0,
+  rootMargin = SCROLL_CONFIG.ROOT_MARGIN,
+  threshold = SCROLL_CONFIG.THRESHOLD,
 }: UseInfiniteScrollOptions): UseInfiniteScrollReturn {
   const containerRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)

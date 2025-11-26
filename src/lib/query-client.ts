@@ -6,6 +6,7 @@
  */
 
 import { QueryClient, defaultShouldDehydrateQuery, isServer } from '@tanstack/react-query'
+import { QUERY_CONFIG } from '@/_constants/config'
 
 /**
  * QueryClient 생성 함수
@@ -17,10 +18,10 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         // SSR에서는 refetch 비활성화
-        staleTime: 60 * 1000, // 1분
+        staleTime: QUERY_CONFIG.STALE_TIME_MS,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
-        retry: 1,
+        retry: QUERY_CONFIG.RETRY_COUNT,
       },
       dehydrate: {
         // dehydrate할 쿼리 결정
