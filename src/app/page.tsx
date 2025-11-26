@@ -10,21 +10,15 @@
 import ChannelList from '@/app/_components/ChannelList/ChannelList'
 import ChannelActions from '@/app/_components/ChannelActions/ChannelActions'
 import PageLayout from '@/app/_components/PageLayout/PageLayout'
-import ErrorTesterWrapper from '@/app/_components/ErrorTester/ErrorTesterWrapper'
 
 export default function Home() {
   return (
-    <>
-      <PageLayout
-        title="Dynamic Channel List"
-        description="Sendbird UIKit implementation with dynamic channel list features"
-        actions={<ChannelActions />}
-      >
-        <ChannelList />
-      </PageLayout>
-
-      {/* 개발 환경에서만 ErrorTester 표시 */}
-      <ErrorTesterWrapper />
-    </>
+    <PageLayout
+      title="Dynamic Channel List"
+      description="Sendbird UIKit implementation with dynamic channel list features"
+      actions={<ChannelActions />}
+    >
+      <ChannelList />
+    </PageLayout>
   )
 }
