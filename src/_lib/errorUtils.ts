@@ -123,8 +123,9 @@ export function toAppError(error: unknown, fallbackType: ErrorType): AppError {
 
   // Sendbird 에러 객체인 경우 (공식 에러 코드 사용)
   if (isSendbirdError(error)) {
-    // isSendbirdError 타입 가드가 error.code가 number임을 보장
-    const errorCode = error.code
+    // isSendbirdError 타입 가드를 통과했으므로 error.code는 반드시 number
+    // TypeScript 컴파일러가 타입을 올바르게 추론하지 못하는 경우를 대비한 명시적 타입 단언
+    const errorCode = error.code as number
     const sendbirdMessage = getSendbirdErrorMessage(errorCode)
     const errorType = mapSendbirdCodeToErrorType(errorCode, fallbackType)
 
