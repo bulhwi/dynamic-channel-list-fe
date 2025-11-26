@@ -354,9 +354,19 @@ export interface SendbirdErrorObject {
 }
 
 /**
- * Sendbird 에러인지 확인하는 타입 가드
+ * code가 반드시 존재하는 Sendbird 에러 타입
+ * isSendbirdError 타입 가드에서 사용
  */
-export function isSendbirdError(error: unknown): error is SendbirdErrorObject {
+export interface SendbirdErrorWithCode {
+  code: number
+  message?: string
+}
+
+/**
+ * Sendbird 에러인지 확인하는 타입 가드
+ * code가 number 타입으로 존재하는 경우에만 true 반환
+ */
+export function isSendbirdError(error: unknown): error is SendbirdErrorWithCode {
   return (
     typeof error === 'object' &&
     error !== null &&
