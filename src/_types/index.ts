@@ -11,24 +11,7 @@
  */
 
 // Channel types
-export type {
-  Channel,
-  ChannelListResponse,
-  CreateChannelParams,
-  UpdateChannelParams,
-  ChannelSortOrder,
-  ChannelFilterOptions,
-} from './channel.types'
-
-// Sendbird types
-export type {
-  SendbirdConfig,
-  SendbirdConnectionParams,
-  SendbirdChannelQuery,
-  SendbirdChannelAdapter,
-  SendbirdError,
-  SendbirdResult,
-} from './sendbird.types'
+export type { Channel } from './channel.types'
 
 // Component types
 export type {
