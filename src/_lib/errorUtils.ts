@@ -140,62 +140,10 @@ export function toAppError(error: unknown, fallbackType: ErrorType): AppError {
     }
   }
 
-  // Error 객체인 경우
+  // Error 객체인 경우 - fallback 타입 사용
+  // Sendbird SDK의 공식 에러는 항상 code를 포함하므로 위에서 처리됨
+  // 여기서는 일반 JavaScript Error만 처리
   if (error instanceof Error) {
-    // Sendbird SDK 특정 에러 메시지 파싱 (코드가 없는 경우)
-    const errorMessage = error.message.toLowerCase()
-
-    // 초기화 실패
-    if (errorMessage.includes('not initialized') || errorMessage.includes('init')) {
-      return new AppError(
-        ErrorType.SENDBIRD_INIT_FAILED,
-        getUserFriendlyMessage(ErrorType.SENDBIRD_INIT_FAILED),
-        error.message,
-        error
-      )
-    }
-
-    // 연결 실패
-    if (errorMessage.includes('connect') || errorMessage.includes('connection')) {
-      return new AppError(
-        ErrorType.SENDBIRD_CONNECTION_FAILED,
-        getUserFriendlyMessage(ErrorType.SENDBIRD_CONNECTION_FAILED),
-        error.message,
-        error
-      )
-    }
-
-    // 네트워크 에러
-    if (errorMessage.includes('network') || errorMessage.includes('fetch failed')) {
-      return new AppError(
-        ErrorType.NETWORK_ERROR,
-        getUserFriendlyMessage(ErrorType.NETWORK_ERROR),
-        error.message,
-        error
-      )
-    }
-
-    // 타임아웃
-    if (errorMessage.includes('timeout') || errorMessage.includes('timed out')) {
-      return new AppError(
-        ErrorType.TIMEOUT_ERROR,
-        getUserFriendlyMessage(ErrorType.TIMEOUT_ERROR),
-        error.message,
-        error
-      )
-    }
-
-    // 채널을 찾을 수 없음
-    if (errorMessage.includes('not found') || errorMessage.includes('channel not found')) {
-      return new AppError(
-        ErrorType.CHANNEL_NOT_FOUND,
-        getUserFriendlyMessage(ErrorType.CHANNEL_NOT_FOUND),
-        error.message,
-        error
-      )
-    }
-
-    // 기타 Error 객체 - fallback 타입 사용
     return new AppError(fallbackType, getUserFriendlyMessage(fallbackType), error.message, error)
   }
 
