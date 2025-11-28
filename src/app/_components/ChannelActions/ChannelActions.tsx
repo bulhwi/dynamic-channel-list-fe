@@ -18,15 +18,12 @@ import { ErrorType } from '@/_types/error.types'
 export default function ChannelActions() {
   const { mutate, isPending, error, reset } = useCreateChannel()
 
+  const appError = error ? toAppError(error, ErrorType.CHANNEL_CREATE_FAILED) : null
+
   // 에러 처리: 심각도에 따라 다르게 처리
   // useEffect가 아닌 render phase에서 체크하여 ErrorBoundary로 전달
-  if (error) {
-    const appError = toAppError(error, ErrorType.CHANNEL_CREATE_FAILED)
-
-    // 심각한 에러는 ErrorBoundary로 전달 (throw)
-    if (isCriticalError(appError)) {
-      throw appError
-    }
+  if (appError && isCriticalError(appError)) {
+    throw appError
   }
 
   // useCallback으로 메모이제이션: 함수 참조가 안정되어 CreateChannelButton 리렌더 방지
@@ -40,16 +37,14 @@ export default function ChannelActions() {
   }, [reset, mutate])
 
   // 복구 가능한 에러만 CreateChannelButton으로 전달
-  const errorMessage = error
-    ? toAppError(error, ErrorType.CHANNEL_CREATE_FAILED).userMessage
-    : undefined
+  const errorMessage = appError?.userMessage
 
   return (
     <CreateChannelButton
       onClick={handleCreateChannel}
       isLoading={isPending}
       error={errorMessage}
-      onRetry={error ? handleRetry : undefined}
+      onRetry={appError ? handleRetry : undefined}
     />
   )
 }
