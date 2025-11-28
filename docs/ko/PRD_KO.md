@@ -484,9 +484,11 @@ graph TB
 
 **스타일링:**
 
-- ✅ styled-components (주 방식) - SSR 지원
-- ✅ @formkit/auto-animate (재배치 애니메이션)
+- ✅ styled-components 6.1.19 (주 방식) - ServerStyleSheet를 통한 SSR 지원
+- ✅ @formkit/auto-animate 0.9.0 (재배치 애니메이션)
 - ✅ CSS Transitions (호버 효과)
+- ❌ CSS Modules (Session 08에서 제거)
+- ❌ Tailwind CSS (Session 08에서 제거)
 
 **테스팅:**
 
@@ -543,80 +545,123 @@ SendbirdChat.init({
 
 ```
 dynamic-channel-list-fe/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx               # 루트 레이아웃
-│   ├── page.tsx                 # 홈 페이지 (채널 리스트)
-│   ├── globals.css              # 전역 스타일
-│   └── providers.tsx            # React Query provider
-│
-├── components/
-│   ├── ChannelList/
-│   │   ├── ChannelList.tsx      # 메인 리스트 컴포넌트
-│   │   ├── ChannelList.test.tsx # 단위 테스트
-│   │   ├── ChannelList.module.css
-│   │   └── index.ts
+├── src/
+│   ├── app/
+│   │   ├── _components/          # Private 폴더 (라우팅 제외)
+│   │   │   ├── ChannelActions/
+│   │   │   │   └── ChannelActions.tsx
+│   │   │   ├── ChannelItem/
+│   │   │   │   ├── ChannelItem.tsx
+│   │   │   │   └── ChannelItem.style.ts        # styled-components
+│   │   │   ├── ChannelList/
+│   │   │   │   ├── ChannelList.tsx
+│   │   │   │   └── ChannelList.style.ts
+│   │   │   ├── CreateChannelButton/
+│   │   │   │   ├── CreateChannelButton.tsx
+│   │   │   │   └── CreateChannelButton.style.ts
+│   │   │   ├── ErrorBoundary/
+│   │   │   │   ├── ErrorBoundary.tsx
+│   │   │   │   └── ErrorBoundary.style.ts
+│   │   │   ├── ErrorMessage/
+│   │   │   │   ├── ErrorMessage.tsx
+│   │   │   │   └── ErrorMessage.style.ts
+│   │   │   ├── LoadingSpinner/
+│   │   │   │   ├── LoadingSpinner.tsx
+│   │   │   │   └── LoadingSpinner.style.ts
+│   │   │   └── PageLayout/
+│   │   │       └── PageLayout.tsx
+│   │   ├── layout.tsx               # 루트 레이아웃
+│   │   ├── page.tsx                 # Server Component (홈 페이지)
+│   │   ├── error.tsx                # Next.js 에러 페이지
+│   │   ├── global-error.tsx         # Next.js 전역 에러 페이지
+│   │   └── providers.tsx            # React Query provider
 │   │
-│   ├── ChannelItem/
-│   │   ├── ChannelItem.tsx      # 개별 항목
-│   │   ├── ChannelItem.test.tsx
-│   │   ├── ChannelItem.module.css
-│   │   └── index.ts
+│   ├── _hooks/                      # Private 폴더
+│   │   ├── useChannelList.ts        # 페이지네이션 채널 리스트
+│   │   ├── useCreateChannel.ts      # 채널 생성 mutation
+│   │   ├── useUpdateChannel.ts      # 채널 업데이트 mutation
+│   │   └── useInfiniteScroll.ts     # Intersection Observer hook
 │   │
-│   ├── CreateChannelButton/
-│   │   ├── CreateChannelButton.tsx
-│   │   ├── CreateChannelButton.test.tsx
-│   │   └── index.ts
+│   ├── _lib/                        # Private 폴더 (유틸리티)
+│   │   ├── utils.ts                 # 헬퍼 함수
+│   │   └── errorUtils.ts            # 에러 처리 유틸리티
 │   │
-│   └── UI/                       # 공유 UI 컴포넌트
-│       ├── LoadingSpinner/
-│       ├── ErrorMessage/
-│       └── EmptyState/
-│
-├── hooks/
-│   ├── useSendbird.ts           # Sendbird 초기화
-│   ├── useSendbird.test.ts
-│   ├── useChannelList.ts        # 채널 CRUD 작업
-│   ├── useChannelList.test.ts
-│   ├── useInfiniteScroll.ts     # 스크롤 감지
-│   └── useHoverAnimation.ts     # 호버 상태 관리
-│
-├── services/
-│   ├── sendbird/
-│   │   ├── client.ts            # SDK 클라이언트 싱글톤
-│   │   ├── channel.service.ts   # 채널 작업
-│   │   └── channel.service.test.ts
+│   ├── _styles/                     # Private 폴더 (styled-components)
+│   │   ├── global.style.ts          # GlobalStyle (createGlobalStyle)
+│   │   └── common.style.ts          # 디자인 토큰, 믹스인, 공통 스타일
 │   │
-│   └── api/
-│       └── queries.ts           # React Query 설정
+│   ├── _types/                      # Private 폴더
+│   │   ├── channel.types.ts         # 채널 인터페이스
+│   │   ├── component.types.ts       # 컴포넌트 prop 타입
+│   │   ├── error.types.ts           # 에러 타입 (AppError 클래스)
+│   │   ├── sendbirdError.types.ts   # Sendbird 에러 코드 & 메시지
+│   │   └── index.ts                 # 타입 exports
+│   │
+│   ├── lib/                         # Public 폴더 (SSR 지원)
+│   │   ├── registry.tsx             # styled-components SSR Registry
+│   │   └── query-client.ts          # QueryClient SSR/CSR 호환
+│   │
+│   ├── services/
+│   │   └── sendbird/
+│   │       ├── client.ts            # SDK 클라이언트 싱글톤
+│   │       └── channel/             # API 분리 (Phase 6)
+│   │           ├── getChannels.ts   # 채널 가져오기
+│   │           ├── createChannel.ts # 채널 생성
+│   │           └── updateChannel.ts # 채널 업데이트
+│   │
+│   ├── mocks/
+│   │   ├── browser.ts               # MSW 브라우저 설정
+│   │   └── handlers.ts              # MSW 핸들러
+│   │
+│   └── __tests__/
+│       ├── _components/
+│       │   ├── ChannelItem/
+│       │   ├── ChannelList/
+│       │   ├── CreateChannelButton/
+│       │   ├── ErrorBoundary/
+│       │   ├── ErrorMessage/
+│       │   └── LoadingSpinner/
+│       ├── _hooks/
+│       ├── _lib/
+│       ├── app/
+│       │   ├── error.test.tsx
+│       │   ├── global-error.test.tsx
+│       │   ├── page.test.tsx
+│       │   └── providers.test.tsx
+│       ├── lib/
+│       └── services/
 │
-├── utils/
-│   ├── generateRandomName.ts    # 8자 문자열 생성기
-│   ├── generateRandomName.test.ts
-│   ├── sortChannels.ts          # 정렬 로직
-│   ├── sortChannels.test.ts
-│   └── constants.ts
+├── docs/                            # 문서
+│   ├── en/
+│   │   ├── PRD_EN.md
+│   │   └── TECH_SPEC.md
+│   ├── ko/
+│   │   ├── PRD_KO.md                # 이 문서
+│   │   ├── TECH_SPEC.md
+│   │   └── REQUIREMENTS.md
+│   ├── prompts/
+│   │   ├── sessions/                # 세션별 문서
+│   │   │   ├── 00_PROJECT_INITIALIZATION.md
+│   │   │   ├── 01_GITHUB_ISSUES_SETUP.md
+│   │   │   ├── 02_DOCUMENTATION_CLEANUP.md
+│   │   │   ├── 03_PROJECT_SETUP.md
+│   │   │   ├── 04_PHASE2_UTILITIES.md
+│   │   │   ├── 05_SERVICES_LAYER.md
+│   │   │   ├── 06_PROJECT_RESTRUCTURE.md
+│   │   │   ├── 07_STEP3_INFINITE_SCROLL.md
+│   │   │   ├── 08_REFACTORING_STYLED_COMPONENTS_SSR.md
+│   │   │   └── 09_PHASE6_COMPLETION.md
+│   │   ├── SESSION_TEMPLATE.md
+│   │   └── README.md
+│   ├── ERROR_HANDLING.md            # 에러 처리 전략
+│   └── _JS__EN__Assignment...pdf    # 원본 과제 문서
 │
-├── types/
-│   ├── channel.types.ts         # 채널 인터페이스
-│   └── sendbird.types.ts        # Sendbird 타입 확장
-│
-├── __tests__/
-│   └── integration/
-│       ├── channel-creation.test.tsx
-│       ├── channel-update.test.tsx
-│       └── infinite-scroll.test.tsx
-│
-├── docs/                         # 문서
-│   ├── PRD_EN.md                # 영문 PRD
-│   ├── PRD_KO.md                # 한글 PRD (이 문서)
-│   ├── TECH_SPEC_EN.md          # 영문 기술 사양
-│   ├── TECH_SPEC_KO.md          # 한글 기술 사양
-│   ├── REQUIREMENTS.md          # 원본 요구사항
-│   └── *.pdf                    # 과제 문서
-│
-├── .env.local.example           # 환경 변수 템플릿
+├── CLAUDE.md                        # AI 사용 문서
+├── README.md
+├── .env.local.example
 ├── .eslintrc.json
 ├── .prettierrc
+├── .gitignore
 ├── jest.config.js
 ├── jest.setup.js
 ├── next.config.js

@@ -450,9 +450,11 @@ So that I can reorganize my channel list
 
 **Styling:**
 
-- ✅ styled-components (primary, with SSR support)
-- ✅ @formkit/auto-animate (repositioning animations)
+- ✅ styled-components 6.1.19 (primary, with SSR support via ServerStyleSheet)
+- ✅ @formkit/auto-animate 0.9.0 (repositioning animations)
 - ✅ CSS Transitions (hover effects)
+- ❌ CSS Modules (removed in Session 08)
+- ❌ Tailwind CSS (removed in Session 08)
 
 **Testing:**
 
@@ -509,80 +511,123 @@ SendbirdChat.init({
 
 ```
 dynamic-channel-list-fe/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx               # Root layout
-│   ├── page.tsx                 # Home page (channel list)
-│   ├── globals.css              # Global styles
-│   └── providers.tsx            # React Query provider
-│
-├── components/
-│   ├── ChannelList/
-│   │   ├── ChannelList.tsx      # Main list component
-│   │   ├── ChannelList.test.tsx # Unit tests
-│   │   ├── ChannelList.module.css
-│   │   └── index.ts
+├── src/
+│   ├── app/
+│   │   ├── _components/          # Private folder (excluded from routing)
+│   │   │   ├── ChannelActions/
+│   │   │   │   └── ChannelActions.tsx
+│   │   │   ├── ChannelItem/
+│   │   │   │   ├── ChannelItem.tsx
+│   │   │   │   └── ChannelItem.style.ts        # styled-components
+│   │   │   ├── ChannelList/
+│   │   │   │   ├── ChannelList.tsx
+│   │   │   │   └── ChannelList.style.ts
+│   │   │   ├── CreateChannelButton/
+│   │   │   │   ├── CreateChannelButton.tsx
+│   │   │   │   └── CreateChannelButton.style.ts
+│   │   │   ├── ErrorBoundary/
+│   │   │   │   ├── ErrorBoundary.tsx
+│   │   │   │   └── ErrorBoundary.style.ts
+│   │   │   ├── ErrorMessage/
+│   │   │   │   ├── ErrorMessage.tsx
+│   │   │   │   └── ErrorMessage.style.ts
+│   │   │   ├── LoadingSpinner/
+│   │   │   │   ├── LoadingSpinner.tsx
+│   │   │   │   └── LoadingSpinner.style.ts
+│   │   │   └── PageLayout/
+│   │   │       └── PageLayout.tsx
+│   │   ├── layout.tsx               # Root layout
+│   │   ├── page.tsx                 # Server Component (home page)
+│   │   ├── error.tsx                # Next.js error page
+│   │   ├── global-error.tsx         # Next.js global error page
+│   │   └── providers.tsx            # React Query provider
 │   │
-│   ├── ChannelItem/
-│   │   ├── ChannelItem.tsx      # Individual item
-│   │   ├── ChannelItem.test.tsx
-│   │   ├── ChannelItem.module.css
-│   │   └── index.ts
+│   ├── _hooks/                      # Private folder
+│   │   ├── useChannelList.ts        # Channel list with pagination
+│   │   ├── useCreateChannel.ts      # Channel creation mutation
+│   │   ├── useUpdateChannel.ts      # Channel update mutation
+│   │   └── useInfiniteScroll.ts     # Intersection Observer hook
 │   │
-│   ├── CreateChannelButton/
-│   │   ├── CreateChannelButton.tsx
-│   │   ├── CreateChannelButton.test.tsx
-│   │   └── index.ts
+│   ├── _lib/                        # Private folder (utilities)
+│   │   ├── utils.ts                 # Helper functions
+│   │   └── errorUtils.ts            # Error handling utilities
 │   │
-│   └── UI/                       # Shared UI components
-│       ├── LoadingSpinner/
-│       ├── ErrorMessage/
-│       └── EmptyState/
-│
-├── hooks/
-│   ├── useSendbird.ts           # Sendbird initialization
-│   ├── useSendbird.test.ts
-│   ├── useChannelList.ts        # Channel CRUD operations
-│   ├── useChannelList.test.ts
-│   ├── useInfiniteScroll.ts     # Scroll detection
-│   └── useHoverAnimation.ts     # Hover state management
-│
-├── services/
-│   ├── sendbird/
-│   │   ├── client.ts            # SDK client singleton
-│   │   ├── channel.service.ts   # Channel operations
-│   │   └── channel.service.test.ts
+│   ├── _styles/                     # Private folder (styled-components)
+│   │   ├── global.style.ts          # GlobalStyle (createGlobalStyle)
+│   │   └── common.style.ts          # Design tokens, mixins, common styles
 │   │
-│   └── api/
-│       └── queries.ts           # React Query configurations
+│   ├── _types/                      # Private folder
+│   │   ├── channel.types.ts         # Channel interfaces
+│   │   ├── component.types.ts       # Component prop types
+│   │   ├── error.types.ts           # Error types (AppError class)
+│   │   ├── sendbirdError.types.ts   # Sendbird error codes & messages
+│   │   └── index.ts                 # Type exports
+│   │
+│   ├── lib/                         # Public folder (SSR support)
+│   │   ├── registry.tsx             # styled-components SSR Registry
+│   │   └── query-client.ts          # QueryClient SSR/CSR compatibility
+│   │
+│   ├── services/
+│   │   └── sendbird/
+│   │       ├── client.ts            # SDK client singleton
+│   │       └── channel/             # API split (Phase 6)
+│   │           ├── getChannels.ts   # Fetch channels
+│   │           ├── createChannel.ts # Create channel
+│   │           └── updateChannel.ts # Update channel
+│   │
+│   ├── mocks/
+│   │   ├── browser.ts               # MSW browser setup
+│   │   └── handlers.ts              # MSW handlers
+│   │
+│   └── __tests__/
+│       ├── _components/
+│       │   ├── ChannelItem/
+│       │   ├── ChannelList/
+│       │   ├── CreateChannelButton/
+│       │   ├── ErrorBoundary/
+│       │   ├── ErrorMessage/
+│       │   └── LoadingSpinner/
+│       ├── _hooks/
+│       ├── _lib/
+│       ├── app/
+│       │   ├── error.test.tsx
+│       │   ├── global-error.test.tsx
+│       │   ├── page.test.tsx
+│       │   └── providers.test.tsx
+│       ├── lib/
+│       └── services/
 │
-├── utils/
-│   ├── generateRandomName.ts    # 8-letter string generator
-│   ├── generateRandomName.test.ts
-│   ├── sortChannels.ts          # Sorting logic
-│   ├── sortChannels.test.ts
-│   └── constants.ts
+├── docs/                            # Documentation
+│   ├── en/
+│   │   ├── PRD_EN.md                # This file
+│   │   └── TECH_SPEC.md
+│   ├── ko/
+│   │   ├── PRD_KO.md
+│   │   ├── TECH_SPEC.md
+│   │   └── REQUIREMENTS.md
+│   ├── prompts/
+│   │   ├── sessions/                # Session-by-session documentation
+│   │   │   ├── 00_PROJECT_INITIALIZATION.md
+│   │   │   ├── 01_GITHUB_ISSUES_SETUP.md
+│   │   │   ├── 02_DOCUMENTATION_CLEANUP.md
+│   │   │   ├── 03_PROJECT_SETUP.md
+│   │   │   ├── 04_PHASE2_UTILITIES.md
+│   │   │   ├── 05_SERVICES_LAYER.md
+│   │   │   ├── 06_PROJECT_RESTRUCTURE.md
+│   │   │   ├── 07_STEP3_INFINITE_SCROLL.md
+│   │   │   ├── 08_REFACTORING_STYLED_COMPONENTS_SSR.md
+│   │   │   └── 09_PHASE6_COMPLETION.md
+│   │   ├── SESSION_TEMPLATE.md
+│   │   └── README.md
+│   ├── ERROR_HANDLING.md            # Error handling strategy
+│   └── _JS__EN__Assignment...pdf    # Original assignment
 │
-├── types/
-│   ├── channel.types.ts         # Channel interfaces
-│   └── sendbird.types.ts        # Sendbird type extensions
-│
-├── __tests__/
-│   └── integration/
-│       ├── channel-creation.test.tsx
-│       ├── channel-update.test.tsx
-│       └── infinite-scroll.test.tsx
-│
-├── docs/                         # Documentation
-│   ├── PRD_EN.md                # This file
-│   ├── PRD_KO.md                # Korean version
-│   ├── TECH_SPEC_EN.md          # Technical specifications
-│   ├── TECH_SPEC_KO.md
-│   ├── REQUIREMENTS.md          # Original requirements
-│   └── *.pdf                    # Assignment document
-│
-├── .env.local.example           # Environment variables template
+├── CLAUDE.md                        # AI usage documentation
+├── README.md
+├── .env.local.example
 ├── .eslintrc.json
 ├── .prettierrc
+├── .gitignore
 ├── jest.config.js
 ├── jest.setup.js
 ├── next.config.js

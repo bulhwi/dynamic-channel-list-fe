@@ -56,14 +56,30 @@
 │  │  │  ┌────────────┐  ┌─────────────────┐   │    │  │
 │  │  │  │ ChannelItem│  │ LoadingSpinner  │   │    │  │
 │  │  │  └────────────┘  └─────────────────┘   │    │  │
+│  │  │  ┌────────────┐  ┌─────────────────┐   │    │  │
+│  │  │  │ErrorBoundary│  │ ErrorMessage   │   │    │  │
+│  │  │  └────────────┘  └─────────────────┘   │    │  │
+│  │  └──────────────────────────────────────────┘    │  │
+│  │                       ↕                           │  │
+│  │  ┌──────────────────────────────────────────┐    │  │
+│  │  │      styled-components Layer             │    │  │
+│  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
+│  │  │  │ *.style.ts │  │ common.style.ts │    │    │  │
+│  │  │  │ (per comp.)│  │ (design tokens) │    │    │  │
+│  │  │  └────────────┘  └─────────────────┘    │    │  │
 │  │  └──────────────────────────────────────────┘    │  │
 │  │                       ↕                           │  │
 │  │  ┌──────────────────────────────────────────┐    │  │
 │  │  │         Business Logic Layer             │    │  │
 │  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
 │  │  │  │   Hooks    │  │  Services       │    │    │  │
-│  │  │  │  - useChannel  │  - channel.service│ │    │  │
-│  │  │  │  - useSendbird │  - client.ts    │   │    │  │
+│  │  │  │  (_hooks/) │  │  (services/)    │    │    │  │
+│  │  │  │- useChannel│  │  - getChannels  │    │    │  │
+│  │  │  │  List      │  │  - createChannel│    │    │  │
+│  │  │  │- useCreate │  │  - updateChannel│    │    │  │
+│  │  │  │- useUpdate │  │  - client.ts    │    │    │  │
+│  │  │  │- useInfinite│ │                 │    │    │  │
+│  │  │  │  Scroll    │  │                 │    │    │  │
 │  │  │  └────────────┘  └─────────────────┘    │    │  │
 │  │  └──────────────────────────────────────────┘    │  │
 │  │                       ↕                           │  │
@@ -71,8 +87,16 @@
 │  │  │         Data Layer (React Query)         │    │  │
 │  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
 │  │  │  │   Queries  │  │   Mutations     │    │    │  │
-│  │  │  │  - fetch   │  │   - create      │    │    │  │
-│  │  │  │  - infinite│  │   - update      │    │    │  │
+│  │  │  │  - infinite│  │   - create      │    │    │  │
+│  │  │  │    Query   │  │   - update      │    │    │  │
+│  │  │  └────────────┘  └─────────────────┘    │    │  │
+│  │  └──────────────────────────────────────────┘    │  │
+│  │                       ↕                           │  │
+│  │  ┌──────────────────────────────────────────┐    │  │
+│  │  │         SSR Support Layer                │    │  │
+│  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
+│  │  │  │ registry.tsx│  │query-client.ts │    │    │  │
+│  │  │  │ (styled-c.)│  │  (SSR/CSR)     │    │    │  │
 │  │  │  └────────────┘  └─────────────────┘    │    │  │
 │  │  └──────────────────────────────────────────┘    │  │
 │  └───────────────────────────────────────────────────┘  │
@@ -96,25 +120,42 @@
 **Presentation Layer**
 
 - Responsible for: UI rendering, user interactions, animations
-- Technologies: React components, CSS Modules
+- Technologies: React components (app/\_components/), ErrorBoundary
 - Communication: Consumes hooks from Business Logic Layer
+
+**styled-components Layer** (Session 08)
+
+- Responsible for: Component styling, design tokens, SSR styling
+- Technologies: styled-components 6.1.19, \*.style.ts files per component
+- Location: \_styles/common.style.ts (design tokens), \_styles/global.style.ts (GlobalStyle)
+- Communication: Consumed by Presentation Layer components
 
 **Business Logic Layer**
 
 - Responsible for: Business rules, data transformation, state management
-- Technologies: Custom React hooks, service classes
+- Technologies: Custom React hooks (\_hooks/), service functions (services/)
+- Location: \_hooks/ (private), services/sendbird/channel/ (API split)
 - Communication: Uses React Query for data fetching
 
 **Data Layer**
 
 - Responsible for: Server state management, caching, synchronization
-- Technologies: React Query (TanStack Query)
-- Communication: Communicates with Sendbird SDK
+- Technologies: React Query (TanStack Query v5)
+- Location: QueryClientProvider in app/providers.tsx
+- Communication: Communicates with Sendbird SDK via service layer
+
+**SSR Support Layer** (Session 08)
+
+- Responsible for: Server-side rendering optimization
+- Technologies: styled-components SSR Registry, QueryClient SSR/CSR compatibility
+- Location: lib/registry.tsx, lib/query-client.ts
+- Communication: Wraps application in layout.tsx
 
 **External Integration Layer**
 
 - Responsible for: Sendbird SDK integration
-- Technologies: @sendbird/chat SDK
+- Technologies: @sendbird/chat SDK v4.20.2
+- Location: services/sendbird/client.ts
 - Communication: REST API / WebSocket
 
 ---
@@ -132,8 +173,18 @@
     "@sendbird/chat": "^4.20.2",
     "@tanstack/react-query": "^5.90.10",
     "@tanstack/react-query-devtools": "^5.90.10",
-    "styled-components": "^6.1.14",
-    "@formkit/auto-animate": "^0.8.2"
+    "styled-components": "6.1.19",
+    "@formkit/auto-animate": "0.9.0"
+  },
+  "notes": {
+    "removed": [
+      "tailwindcss (Session 08 - CSS Modules and Tailwind removed in favor of styled-components)",
+      "CSS Modules (Session 08 - replaced with styled-components *.style.ts files)"
+    ],
+    "added": [
+      "styled-components 6.1.19 (Session 08 - with SSR support)",
+      "@formkit/auto-animate 0.9.0 (Step 4 - repositioning animations)"
+    ]
   }
 }
 ```
@@ -362,33 +413,38 @@ export const ChannelItem = memo(function ChannelItem({
 });
 ```
 
-**CSS Module** (`ChannelItem.module.css`):
+**styled-components Styling** (`ChannelItem.style.ts`):
 
-```css
-.item {
+```typescript
+import styled from 'styled-components'
+import { colors } from '@/_styles/common.style'
+
+export const ChannelItemContainer = styled.div<{ $isUpdating: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 60px;
   padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
+  border-bottom: 1px solid ${colors.gray[200]};
+  background: ${colors.background.main};
   cursor: pointer;
+  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
+
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;
-}
 
-.item:hover {
-  background-color: #f5f5f5;
-}
+  &:hover {
+    background-color: ${colors.gray[50]};
+  }
+`
 
-.name {
+export const ChannelName = styled.span`
   font-size: 16px;
   font-weight: 500;
-  color: #333;
+  color: ${colors.text.primary};
   user-select: none;
-}
+`
 ```
 
 ---
@@ -699,12 +755,16 @@ export function getSendbirdInstance(): SendbirdGroupChat {
 }
 ```
 
-### 5.2 Channel Service
+### 5.2 Channel Service (Phase 6: Split into 3 files)
 
-**File**: `services/sendbird/channel.service.ts`
+The channel service was split from a single `channel.service.ts` file into three separate files for better modularity:
+
+#### 5.2.1 Get Channels Service
+
+**File**: `services/sendbird/channel/getChannels.ts`
 
 ```typescript
-import { getSendbirdInstance } from './client'
+import { getSendbirdInstance } from '../client'
 import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
 import type { GroupChannel } from '@sendbird/chat/groupChannel'
 import type { Channel } from '@/_types/channel.types'
@@ -720,12 +780,12 @@ function transformChannel(groupChannel: GroupChannel): Channel {
   }
 }
 
-interface FetchChannelsParams {
+interface GetChannelsParams {
   limit: number
   token?: string
 }
 
-interface FetchChannelsResult {
+interface GetChannelsResult {
   channels: Channel[]
   nextToken?: string
 }
@@ -734,10 +794,7 @@ interface FetchChannelsResult {
  * Fetch channels using Sendbird SDK
  * IMPORTANT: Only allowed SDK function per assignment
  */
-export async function fetchChannels({
-  limit,
-  token,
-}: FetchChannelsParams): Promise<FetchChannelsResult> {
+export async function getChannels({ limit, token }: GetChannelsParams): Promise<GetChannelsResult> {
   const sb = getSendbirdInstance()
 
   const query = sb.groupChannel.createMyGroupChannelListQuery({
@@ -767,6 +824,27 @@ export async function fetchChannels({
     throw error
   }
 }
+```
+
+#### 5.2.2 Create Channel Service
+
+**File**: `services/sendbird/channel/createChannel.ts`
+
+```typescript
+import { getSendbirdInstance } from '../client'
+import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import type { Channel } from '@/_types/channel.types'
+
+// Transform Sendbird GroupChannel to our Channel type
+function transformChannel(groupChannel: GroupChannel): Channel {
+  return {
+    url: groupChannel.url,
+    name: groupChannel.name,
+    createdAt: groupChannel.createdAt,
+    customType: groupChannel.customType,
+    data: groupChannel.data,
+  }
+}
 
 interface CreateChannelParams {
   name: string
@@ -791,6 +869,27 @@ export async function createChannel({ name }: CreateChannelParams): Promise<Chan
   } catch (error) {
     console.error('Failed to create channel:', error)
     throw error
+  }
+}
+```
+
+#### 5.2.3 Update Channel Service
+
+**File**: `services/sendbird/channel/updateChannel.ts`
+
+```typescript
+import { getSendbirdInstance } from '../client'
+import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import type { Channel } from '@/_types/channel.types'
+
+// Transform Sendbird GroupChannel to our Channel type
+function transformChannel(groupChannel: GroupChannel): Channel {
+  return {
+    url: groupChannel.url,
+    name: groupChannel.name,
+    createdAt: groupChannel.createdAt,
+    customType: groupChannel.customType,
+    data: groupChannel.data,
   }
 }
 
@@ -1861,10 +1960,11 @@ export const ANIMATION_CONFIG = {
 
 ## Document Change Log
 
-| Version | Date       | Author           | Changes                                                                                                                                                                                                                                 |
-| ------- | ---------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification                                                                                                                                                                                                         |
-| 1.0.1   | 2025-11-24 | Development Team | Production completion status update, styled-components and SSR optimization content updates (dependencies, component tree, animation implementation, CSS performance section), actual test results reflected (161 tests, 85%+ coverage) |
+| Version | Date       | Author           | Changes                                                                                                                                                                                                                                                  |
+| ------- | ---------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification                                                                                                                                                                                                                          |
+| 1.0.1   | 2025-11-24 | Development Team | Production completion status update, styled-components and SSR optimization content updates (dependencies, component tree, animation implementation, CSS performance section), actual test results reflected (161 tests, 85%+ coverage)                  |
+| 1.0.2   | 2025-11-28 | Development Team | Architecture diagrams updated (Session 06 private folders, Session 08 styled-components, Phase 6 API split), dependencies notes added (removed/added packages), layered architecture expanded with SSR layer, channel service split (3 files) documented |
 
 ---
 

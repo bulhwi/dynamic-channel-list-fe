@@ -56,14 +56,30 @@
 │  │  │  ┌────────────┐  ┌─────────────────┐   │    │  │
 │  │  │  │ ChannelItem│  │ LoadingSpinner  │   │    │  │
 │  │  │  └────────────┘  └─────────────────┘   │    │  │
+│  │  │  ┌────────────┐  ┌─────────────────┐   │    │  │
+│  │  │  │ErrorBoundary│  │ ErrorMessage   │   │    │  │
+│  │  │  └────────────┘  └─────────────────┘   │    │  │
+│  │  └──────────────────────────────────────────┘    │  │
+│  │                       ↕                           │  │
+│  │  ┌──────────────────────────────────────────┐    │  │
+│  │  │      styled-components 레이어            │    │  │
+│  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
+│  │  │  │ *.style.ts │  │ common.style.ts │    │    │  │
+│  │  │  │ (컴포넌트별)│  │ (디자인 토큰)   │    │    │  │
+│  │  │  └────────────┘  └─────────────────┘    │    │  │
 │  │  └──────────────────────────────────────────┘    │  │
 │  │                       ↕                           │  │
 │  │  ┌──────────────────────────────────────────┐    │  │
 │  │  │         비즈니스 로직 레이어             │    │  │
 │  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
 │  │  │  │   Hooks    │  │  Services       │    │    │  │
-│  │  │  │  - useChannel  │  - channel.service│ │    │  │
-│  │  │  │  - useSendbird │  - client.ts    │   │    │  │
+│  │  │  │  (_hooks/) │  │  (services/)    │    │    │  │
+│  │  │  │- useChannel│  │  - getChannels  │    │    │  │
+│  │  │  │  List      │  │  - createChannel│    │    │  │
+│  │  │  │- useCreate │  │  - updateChannel│    │    │  │
+│  │  │  │- useUpdate │  │  - client.ts    │    │    │  │
+│  │  │  │- useInfinite│ │                 │    │    │  │
+│  │  │  │  Scroll    │  │                 │    │    │  │
 │  │  │  └────────────┘  └─────────────────┘    │    │  │
 │  │  └──────────────────────────────────────────┘    │  │
 │  │                       ↕                           │  │
@@ -71,8 +87,16 @@
 │  │  │      데이터 레이어 (React Query)         │    │  │
 │  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
 │  │  │  │   Queries  │  │   Mutations     │    │    │  │
-│  │  │  │  - fetch   │  │   - create      │    │    │  │
-│  │  │  │  - infinite│  │   - update      │    │    │  │
+│  │  │  │  - infinite│  │   - create      │    │    │  │
+│  │  │  │    Query   │  │   - update      │    │    │  │
+│  │  │  └────────────┘  └─────────────────┘    │    │  │
+│  │  └──────────────────────────────────────────┘    │  │
+│  │                       ↕                           │  │
+│  │  ┌──────────────────────────────────────────┐    │  │
+│  │  │         SSR 지원 레이어                  │    │  │
+│  │  │  ┌────────────┐  ┌─────────────────┐    │    │  │
+│  │  │  │ registry.tsx│  │query-client.ts │    │    │  │
+│  │  │  │ (styled-c.)│  │  (SSR/CSR)     │    │    │  │
 │  │  │  └────────────┘  └─────────────────┘    │    │  │
 │  │  └──────────────────────────────────────────┘    │  │
 │  └───────────────────────────────────────────────────┘  │
@@ -96,25 +120,42 @@
 **프레젠테이션 레이어**
 
 - 책임: UI 렌더링, 사용자 인터랙션, 애니메이션
-- 기술: React 컴포넌트, CSS Modules
+- 기술: React 컴포넌트 (app/\_components/), ErrorBoundary
 - 통신: 비즈니스 로직 레이어의 hooks 사용
+
+**styled-components 레이어** (Session 08)
+
+- 책임: 컴포넌트 스타일링, 디자인 토큰, SSR 스타일링
+- 기술: styled-components 6.1.19, 컴포넌트별 \*.style.ts 파일
+- 위치: \_styles/common.style.ts (디자인 토큰), \_styles/global.style.ts (GlobalStyle)
+- 통신: 프레젠테이션 레이어 컴포넌트에서 소비
 
 **비즈니스 로직 레이어**
 
 - 책임: 비즈니스 규칙, 데이터 변환, 상태 관리
-- 기술: 커스텀 React hooks, 서비스 클래스
+- 기술: 커스텀 React hooks (\_hooks/), 서비스 함수 (services/)
+- 위치: \_hooks/ (private), services/sendbird/channel/ (API 분리)
 - 통신: 데이터 페칭에 React Query 사용
 
 **데이터 레이어**
 
 - 책임: 서버 상태 관리, 캐싱, 동기화
-- 기술: React Query (TanStack Query)
-- 통신: Sendbird SDK와 통신
+- 기술: React Query (TanStack Query v5)
+- 위치: app/providers.tsx의 QueryClientProvider
+- 통신: 서비스 레이어를 통해 Sendbird SDK와 통신
+
+**SSR 지원 레이어** (Session 08)
+
+- 책임: 서버 사이드 렌더링 최적화
+- 기술: styled-components SSR Registry, QueryClient SSR/CSR 호환성
+- 위치: lib/registry.tsx, lib/query-client.ts
+- 통신: layout.tsx에서 애플리케이션을 감쌈
 
 **외부 통합 레이어**
 
 - 책임: Sendbird SDK 통합
-- 기술: @sendbird/chat SDK
+- 기술: @sendbird/chat SDK v4.20.2
+- 위치: services/sendbird/client.ts
 - 통신: REST API / WebSocket
 
 ---
@@ -132,8 +173,18 @@
     "@sendbird/chat": "^4.20.2",
     "@tanstack/react-query": "^5.90.10",
     "@tanstack/react-query-devtools": "^5.90.10",
-    "styled-components": "^6.1.14",
-    "@formkit/auto-animate": "^0.8.2"
+    "styled-components": "6.1.19",
+    "@formkit/auto-animate": "0.9.0"
+  },
+  "notes": {
+    "removed": [
+      "tailwindcss (Session 08 - CSS Modules 및 Tailwind 제거, styled-components로 통일)",
+      "CSS Modules (Session 08 - styled-components *.style.ts 파일로 교체)"
+    ],
+    "added": [
+      "styled-components 6.1.19 (Session 08 - SSR 지원 포함)",
+      "@formkit/auto-animate 0.9.0 (Step 4 - 재배치 애니메이션)"
+    ]
   }
 }
 ```
@@ -362,33 +413,38 @@ export const ChannelItem = memo(function ChannelItem({
 });
 ```
 
-**CSS Module** (`ChannelItem.module.css`):
+**styled-components 스타일링** (`ChannelItem.style.ts`):
 
-```css
-.item {
+```typescript
+import styled from 'styled-components'
+import { colors } from '@/_styles/common.style'
+
+export const ChannelItemContainer = styled.div<{ $isUpdating: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 60px;
   padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
+  border-bottom: 1px solid ${colors.gray[200]};
+  background: ${colors.background.main};
   cursor: pointer;
+  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
+
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;
-}
 
-.item:hover {
-  background-color: #f5f5f5;
-}
+  &:hover {
+    background-color: ${colors.gray[50]};
+  }
+`
 
-.name {
+export const ChannelName = styled.span`
   font-size: 16px;
   font-weight: 500;
-  color: #333;
+  color: ${colors.text.primary};
   user-select: none;
-}
+`
 ```
 
 ---
@@ -699,12 +755,16 @@ export function getSendbirdInstance(): SendbirdGroupChat {
 }
 ```
 
-### 5.2 채널 서비스
+### 5.2 채널 서비스 (Phase 6: 3개 파일로 분리)
 
-**파일**: `services/sendbird/channel.service.ts`
+채널 서비스는 단일 `channel.service.ts` 파일에서 3개의 별도 파일로 분리되어 모듈성이 향상되었습니다:
+
+#### 5.2.1 채널 가져오기 서비스
+
+**파일**: `services/sendbird/channel/getChannels.ts`
 
 ```typescript
-import { getSendbirdInstance } from './client'
+import { getSendbirdInstance } from '../client'
 import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
 import type { GroupChannel } from '@sendbird/chat/groupChannel'
 import type { Channel } from '@/_types/channel.types'
@@ -720,12 +780,12 @@ function transformChannel(groupChannel: GroupChannel): Channel {
   }
 }
 
-interface FetchChannelsParams {
+interface GetChannelsParams {
   limit: number
   token?: string
 }
 
-interface FetchChannelsResult {
+interface GetChannelsResult {
   channels: Channel[]
   nextToken?: string
 }
@@ -734,10 +794,7 @@ interface FetchChannelsResult {
  * Sendbird SDK를 사용하여 채널 가져오기
  * 중요: 과제에서 허용된 SDK 함수만 사용
  */
-export async function fetchChannels({
-  limit,
-  token,
-}: FetchChannelsParams): Promise<FetchChannelsResult> {
+export async function getChannels({ limit, token }: GetChannelsParams): Promise<GetChannelsResult> {
   const sb = getSendbirdInstance()
 
   const query = sb.groupChannel.createMyGroupChannelListQuery({
@@ -767,6 +824,27 @@ export async function fetchChannels({
     throw error
   }
 }
+```
+
+#### 5.2.2 채널 생성 서비스
+
+**파일**: `services/sendbird/channel/createChannel.ts`
+
+```typescript
+import { getSendbirdInstance } from '../client'
+import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import type { Channel } from '@/_types/channel.types'
+
+// Sendbird GroupChannel을 Channel 타입으로 변환
+function transformChannel(groupChannel: GroupChannel): Channel {
+  return {
+    url: groupChannel.url,
+    name: groupChannel.name,
+    createdAt: groupChannel.createdAt,
+    customType: groupChannel.customType,
+    data: groupChannel.data,
+  }
+}
 
 interface CreateChannelParams {
   name: string
@@ -791,6 +869,27 @@ export async function createChannel({ name }: CreateChannelParams): Promise<Chan
   } catch (error) {
     console.error('채널 생성 실패:', error)
     throw error
+  }
+}
+```
+
+#### 5.2.3 채널 업데이트 서비스
+
+**파일**: `services/sendbird/channel/updateChannel.ts`
+
+```typescript
+import { getSendbirdInstance } from '../client'
+import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import type { Channel } from '@/_types/channel.types'
+
+// Sendbird GroupChannel을 Channel 타입으로 변환
+function transformChannel(groupChannel: GroupChannel): Channel {
+  return {
+    url: groupChannel.url,
+    name: groupChannel.name,
+    createdAt: groupChannel.createdAt,
+    customType: groupChannel.customType,
+    data: groupChannel.data,
   }
 }
 
@@ -1834,10 +1933,11 @@ export const ANIMATION_CONFIG = {
 
 ## 문서 변경 이력
 
-| 버전  | 날짜       | 작성자 | 변경 사항                                                                                                                                                                          |
-| ----- | ---------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성                                                                                                                                                              |
-| 1.0.1 | 2025-11-24 | 개발팀 | Production 완료 상태 반영, styled-components 및 SSR 최적화 내용 업데이트 (의존성, 컴포넌트 트리, 애니메이션 구현, CSS 성능 섹션), 실제 테스트 결과 반영 (161 tests, 85%+ coverage) |
+| 버전  | 날짜       | 작성자 | 변경 사항                                                                                                                                                                                                          |
+| ----- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성                                                                                                                                                                                              |
+| 1.0.1 | 2025-11-24 | 개발팀 | Production 완료 상태 반영, styled-components 및 SSR 최적화 내용 업데이트 (의존성, 컴포넌트 트리, 애니메이션 구현, CSS 성능 섹션), 실제 테스트 결과 반영 (161 tests, 85%+ coverage)                                 |
+| 1.0.2 | 2025-11-28 | 개발팀 | 아키텍처 다이어그램 업데이트 (Session 06 private 폴더, Session 08 styled-components, Phase 6 API 분리), 의존성 노트 추가 (제거/추가된 패키지), 계층화 아키텍처에 SSR 레이어 추가, 채널 서비스 3개 파일 분리 문서화 |
 
 ---
 
