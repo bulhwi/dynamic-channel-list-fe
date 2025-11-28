@@ -45,8 +45,6 @@ Sendbird SDK 통합 및 컴포넌트 개발을 위한 서비스 레이어 구현
 session 05로 분리해서 가자, 서비스레벨에서의 코드들이 이제부터 작업될거야.
 ```
 
-**번역**: "session 05로 분리해서 가자. 서비스 레벨에서의 코드들이 이제부터 작업될 거야."
-
 **Claude의 응답**:
 
 서비스 레이어를 위한 Session 05 시작:
@@ -65,8 +63,6 @@ session 05로 분리해서 가자, 서비스레벨에서의 코드들이 이제�
 오, 드디어 컴포넌트 작업 진행하는구나 ! 진행해보자
 ```
 
-**번역**: "오, 드디어 컴포넌트 작업 진행하는구나! 진행해보자"
-
 **Claude의 응답**:
 
 - Issue #8 완료 (Sendbird 클라이언트 서비스)
@@ -82,8 +78,6 @@ session 05로 분리해서 가자, 서비스레벨에서의 코드들이 이제�
 ```
 프롬프트 업데이트 확인해서 업데이트 해줘. 추가로 test code들에 대해서 it 부분(시나리오 부분)에 번역 내용을 it 상단 라인에 주석으로 추가하자 내가 일일이 번역하면서 보기 힘드네 ;;
 ```
-
-**번역**: "프롬프트 업데이트 확인해서 업데이트 해줘. 추가로 test code들에 대해서 it 부분(시나리오 부분)에 번역 내용을 it 상단 라인에 주석으로 추가하자. 내가 일일이 번역하면서 보기 힘드네 ;;"
 
 **Claude의 응답**:
 
@@ -102,8 +96,6 @@ session 05로 분리해서 가자, 서비스레벨에서의 코드들이 이제�
 ChannelItem.tsx에 JSX.Element 부분 제거했어. 그리고 컴포넌트의 코드 구조를 const Test = () => {} 형태로 변경하자. 함수형이 더 가독성이 좋아
 ```
 
-**번역**: "ChannelItem.tsx에 JSX.Element 부분 제거했어. 그리고 컴포넌트의 코드 구조를 const Test = () => {} 형태로 변경하자. 화살표 함수 형태가 더 가독성이 좋아"
-
 **Claude의 응답**:
 
 - ChannelItem을 함수 선언에서 화살표 함수로 변환
@@ -118,8 +110,6 @@ ChannelItem.tsx에 JSX.Element 부분 제거했어. 그리고 컴포넌트의 �
 ```
 new Date(channel.createdAt).toLocaleString() -> new Date() 두번 만들고 있어서 내가 수정했어. 그리고, className은 clx 라이브러리를 사용해서 개선해보자 지금 보다 더 깔끔해질거 같아
 ```
-
-**번역**: "new Date(channel.createdAt).toLocaleString() -> new Date() 두 번 만들고 있어서 내가 수정했어. 그리고, className은 clsx 라이브러리를 사용해서 개선해보자. 지금보다 더 깔끔해질 것 같아"
 
 **Claude의 응답**:
 
@@ -136,8 +126,6 @@ new Date(channel.createdAt).toLocaleString() -> new Date() 두번 만들고 있�
 ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be of type string, number, symbol, or any 에러가 발생하고 있어 원인이 뭐야?
 ```
 
-**번역**: "ChannelItem.tsx clsx 적용한 부분에 TS2464: A computed property name must be of type string, number, symbol, or any 에러가 발생하고 있어. 원인이 뭐야?"
-
 **Claude의 응답**:
 
 - CSS Module 타입 문제 식별 (string | undefined)
@@ -153,8 +141,6 @@ ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be
 좋아 프롬프트 업데이트 하고 다음 진행가능한 작업 확인해보자
 ```
 
-**번역**: "좋아, 프롬프트 업데이트 하고 다음 진행 가능한 작업 확인해보자"
-
 **Claude의 응답**:
 
 - 모든 개선사항으로 Session 05 문서 업데이트
@@ -169,8 +155,6 @@ ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be
 ```
 그전에 프롬프트 업데이트 다시 확인하자 우리가 주고받은 대화내용은 최신화가 안된거 같아
 ```
-
-**번역**: "그 전에 프롬프트 업데이트 다시 확인하자. 우리가 주고받은 대화 내용은 최신화가 안 된 것 같아"
 
 **Claude의 응답**:
 
@@ -194,8 +178,6 @@ ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be
 더미데이터의 구성은 msw로 구성해보고 후에 실제 api 통신은 fetch api 와 react query, 컴포넌트 내에서 client 레벨의 상태관리는 context api를 사용하자
 ```
 
-**번역**: "진행 전에 더미 데이터 구성 어떻게 하고 활용할 건지 계획해보자. MSW를 사용하면 좋을 것 같은데... 아 아냐, 내가 잘못 말했어. MSW를 말한 거였어. 더미 데이터의 구성은 MSW로 구성해보고, 후에 실제 API 통신은 fetch API와 React Query, 컴포넌트 내에서 client 레벨의 상태 관리는 Context API를 사용하자"
-
 **Claude의 응답**:
 
 - MSW (Mock Service Worker) 아키텍처 제안
@@ -217,8 +199,6 @@ ChannelItem.tsx clx 적용한 부분에 TS2464: A computed property name must be
 ```
 응, 좋아 현재 github 이슈에서 내용이 좀 변경되엇으니 이슈 업데이트 부터 해보자
 ```
-
-**번역**: "응, 좋아. 현재 GitHub 이슈에서 내용이 좀 변경되었으니 이슈 업데이트부터 해보자"
 
 **Claude의 응답**:
 
@@ -475,8 +455,6 @@ SendbirdChat.init({
 설명 수준의 주석들은 모두 한글로 번역하는게 좋을거 같아.
 ```
 
-**번역**: "설명 수준의 주석들은 모두 한글로 번역하는 게 좋을 것 같아."
-
 **Claude의 응답**:
 
 - 모든 JSDoc 및 인라인 주석을 한국어로 번역
@@ -503,8 +481,6 @@ SendbirdChat.init({
 푸시도 해줘
 ```
 
-**번역**: "푸시도 해줘"
-
 **Claude의 응답**:
 
 - 2개 커밋을 remote로 푸시:
@@ -518,8 +494,6 @@ SendbirdChat.init({
 ```
 프롬프트와 대화내용 업데이트 진행해줘
 ```
-
-**번역**: "프롬프트와 대화 내용 업데이트 진행해줘"
 
 **Claude의 응답**:
 
@@ -539,8 +513,6 @@ SendbirdChat.init({
 현재 코드상 호버상태의 item과 그 item의 인접한 상태를 컨텍스트로 관리가 되고잇는데, 그럴필요없이 css로도 충분할거 같아 이부분은 #11번에서 개선될 내용인같은데 맞아 ??
 ```
 
-**번역**: "현재 코드상 호버 상태의 item과 그 item의 인접한 상태를 컨텍스트로 관리가 되고 있는데, 그럴 필요 없이 CSS로도 충분할 것 같아. 이 부분은 #11번에서 개선될 내용인 것 같은데 맞아??"
-
 **Claude의 응답**:
 
 - 사용자의 통찰이 옳다고 확인
@@ -557,8 +529,6 @@ SendbirdChat.init({
 바로 리팩토링 해보자 호버상태까지 컨텍스트로 관리하는건 낭비야
 내가 생각해본 구조는 css로 애니메이션 동작을 구현하는거야
 ```
-
-**번역**: "바로 리팩토링 해보자. 호버 상태까지 컨텍스트로 관리하는 건 낭비야. 내가 생각해본 구조는 CSS로 애니메이션 동작을 구현하는 거야"
 
 **리팩토링 결과**:
 
@@ -684,15 +654,11 @@ SendbirdChat.init({
 다음 작업 진행해보자
 ```
 
-**번역**: "다음 작업 진행해보자"
-
 **사용자**:
 
 ```
 오 좋아 11, 12 완료처리하고 13 확인하자. 12는 css로 작업햇기 때문에 별도 커스텀훅이 필요없어
 ```
-
-**번역**: "오 좋아, 11, 12 완료 처리하고 13 확인하자. 12는 CSS로 작업했기 때문에 별도 커스텀 hook이 필요 없어"
 
 **Claude의 응답**:
 
