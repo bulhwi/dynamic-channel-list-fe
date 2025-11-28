@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import StyledComponentsRegistry from '@/lib/registry'
+import StyledComponentsRegistry from '@/_lib/registry'
 import { Providers } from './providers'
 import { ErrorBoundary } from '@/app/_components/ErrorBoundary/ErrorBoundary'
 

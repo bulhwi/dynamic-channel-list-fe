@@ -9,7 +9,7 @@
 
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useEffect, type ReactNode } from 'react'
-import { getQueryClient } from '@/lib/query-client'
+import { getQueryClient } from '@/_lib/query-client'
 import { initializeSendbird, connectUser } from '@/services/sendbird/client'
 import { logError, toAppError } from '@/_lib/errorUtils'
 import { ErrorType } from '@/_types/error.types'
