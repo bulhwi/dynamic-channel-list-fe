@@ -540,4 +540,152 @@ const mockGetChannels = getChannels as jest.MockedFunction<typeof getChannels>
 
 ---
 
-_이 세션은 2025-11-24에 완료되었습니다._
+### Phase 7: ChannelActions toAppError 중복 처리 개선
+
+**개발자 (나)**:
+
+```
+내가 따로 ChannelActions.tsx에서 toAppError 중복 처리 개선했어 문서 업데이트 해줘
+```
+
+**문제점**:
+
+- `toAppError()` 함수가 컴포넌트 내에서 2번 호출됨
+  1. 에러 심각도 체크 시
+  2. `errorMessage` 추출 시
+- 불필요한 중복 연산 및 코드 중복
+
+**해결 방법**:
+
+```typescript
+// Before: toAppError 2번 호출
+if (error) {
+  const appError = toAppError(error, ErrorType.CHANNEL_CREATE_FAILED)
+  if (isCriticalError(appError)) {
+    throw appError
+  }
+}
+
+const errorMessage = error
+  ? toAppError(error, ErrorType.CHANNEL_CREATE_FAILED).userMessage
+  : undefined
+
+// After: toAppError 1번만 호출
+const appError = error ? toAppError(error, ErrorType.CHANNEL_CREATE_FAILED) : null
+
+if (appError && isCriticalError(appError)) {
+  throw appError
+}
+
+const errorMessage = appError?.userMessage
+```
+
+**변경사항**:
+
+- `appError` 변수를 상단에서 한 번만 생성
+- 조건문 간소화: `if (error)` + 내부 throw → `if (appError && isCriticalError)`
+- `errorMessage`에서 optional chaining 활용
+- `onRetry` 조건도 `appError` 기준으로 통일
+
+**효과**:
+
+- ✅ `toAppError()` 중복 호출 제거 (2번 → 1번)
+- ✅ 코드 간결화 (15줄 → 12줄)
+- ✅ 일관된 변수 사용으로 가독성 향상
+
+**커밋**: `07fea07` - ChannelActions.tsx toAppError 중복 처리 개선
+
+---
+
+### Phase 8: useInfiniteScroll 콜백 최적화
+
+**개발자 (나)**:
+
+```
+useEffect에 onLoadMore 의존성 제거작업을 좀 했어 문서 업데이트 해줘
+```
+
+**문제점**:
+
+- `useInfiniteScroll` 훅에서 `onLoadMore` 콜백이 의존성 배열에 포함되어 있음
+- `onLoadMore`가 변경될 때마다 IntersectionObserver가 재생성됨
+- 불필요한 observer disconnect/reconnect 발생
+
+**해결 방법**:
+
+```typescript
+// Before: onLoadMore가 의존성에 포함
+useEffect(() => {
+  // ... observer 설정
+  if (entry && entry.isIntersecting) {
+    onLoadMore()
+  }
+  // ...
+}, [onLoadMore, isLoading, hasMore, rootMargin, threshold])
+
+// After: useRef로 최신 참조 유지
+const onLoadMoreRef = useRef(onLoadMore)
+useEffect(() => {
+  onLoadMoreRef.current = onLoadMore
+}, [onLoadMore])
+
+useEffect(() => {
+  // ... observer 설정
+  if (entry && entry.isIntersecting) {
+    onLoadMoreRef.current()
+  }
+  // ...
+}, [isLoading, hasMore, rootMargin, threshold]) // onLoadMore 제거됨
+```
+
+**변경사항**:
+
+- `onLoadMoreRef`를 생성하여 `onLoadMore`의 최신 참조 유지
+- `useEffect`로 `onLoadMore` 변경 시 ref 업데이트
+- observer 콜백에서 `onLoadMoreRef.current()` 호출
+- 의존성 배열에서 `onLoadMore` 제거
+
+**효과**:
+
+- ✅ `onLoadMore` 콜백 변경 시 observer 재생성 방지
+- ✅ 불필요한 disconnect/reconnect 제거
+- ✅ 성능 최적화
+
+**커밋**: `31c0bd2` - onLoadMore 의존성 제거
+
+---
+
+## 📊 전체 작업 통계 (업데이트)
+
+### 커밋 이력
+
+1. `571f0cb` - styled-components 마이그레이션 및 무한 렌더링 버그 수정
+2. `131bfc4` - SSR 최적화 (Registry, QueryClient, Server Components)
+3. `157bc46` - Dead code 제거 (channels.ts, useChannels.ts)
+4. `ffd4cc3` - API 파일 분리 (channel.service.ts → 3개 파일)
+5. `07fea07` - ChannelActions.tsx toAppError 중복 처리 개선
+6. `31c0bd2` - useInfiniteScroll onLoadMore 의존성 제거
+
+### 최종 결과
+
+```
+파일 변경: 53개
+추가: +1,353줄
+삭제: -1,688줄
+순 감소: -335줄 (코드 정리 효과)
+```
+
+**개선 효과**:
+
+- ✅ 스타일링 통일 (styled-components)
+- ✅ SSR 완벽 지원 (초기 로딩 최적화)
+- ✅ Dead code 제거 (유지보수성 향상)
+- ✅ API 파일 분리 (가독성 향상)
+- ✅ Single Responsibility 원칙 준수
+- ✅ 명확한 Import 경로
+- ✅ ChannelActions toAppError 중복 호출 제거
+- ✅ useInfiniteScroll 성능 최적화 (콜백 참조 패턴)
+
+---
+
+_이 세션은 2025-11-28에 업데이트되었습니다._
