@@ -10,10 +10,10 @@
  * ```
  */
 
-// Channel types
+// 채널 타입
 export type { Channel } from './channel.types'
 
-// Component types
+// 컴포넌트 타입
 export type {
   BaseComponentProps,
   ChannelItemProps,
@@ -23,10 +23,10 @@ export type {
   ErrorMessageProps,
 } from './component.types'
 
-// Error types
+// 에러 타입
 export { ErrorType, AppError } from './error.types'
 
-// Sendbird error codes
+// Sendbird 에러 코드
 export {
   SendbirdClientErrorCode,
   SendbirdServerErrorCode,

@@ -30,7 +30,7 @@ const ChannelList = () => {
   const { mutate: updateChannel, isPending: isUpdating } = useUpdateChannel()
   const [updatingChannelUrl, setUpdatingChannelUrl] = useState<string | null>(null)
 
-  // auto-animate for smooth re-positioning
+  // 부드러운 재배치를 위한 auto-animate
   const [animateRef] = useAutoAnimate<HTMLDivElement>({
     duration: ANIMATION_CONFIG.DURATION_MS,
     easing: ANIMATION_CONFIG.EASING,
@@ -42,15 +42,15 @@ const ChannelList = () => {
     hasMore: hasNextPage,
   })
 
-  // Callback ref to set both animateRef and containerRef
+  // animateRef와 containerRef를 모두 설정하는 콜백 ref
   // useCallback으로 메모이제이션하여 무한 렌더링 방지
   const setRefs = useCallback(
     (element: HTMLDivElement | null) => {
-      // Set auto-animate ref (it's always a callback function from useAutoAnimate)
+      // auto-animate ref 설정 (useAutoAnimate에서 항상 콜백 함수로 반환됨)
       if (typeof animateRef === 'function') {
         animateRef(element)
       }
-      // Set container ref for IntersectionObserver
+      // IntersectionObserver를 위한 container ref 설정
       containerRef.current = element
     },
     [animateRef, containerRef]
@@ -103,10 +103,10 @@ const ChannelList = () => {
         />
       ))}
 
-      {/* Sentinel element for infinite scroll */}
+      {/* 무한 스크롤을 위한 센티널 요소 */}
       <S.Sentinel ref={sentinelRef} data-testid="sentinel" />
 
-      {/* Pagination loading indicator */}
+      {/* 페이지네이션 로딩 인디케이터 */}
       {isFetchingNextPage && (
         <S.LoadingMore>
           <LoadingSpinner size="small" />
