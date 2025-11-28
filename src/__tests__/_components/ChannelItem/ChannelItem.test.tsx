@@ -23,13 +23,6 @@ describe('ChannelItem', () => {
     expect(screen.getByText('Test Channel')).toBeInTheDocument()
   })
 
-  // 채널 URL이 렌더링되어야 함
-  it('should render channel URL', () => {
-    render(<ChannelItem channel={mockChannel} />)
-
-    expect(screen.getByText(/test-channel-url/i)).toBeInTheDocument()
-  })
-
   // createdAt 타임스탬프가 포맷되어야 함
   it('should format createdAt timestamp', () => {
     render(<ChannelItem channel={mockChannel} />)
@@ -72,7 +65,6 @@ describe('ChannelItem', () => {
     render(<ChannelItem channel={fullChannel} />)
 
     expect(screen.getByText('Full Test Channel')).toBeInTheDocument()
-    expect(screen.getByText('full-test-url')).toBeInTheDocument()
     expect(screen.getByText('premium')).toBeInTheDocument()
   })
 

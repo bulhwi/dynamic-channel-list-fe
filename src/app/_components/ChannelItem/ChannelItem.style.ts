@@ -63,13 +63,6 @@ export const ChannelName = styled.h3`
   margin: 0;
 `
 
-export const ChannelUrl = styled.p`
-  font-size: 14px;
-  color: ${colors.gray[500]};
-  margin: 0;
-  font-family: monospace;
-`
-
 export const ChannelDate = styled.time`
   font-size: 12px;
   color: ${colors.gray[300]};

@@ -55,7 +55,6 @@ const ChannelItem = memo(({ channel, onClick, isUpdating = false }: ChannelItemP
     >
       <S.ChannelInfo>
         <S.ChannelName>{channel.name}</S.ChannelName>
-        <S.ChannelUrl>{channel.url}</S.ChannelUrl>
         <S.ChannelDate dateTime={formattedDate}>{formattedDate}</S.ChannelDate>
         {channel.customType && <S.CustomType>{channel.customType}</S.CustomType>}
       </S.ChannelInfo>
