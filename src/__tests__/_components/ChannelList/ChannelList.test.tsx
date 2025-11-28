@@ -24,14 +24,8 @@ jest.mock('@/_hooks/useChannelList')
 jest.mock('@/_hooks/useUpdateChannel')
 jest.mock('@/_hooks/useInfiniteScroll')
 
-// 목 데이터
+// 목 데이터 (Sendbird가 알파벳순으로 정렬하여 반환하는 것을 시뮬레이션)
 const mockChannels: Channel[] = [
-  {
-    url: 'channel-zebra',
-    name: 'Zebra Channel',
-    createdAt: 1000,
-    customType: 'group',
-  },
   {
     url: 'channel-apple',
     name: 'Apple Channel',
@@ -42,6 +36,12 @@ const mockChannels: Channel[] = [
     name: 'Mango Channel',
     createdAt: 3000,
     customType: 'private',
+  },
+  {
+    url: 'channel-zebra',
+    name: 'Zebra Channel',
+    createdAt: 1000,
+    customType: 'group',
   },
 ]
 

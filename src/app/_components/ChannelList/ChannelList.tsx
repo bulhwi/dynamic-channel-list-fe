@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useChannelList } from '@/_hooks/useChannelList'
 import { useUpdateChannel } from '@/_hooks/useUpdateChannel'
@@ -17,7 +17,6 @@ import { useInfiniteScroll } from '@/_hooks/useInfiniteScroll'
 import ChannelItem from '@/app/_components/ChannelItem/ChannelItem'
 import LoadingSpinner from '@/app/_components/LoadingSpinner/LoadingSpinner'
 import ErrorMessage from '@/app/_components/ErrorMessage/ErrorMessage'
-import { sortChannels } from '@/_lib/utils'
 import { toAppError, isCriticalError } from '@/_lib/errorUtils'
 import { ErrorType } from '@/_types/error.types'
 import { CHANNEL_CONFIG, ANIMATION_CONFIG } from '@/_constants/config'
@@ -67,12 +66,6 @@ const ChannelList = () => {
     })
   }
 
-  // useMemo로 정렬 결과 메모이제이션
-  // channels가 변경되지 않으면 정렬을 스킵하여 성능 개선
-  // 특히 updatingChannelUrl, isFetchingNextPage 등 다른 상태 변경 시 불필요한 정렬 방지
-  // early return 전에 위치 (React Hooks 규칙: 조건부 실행 불가)
-  const sortedChannels = useMemo(() => sortChannels(channels), [channels])
-
   // 에러 처리: 심각도에 따라 다르게 처리
   // render phase에서 체크하여 ErrorBoundary로 전달
   if (error) {
@@ -101,7 +94,7 @@ const ChannelList = () => {
 
   return (
     <S.StyledChannelList ref={setRefs}>
-      {sortedChannels.map(channel => (
+      {channels.map(channel => (
         <ChannelItem
           key={channel.url}
           channel={channel}

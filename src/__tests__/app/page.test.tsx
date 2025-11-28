@@ -11,6 +11,7 @@ import '@testing-library/jest-dom'
 import Home from '@/app/page'
 import { createChannel } from '@/services/sendbird/channel/createChannel'
 import { getChannels } from '@/services/sendbird/channel/getChannels'
+import { sortChannels } from '@/_lib/utils'
 
 // Mock services
 jest.mock('@/services/sendbird/channel/createChannel')
@@ -38,9 +39,10 @@ function createWrapper() {
 }
 
 describe('Home Page Integration', () => {
+  // Sendbird가 알파벳순으로 정렬하여 반환하는 것을 시뮬레이션
   const mockInitialChannels = [
-    { url: 'channel-1', name: 'banana', createdAt: 1000 },
     { url: 'channel-2', name: 'apple', createdAt: 2000 },
+    { url: 'channel-1', name: 'banana', createdAt: 1000 },
     { url: 'channel-3', name: 'cherry', createdAt: 3000 },
   ]
 
@@ -131,8 +133,8 @@ describe('Home Page Integration', () => {
       expect(screen.getByText('apple')).toBeInTheDocument()
     })
 
-    // 새 채널 생성 시 getChannels가 다시 호출될 때 새 채널 포함
-    const updatedChannels = [...mockInitialChannels, mockNewChannel]
+    // 새 채널 생성 시 getChannels가 다시 호출될 때 새 채널 포함 (정렬됨)
+    const updatedChannels = sortChannels([...mockInitialChannels, mockNewChannel])
     mockGetChannels.mockResolvedValue({
       channels: updatedChannels,
       hasMore: false,
@@ -169,8 +171,8 @@ describe('Home Page Integration', () => {
       expect(screen.getByText('apple')).toBeInTheDocument()
     })
 
-    // 새 채널 생성 후 목록 업데이트
-    const updatedChannels2 = [...mockInitialChannels, mockNewChannel]
+    // 새 채널 생성 후 목록 업데이트 (Sendbird가 정렬하여 반환하는 것을 시뮬레이션)
+    const updatedChannels2 = sortChannels([...mockInitialChannels, mockNewChannel])
     mockGetChannels.mockResolvedValue({
       channels: updatedChannels2,
       hasMore: false,
@@ -422,11 +424,11 @@ describe('Home Page Integration', () => {
       expect(screen.getByRole('button', { name: /creating/i })).toBeDisabled()
     })
 
-    // 4. 채널 생성 완료
-    const withAvocado = [
+    // 4. 채널 생성 완료 (Sendbird가 정렬하여 반환하는 것을 시뮬레이션)
+    const withAvocado = sortChannels([
       ...mockInitialChannels,
       { url: 'new-channel', name: 'avocado', createdAt: Date.now() },
-    ]
+    ])
     mockGetChannels.mockResolvedValueOnce({
       channels: withAvocado,
       hasMore: false,
