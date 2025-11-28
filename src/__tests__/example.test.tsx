@@ -20,6 +20,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('Home Page', () => {
+  // 제목을 렌더링해야 함
   it('renders the heading', () => {
     render(<Home />, { wrapper })
 
@@ -30,6 +31,7 @@ describe('Home Page', () => {
     expect(heading).toBeInTheDocument()
   })
 
+  // 설명을 렌더링해야 함
   it('renders the description', () => {
     render(<Home />, { wrapper })
 

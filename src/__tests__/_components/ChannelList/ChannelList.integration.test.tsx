@@ -112,7 +112,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     observerInstance = null
   })
 
-  // Test 1: Initial 10 channels load
+  // Test 1: 초기 10개 채널 로드
   it('should load initial 10 channels', async () => {
     const mockChannels = createMockChannels(1, 10)
     const mockQuery = createMockQuery(true)
@@ -154,7 +154,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     })
   })
 
-  // Test 2: Scroll to bottom triggers next page
+  // Test 2: 스크롤이 하단에 도달하면 다음 페이지를 로드해야 함
   it('should load next page when scrolling to bottom', async () => {
     const page1Channels = createMockChannels(1, 10)
     const page2Channels = createMockChannels(11, 10)
@@ -231,7 +231,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     })
   })
 
-  // Test 3: No duplicate channels
+  // Test 3: 중복 채널이 없어야 함
   it('should not render duplicate channels', async () => {
     const page1Channels = createMockChannels(1, 10)
     const page2Channels = createMockChannels(11, 10)
@@ -295,7 +295,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     })
   })
 
-  // Test 4: Loading indicator appears/disappears
+  // Test 4: 로딩 인디케이터 표시/숨김
   it('should show and hide loading indicator during pagination', async () => {
     const page1Channels = createMockChannels(1, 10)
     const page2Channels = createMockChannels(11, 10)
@@ -362,7 +362,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     })
   })
 
-  // Test 5: Handles end of list (no more pages)
+  // Test 5: 리스트 끝 처리 (더 이상 페이지 없음)
   it('should not create observer when hasNextPage is false', async () => {
     const page1Channels = createMockChannels(1, 10)
     const mockQuery1 = createMockQuery(false) // hasMore: false
@@ -397,7 +397,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     expect(mockGetChannels).toHaveBeenCalledTimes(1)
   })
 
-  // Test 6: Multiple scroll triggers
+  // Test 6: 여러 번 스크롤 트리거
   it('should load multiple pages with multiple scroll triggers', async () => {
     const page1Channels = createMockChannels(1, 10)
     const page2Channels = createMockChannels(11, 10)
@@ -478,7 +478,7 @@ describe('ChannelList Integration Tests - Infinite Scroll', () => {
     expect(mockGetChannels).toHaveBeenCalledTimes(3)
   })
 
-  // Test 7: Error handling - initial load error
+  // Test 7: 에러 처리 - 초기 로드 에러
   it('should handle initial load error gracefully', async () => {
     mockGetChannels.mockRejectedValueOnce(new Error('Network error'))
 
@@ -511,7 +511,7 @@ describe('ChannelList Integration Tests - Channel Update Flow', () => {
     observerInstance = null
   })
 
-  // Test: Click channel → update → verify mutation called
+  // Test: 채널 클릭 → 업데이트 → mutation 호출 확인
   it('should call updateChannel mutation when channel is clicked', async () => {
     const initialChannels: Channel[] = [
       { url: 'channel-apple', name: 'apple', createdAt: 1000 },

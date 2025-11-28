@@ -7,12 +7,27 @@
 import '@testing-library/jest-dom'
 import { createChannel } from '@/services/sendbird/channel/createChannel'
 import { updateChannel } from '@/services/sendbird/channel/updateChannel'
+import { getChannels } from '@/services/sendbird/channel/getChannels'
 import { getSendbirdInstance } from '@/services/sendbird/client'
 import { generateRandomName } from '@/_lib/utils'
+
+// GroupChannelListOrder enum mock
+const GroupChannelListOrder = {
+  CHANNEL_NAME_ALPHABETICAL: 'channel_name_alphabetical',
+}
 
 // Mock dependencies
 jest.mock('@/services/sendbird/client')
 jest.mock('@/_lib/utils')
+jest.mock('@/_lib/errorUtils', () => ({
+  toAppError: jest.fn(error => error),
+  logError: jest.fn(),
+}))
+jest.mock('@sendbird/chat/groupChannel', () => ({
+  GroupChannelListOrder: {
+    CHANNEL_NAME_ALPHABETICAL: 'channel_name_alphabetical',
+  },
+}))
 
 const mockGetSendbirdInstance = getSendbirdInstance as jest.MockedFunction<
   typeof getSendbirdInstance
@@ -319,6 +334,167 @@ describe('Sendbird Channel Service', () => {
         includeEmpty: true,
         channelUrlsFilter: ['custom-channel-url'],
       })
+    })
+  })
+
+  describe('getChannels', () => {
+    const mockGroupChannels = [
+      { url: 'channel-1', name: 'apple', createdAt: 1000, customType: '', data: '' },
+      { url: 'channel-2', name: 'banana', createdAt: 2000, customType: '', data: '' },
+      {
+        url: 'channel-3',
+        name: 'cherry',
+        createdAt: 3000,
+        customType: 'premium',
+        data: '{"test":true}',
+      },
+    ]
+
+    // 첫 페이지 채널 목록을 가져와야 함
+    it('should fetch first page of channels', async () => {
+      const mockNext = jest.fn().mockResolvedValue(mockGroupChannels)
+      const mockQuery = { next: mockNext, hasNext: true }
+      const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: mockCreateQuery,
+        },
+      } as any)
+
+      const result = await getChannels({ limit: 20 })
+
+      expect(mockCreateQuery).toHaveBeenCalledWith({
+        limit: 20,
+        includeEmpty: true,
+        order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL,
+      })
+      expect(result.channels).toHaveLength(3)
+      expect(result.hasMore).toBe(true)
+      expect(result.query).toBe(mockQuery)
+    })
+
+    // 기본 limit이 20이어야 함
+    it('should use default limit of 20', async () => {
+      const mockNext = jest.fn().mockResolvedValue([])
+      const mockQuery = { next: mockNext, hasNext: false }
+      const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: mockCreateQuery,
+        },
+      } as any)
+
+      await getChannels()
+
+      expect(mockCreateQuery).toHaveBeenCalledWith(expect.objectContaining({ limit: 20 }))
+    })
+
+    // 기존 query로 다음 페이지를 가져와야 함
+    it('should fetch next page with existing query', async () => {
+      const mockNext = jest.fn().mockResolvedValue(mockGroupChannels)
+      const existingQuery = { next: mockNext, hasNext: false }
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: jest.fn(),
+        },
+      } as any)
+
+      const result = await getChannels({ query: existingQuery as any })
+
+      expect(mockNext).toHaveBeenCalledTimes(1)
+      expect(result.hasMore).toBe(false)
+    })
+
+    // GroupChannel을 Channel 타입으로 변환해야 함
+    it('should convert GroupChannel to Channel type', async () => {
+      const mockNext = jest.fn().mockResolvedValue(mockGroupChannels)
+      const mockQuery = { next: mockNext, hasNext: false }
+      const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: mockCreateQuery,
+        },
+      } as any)
+
+      const result = await getChannels()
+
+      expect(result.channels[0]).toEqual({
+        url: 'channel-1',
+        name: 'apple',
+        createdAt: 1000,
+      })
+      expect(result.channels[2]).toEqual({
+        url: 'channel-3',
+        name: 'cherry',
+        createdAt: 3000,
+        customType: 'premium',
+        data: '{"test":true}',
+      })
+    })
+
+    // Sendbird 인스턴스가 없을 때 에러를 던져야 함
+    it('should throw error when Sendbird instance is not available', async () => {
+      mockGetSendbirdInstance.mockReturnValue(null)
+
+      await expect(getChannels()).rejects.toThrow()
+    })
+
+    // 채널 조회 실패 시 에러를 던져야 함
+    it('should throw error when channel fetch fails', async () => {
+      const mockNext = jest.fn().mockRejectedValue(new Error('Fetch failed'))
+      const mockQuery = { next: mockNext, hasNext: false }
+      const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: mockCreateQuery,
+        },
+      } as any)
+
+      await expect(getChannels()).rejects.toThrow('Fetch failed')
+    })
+
+    // 빈 채널 목록도 처리해야 함
+    it('should handle empty channel list', async () => {
+      const mockNext = jest.fn().mockResolvedValue([])
+      const mockQuery = { next: mockNext, hasNext: false }
+      const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: mockCreateQuery,
+        },
+      } as any)
+
+      const result = await getChannels()
+
+      expect(result.channels).toHaveLength(0)
+      expect(result.hasMore).toBe(false)
+    })
+
+    // 알파벳순 정렬 옵션이 적용되어야 함
+    it('should use alphabetical order', async () => {
+      const mockNext = jest.fn().mockResolvedValue([])
+      const mockQuery = { next: mockNext, hasNext: false }
+      const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
+
+      mockGetSendbirdInstance.mockReturnValue({
+        groupChannel: {
+          createMyGroupChannelListQuery: mockCreateQuery,
+        },
+      } as any)
+
+      await getChannels()
+
+      expect(mockCreateQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL,
+        })
+      )
     })
   })
 })
