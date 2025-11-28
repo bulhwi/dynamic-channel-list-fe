@@ -60,6 +60,13 @@ export function useInfiniteScroll({
   const containerRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
+  // onLoadMore의 최신 참조를 유지하여 의존성 배열에서 제거
+  // 이를 통해 onLoadMore가 변경되어도 observer가 재생성되지 않음
+  const onLoadMoreRef = useRef(onLoadMore)
+  useEffect(() => {
+    onLoadMoreRef.current = onLoadMore
+  }, [onLoadMore])
+
   useEffect(() => {
     const sentinel = sentinelRef.current
     const container = containerRef.current
@@ -80,7 +87,7 @@ export function useInfiniteScroll({
         // sentinel이 뷰포트에 보이면 onLoadMore 호출
         const entry = entries[0]
         if (entry && entry.isIntersecting) {
-          onLoadMore()
+          onLoadMoreRef.current()
         }
       },
       {
@@ -97,7 +104,7 @@ export function useInfiniteScroll({
     return () => {
       observer.disconnect()
     }
-  }, [onLoadMore, isLoading, hasMore, rootMargin, threshold])
+  }, [isLoading, hasMore, rootMargin, threshold])
 
   return {
     containerRef,
