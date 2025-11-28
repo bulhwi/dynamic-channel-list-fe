@@ -149,7 +149,10 @@ describe('useUpdateChannel', () => {
       expect(result.current.isSuccess).toBe(true)
     })
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['channels', 'list'] })
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+      queryKey: ['channels', 'list'],
+      refetchType: 'active',
+    })
   })
 
   // 에러 발생 시 에러 상태를 반환해야 함

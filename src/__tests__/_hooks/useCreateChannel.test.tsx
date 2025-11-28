@@ -160,6 +160,9 @@ describe('useCreateChannel', () => {
       expect(result.current.isSuccess).toBe(true)
     })
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['channels', 'list'] })
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+      queryKey: ['channels', 'list'],
+      refetchType: 'active',
+    })
   })
 })

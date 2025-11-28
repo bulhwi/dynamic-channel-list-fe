@@ -31,7 +31,11 @@ export function useUpdateChannel() {
     onSuccess: () => {
       // 성공 시 채널 목록 쿼리 무효화하여 최신 데이터로 갱신
       // prefix matching으로 모든 limit 변형 무효화
-      queryClient.invalidateQueries({ queryKey: ['channels', 'list'] })
+      // refetchType: 'active' - 현재 마운트된 쿼리만 refetch
+      queryClient.invalidateQueries({
+        queryKey: ['channels', 'list'],
+        refetchType: 'active',
+      })
     },
   })
 }
