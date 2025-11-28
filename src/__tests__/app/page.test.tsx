@@ -236,7 +236,7 @@ describe('Home Page Integration', () => {
 
     // 에러 메시지가 표시되는지 확인
     await waitFor(() => {
-      expect(screen.getByText(/channel creation failed/i)).toBeInTheDocument()
+      expect(screen.getByText(/채널 생성에 실패했습니다/i)).toBeInTheDocument()
     })
   })
 
@@ -358,7 +358,7 @@ describe('Home Page Integration', () => {
 
     // 에러 메시지와 재시도 버튼이 표시되는지 확인
     await waitFor(() => {
-      expect(screen.getByText(/failed to create/i)).toBeInTheDocument()
+      expect(screen.getByText(/채널 생성에 실패했습니다/i)).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /다시 시도/i })).toBeInTheDocument()
     })
 
@@ -388,7 +388,7 @@ describe('Home Page Integration', () => {
 
     // 재시도 후 에러가 사라지고 새 채널이 표시되는지 확인
     await waitFor(() => {
-      expect(screen.queryByText(/failed to create/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/채널 생성에 실패했습니다/i)).not.toBeInTheDocument()
       expect(screen.getByText('retrychan')).toBeInTheDocument()
     })
   })
