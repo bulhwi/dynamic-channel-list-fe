@@ -655,6 +655,77 @@ useEffect(() => {
 
 ---
 
+### Phase 9: globals.css를 GlobalStyle로 마이그레이션
+
+**개발자 (나)**:
+
+```
+globals.css가 좀 애매한 상황이야 styled-components를 사용하는 상황에 globals만 따로 css로 빠져있는게 맘에 들지 않아, 그래서
+layout.tsx나 error.tsx등에 <GlobalStyle /> 형태로 사용할수있게 개선해보자.
+한가지 고민되는건 common.style.ts의 경우 GlobalStyle과 합치는게 맞을지 이런게 고민이야
+common.style.ts 는 공통 css이긴 하지만 공통 컴포넌트들의 css도 들어가 잇어서 아마 공통컴포넌트스타일을 사용하는 컴포넌트마다 임포트를 하게 될거 같아서 합칠필요는 없다고 생각하는데 너의 생각은 어때?? 의견있어 ?
+```
+
+**Claude 의견**:
+
+`GlobalStyle`과 `common.style.ts`는 분리하는 게 맞음:
+
+| 구분            | GlobalStyle                  | common.style.ts               |
+| --------------- | ---------------------------- | ----------------------------- |
+| **적용 범위**   | 전역 (html, body, \*, reset) | 컴포넌트 단위                 |
+| **import 방식** | layout.tsx에서 1번만         | 필요한 컴포넌트마다           |
+| **내용**        | CSS Reset, 폰트, 기본 색상   | 재사용 컴포넌트, 믹스인, 토큰 |
+| **성격**        | 브라우저 기본값 덮어쓰기     | 디자인 시스템 빌딩 블록       |
+
+**합치면 안 되는 이유**:
+
+1. **트리 쉐이킹**: `common.style.ts`의 컴포넌트들은 사용하는 곳에서만 번들에 포함되어야 함
+2. **관심사 분리**: GlobalStyle은 "reset/normalize", common은 "디자인 시스템"
+3. **SSR 고려**: GlobalStyle은 `createGlobalStyle`로, 컴포넌트는 일반 styled로 다르게 처리됨
+
+**구현 내용**:
+
+1. `src/_styles/global.style.ts` 생성
+   - `createGlobalStyle` 사용
+   - CSS Reset (\*, html, body)
+   - 폰트 설정, 스크롤바 스타일
+   - 다크모드 CSS 변수
+
+2. `src/lib/registry.tsx` 수정
+   - `GlobalStyle` import 및 SSR 지원
+   - 서버/클라이언트 양쪽에서 GlobalStyle 렌더링
+
+3. `src/app/layout.tsx` 수정
+   - `globals.css` import 제거
+
+4. `src/app/globals.css` 삭제
+
+**파일 구조**:
+
+```
+src/_styles/
+├── global.style.ts    # createGlobalStyle - registry.tsx에서 1번 사용
+└── common.style.ts    # 공통 컴포넌트, 믹스인, 토큰 - 각 컴포넌트에서 import
+```
+
+**테스트 수정**:
+
+테스트에서 영문 에러 메시지를 찾고 있었으나 실제 UI는 한국어로 표시되는 불일치 발견:
+
+- `/channel creation failed/i` → `/채널 생성에 실패했습니다/i`
+- `/failed to create/i` → `/채널 생성에 실패했습니다/i`
+
+**결과**:
+
+```
+✅ Build:  성공 (309 kB)
+✅ Tests:  152/153 passed (1 skipped)
+```
+
+**커밋**: `fb3eba1` - globals.css를 styled-components GlobalStyle로 마이그레이션
+
+---
+
 ## 📊 전체 작업 통계 (업데이트)
 
 ### 커밋 이력
@@ -665,14 +736,15 @@ useEffect(() => {
 4. `ffd4cc3` - API 파일 분리 (channel.service.ts → 3개 파일)
 5. `07fea07` - ChannelActions.tsx toAppError 중복 처리 개선
 6. `31c0bd2` - useInfiniteScroll onLoadMore 의존성 제거
+7. `fb3eba1` - globals.css를 styled-components GlobalStyle로 마이그레이션
 
 ### 최종 결과
 
 ```
-파일 변경: 53개
-추가: +1,353줄
-삭제: -1,688줄
-순 감소: -335줄 (코드 정리 효과)
+파일 변경: 58개
+추가: +1,443줄
+삭제: -1,710줄
+순 감소: -267줄 (코드 정리 효과)
 ```
 
 **개선 효과**:
@@ -685,6 +757,7 @@ useEffect(() => {
 - ✅ 명확한 Import 경로
 - ✅ ChannelActions toAppError 중복 호출 제거
 - ✅ useInfiniteScroll 성능 최적화 (콜백 참조 패턴)
+- ✅ globals.css 제거 및 GlobalStyle 통합 (CSS 파일 완전 제거)
 
 ---
 
