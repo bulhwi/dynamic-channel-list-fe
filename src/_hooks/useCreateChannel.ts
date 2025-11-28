@@ -31,7 +31,8 @@ export function useCreateChannel() {
     mutationFn: createChannel,
     onSuccess: () => {
       // 채널 목록 쿼리 무효화하여 자동 재조회
-      queryClient.invalidateQueries({ queryKey: ['channels'] })
+      // prefix matching으로 모든 limit 변형 무효화
+      queryClient.invalidateQueries({ queryKey: ['channels', 'list'] })
     },
   })
 }

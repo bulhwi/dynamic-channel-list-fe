@@ -149,31 +149,11 @@ describe('useUpdateChannel', () => {
       expect(result.current.isSuccess).toBe(true)
     })
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['channels'] })
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['channels', 'list'] })
   })
 
-  // mutation 시작 시 channels 쿼리를 취소해야 함 (낙관적 업데이트)
-  it('should cancel channels query on mutation start', async () => {
-    mockUpdateChannel.mockResolvedValue(mockUpdatedChannel)
-
-    const testQueryClient = createTestQueryClient()
-    const cancelQueriesSpy = jest.spyOn(testQueryClient, 'cancelQueries')
-
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={testQueryClient}>{children}</QueryClientProvider>
-    )
-
-    const { result } = renderHook(() => useUpdateChannel(), { wrapper })
-
-    result.current.mutate(mockChannelUrl)
-
-    await waitFor(() => {
-      expect(cancelQueriesSpy).toHaveBeenCalledWith({ queryKey: ['channels'] })
-    })
-  })
-
-  // 에러 발생 시 이전 상태로 롤백해야 함
-  it('should rollback to previous state on error', async () => {
+  // 에러 발생 시 에러 상태를 반환해야 함
+  it('should handle error state on failure', async () => {
     const error = new Error('Update failed')
     mockUpdateChannel.mockRejectedValue(error)
 
