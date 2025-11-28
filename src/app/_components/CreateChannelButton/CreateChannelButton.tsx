@@ -49,7 +49,7 @@ const CreateChannelButton = memo(
               <S.LoadingText>Creating...</S.LoadingText>
             </S.LoadingContent>
           )}
-          {!isLoading && 'Create Channel'}
+          {!isLoading && 'Create new channel'}
         </S.Button>
         {!isLoading && error && (
           <S.ErrorWrapper>

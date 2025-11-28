@@ -13,11 +13,7 @@ import PageLayout from '@/app/_components/PageLayout/PageLayout'
 
 export default function Home() {
   return (
-    <PageLayout
-      title="Dynamic Channel List"
-      description="Sendbird UIKit implementation with dynamic channel list features"
-      actions={<ChannelActions />}
-    >
+    <PageLayout title="Dynamic Channel List" actions={<ChannelActions />}>
       <ChannelList />
     </PageLayout>
   )

@@ -374,8 +374,8 @@ describe('Sendbird Channel Service', () => {
       expect(result.query).toBe(mockQuery)
     })
 
-    // 기본 limit이 20이어야 함
-    it('should use default limit of 20', async () => {
+    // 기본 limit이 10이어야 함
+    it('should use default limit of 10', async () => {
       const mockNext = jest.fn().mockResolvedValue([])
       const mockQuery = { next: mockNext, hasNext: false }
       const mockCreateQuery = jest.fn().mockReturnValue(mockQuery)
@@ -388,7 +388,7 @@ describe('Sendbird Channel Service', () => {
 
       await getChannels()
 
-      expect(mockCreateQuery).toHaveBeenCalledWith(expect.objectContaining({ limit: 20 }))
+      expect(mockCreateQuery).toHaveBeenCalledWith(expect.objectContaining({ limit: 10 }))
     })
 
     // 기존 query로 다음 페이지를 가져와야 함

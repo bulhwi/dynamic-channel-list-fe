@@ -25,28 +25,21 @@ const Title = styled.h1`
   color: ${colors.gray[900]};
 `
 
-const Description = styled.p`
-  color: ${colors.gray[700]};
-  margin-bottom: 32px;
-`
-
 const ButtonContainer = styled.div`
   margin-bottom: 16px;
 `
 
 interface PageLayoutProps {
   title: string
-  description: string
   actions: React.ReactNode
   children: React.ReactNode
 }
 
-export default function PageLayout({ title, description, actions, children }: PageLayoutProps) {
+export default function PageLayout({ title, actions, children }: PageLayoutProps) {
   return (
     <Main>
       <StyledContainer>
         <Title>{title}</Title>
-        <Description>{description}</Description>
         <ButtonContainer>{actions}</ButtonContainer>
         {children}
       </StyledContainer>

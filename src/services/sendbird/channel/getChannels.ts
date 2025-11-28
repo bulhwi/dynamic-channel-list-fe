@@ -55,7 +55,7 @@ export interface GetChannelsResult {
  * ```
  */
 export async function getChannels(options: GetChannelsOptions = {}): Promise<GetChannelsResult> {
-  const { limit = 20, query: existingQuery } = options
+  const { limit = 10, query: existingQuery } = options
 
   // Sendbird 인스턴스 가져오기
   const sendbird = getSendbirdInstance()

@@ -763,68 +763,114 @@ The channel service was split from a single `channel.service.ts` file into three
 
 **File**: `services/sendbird/channel/getChannels.ts`
 
-```typescript
+````typescript
 import { getSendbirdInstance } from '../client'
-import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
-import type { GroupChannel } from '@sendbird/chat/groupChannel'
+import { toAppError, logError } from '@/_lib/errorUtils'
+import { AppError, ErrorType } from '@/_types/error.types'
 import type { Channel } from '@/_types/channel.types'
+import type {
+  GroupChannel,
+  GroupChannelListQuery,
+  GroupChannelListQueryParams,
+} from '@sendbird/chat/groupChannel'
+import { GroupChannelListOrder } from '@sendbird/chat/groupChannel'
 
-// Transform Sendbird GroupChannel to our Channel type
-function transformChannel(groupChannel: GroupChannel): Channel {
-  return {
-    url: groupChannel.url,
-    name: groupChannel.name,
-    createdAt: groupChannel.createdAt,
-    customType: groupChannel.customType,
-    data: groupChannel.data,
-  }
+export interface GetChannelsOptions {
+  /** Number of channels to fetch at once (default: 10) */
+  limit?: number
+  /** Query instance for pagination (optional) */
+  query?: GroupChannelListQuery
 }
 
-interface GetChannelsParams {
-  limit: number
-  token?: string
-}
-
-interface GetChannelsResult {
+export interface GetChannelsResult {
+  /** Channel list */
   channels: Channel[]
-  nextToken?: string
+  /** Whether there are more pages */
+  hasMore: boolean
+  /** Query instance for next page */
+  query: GroupChannelListQuery
 }
 
 /**
- * Fetch channels using Sendbird SDK
- * IMPORTANT: Only allowed SDK function per assignment
+ * Fetch channel list using Sendbird SDK
+ *
+ * Supports pagination and transforms GroupChannel to Channel type.
+ * Pass query instance to fetch next page, or omit to fetch first page.
+ *
+ * @param {GetChannelsOptions} options - Query options (limit, query)
+ * @returns {Promise<GetChannelsResult>} Channel list, hasMore, query instance
+ * @throws {Error} When Sendbird instance is not initialized
+ *
+ * @example
+ * ```typescript
+ * // Fetch first page
+ * const result = await getChannels({ limit: 10 })
+ * console.log(result.channels) // First 10 channels
+ * console.log(result.hasMore) // Whether there are more channels
+ *
+ * // Fetch next page
+ * const nextResult = await getChannels({ query: result.query })
+ * console.log(nextResult.channels) // Next 10 channels
+ * ```
  */
-export async function getChannels({ limit, token }: GetChannelsParams): Promise<GetChannelsResult> {
-  const sb = getSendbirdInstance()
+export async function getChannels(options: GetChannelsOptions = {}): Promise<GetChannelsResult> {
+  const { limit = 10, query: existingQuery } = options
 
-  const query = sb.groupChannel.createMyGroupChannelListQuery({
-    includeEmpty: true, // REQUIRED
-    limit, // REQUIRED
-    order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL, // REQUIRED
-  })
+  // Get Sendbird instance
+  const sendbird = getSendbirdInstance()
 
-  // If token exists, load specific page
-  if (token) {
-    // Note: Sendbird query doesn't support token-based pagination
-    // We use hasNext and load next page
-  }
-
-  if (!query.hasNext) {
-    return { channels: [], nextToken: undefined }
+  if (!sendbird) {
+    throw new AppError(
+      ErrorType.SENDBIRD_INIT_FAILED,
+      'Failed to connect to service. Please refresh the page.',
+      'Sendbird instance not initialized'
+    )
   }
 
   try {
-    const groupChannels = await query.next()
-    const channels = groupChannels.map(transformChannel)
-    const nextToken = query.hasNext ? 'next' : undefined
+    let query: GroupChannelListQuery
 
-    return { channels, nextToken }
+    // Reuse existing query if available, otherwise create new one
+    if (existingQuery) {
+      query = existingQuery
+    } else {
+      // Configure GroupChannelListQuery parameters
+      const params: GroupChannelListQueryParams = {
+        limit,
+        includeEmpty: true, // Include empty channels
+        order: GroupChannelListOrder.CHANNEL_NAME_ALPHABETICAL, // Sort alphabetically (assignment requirement)
+      }
+
+      // Create query
+      query = sendbird.groupChannel.createMyGroupChannelListQuery(params)
+    }
+
+    // Fetch channel list
+    const groupChannels: GroupChannel[] = await query.next()
+
+    // Transform GroupChannel to Channel type
+    const channels: Channel[] = groupChannels.map(gc => ({
+      url: gc.url,
+      name: gc.name,
+      createdAt: gc.createdAt,
+      ...(gc.customType && { customType: gc.customType }),
+      ...(gc.data && { data: gc.data }),
+    }))
+
+    // Return result
+    return {
+      channels,
+      hasMore: query.hasNext,
+      query, // Return query instance for next page
+    }
   } catch (error) {
-    console.error('Failed to fetch channels:', error)
-    throw error
+    // Convert to AppError for consistent error handling
+    const appError = toAppError(error, ErrorType.CHANNEL_FETCH_FAILED)
+    logError(appError, 'getChannels')
+    throw appError
   }
 }
-```
+````
 
 #### 5.2.2 Create Channel Service
 
