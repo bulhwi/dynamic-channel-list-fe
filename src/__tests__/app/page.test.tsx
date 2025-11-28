@@ -57,14 +57,11 @@ describe('Home Page Integration', () => {
   })
 
   // 페이지가 제목과 설명을 렌더링해야 함
-  it('should render page title and description', async () => {
+  it('should render page title', async () => {
     const Wrapper = createWrapper()
     render(<Home />, { wrapper: Wrapper })
 
     expect(screen.getByText('Dynamic Channel List')).toBeInTheDocument()
-    expect(
-      screen.getByText('Sendbird UIKit implementation with dynamic channel list features')
-    ).toBeInTheDocument()
   })
 
   // CreateChannelButton이 렌더링되어야 함
@@ -73,7 +70,7 @@ describe('Home Page Integration', () => {
     render(<Home />, { wrapper: Wrapper })
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /create channel/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /create new channel/i })).toBeInTheDocument()
     })
   })
 
@@ -104,7 +101,7 @@ describe('Home Page Integration', () => {
     render(<Home />, { wrapper: Wrapper })
 
     // 버튼이 나타날 때까지 대기
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
 
     // 버튼 클릭
     await user.click(button)
@@ -145,7 +142,7 @@ describe('Home Page Integration', () => {
       next: null,
     })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // 새 채널이 리스트에 나타나는지 확인
@@ -183,7 +180,7 @@ describe('Home Page Integration', () => {
       next: null,
     })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // 모든 채널이 알파벳 순으로 표시되는지 확인
@@ -206,7 +203,7 @@ describe('Home Page Integration', () => {
     const Wrapper = createWrapper()
     render(<Home />, { wrapper: Wrapper })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
 
     // 버튼 클릭
     await user.click(button)
@@ -233,7 +230,7 @@ describe('Home Page Integration', () => {
     const Wrapper = createWrapper()
     render(<Home />, { wrapper: Wrapper })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // 에러 메시지가 표시되는지 확인
@@ -275,7 +272,7 @@ describe('Home Page Integration', () => {
       query: { hasNext: false } as any,
     })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     await waitFor(() => {
@@ -331,7 +328,7 @@ describe('Home Page Integration', () => {
     const Wrapper = createWrapper()
     render(<Home />, { wrapper: Wrapper })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // LoadingSpinner가 표시되는지 확인
@@ -355,7 +352,7 @@ describe('Home Page Integration', () => {
     const Wrapper = createWrapper()
     render(<Home />, { wrapper: Wrapper })
 
-    const button = await screen.findByRole('button', { name: /create channel/i })
+    const button = await screen.findByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // 에러 메시지와 재시도 버튼이 표시되는지 확인
@@ -415,7 +412,7 @@ describe('Home Page Integration', () => {
 
     // 2. 생성 버튼 클릭
     mockCreateChannel.mockReturnValue(createPromise as any)
-    const button = screen.getByRole('button', { name: /create channel/i })
+    const button = screen.getByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // 3. 로딩 상태 확인
@@ -454,7 +451,7 @@ describe('Home Page Integration', () => {
 
     // 6. 버튼이 다시 활성화되는지 확인
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /create channel/i })).not.toBeDisabled()
+      expect(screen.getByRole('button', { name: /create new channel/i })).not.toBeDisabled()
     })
   })
 
@@ -468,11 +465,11 @@ describe('Home Page Integration', () => {
 
     // 1. 초기 상태 확인
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /create channel/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /create new channel/i })).toBeInTheDocument()
     })
 
     // 2. 버튼 클릭
-    const button = screen.getByRole('button', { name: /create channel/i })
+    const button = screen.getByRole('button', { name: /create new channel/i })
     await user.click(button)
 
     // 3. 에러 메시지와 재시도 버튼 확인 (사용자 친화적 메시지로 변환됨)
@@ -486,6 +483,6 @@ describe('Home Page Integration', () => {
     )
 
     // 4. 원래 버튼은 여전히 활성화되어 있어야 함
-    expect(screen.getByRole('button', { name: /create channel/i })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: /create new channel/i })).not.toBeDisabled()
   })
 })

@@ -7,8 +7,9 @@ import { animations, colors } from '@/_styles/common.style'
 
 export const StyledChannelItem = styled.div<{ $clickable: boolean; $isUpdating: boolean }>`
   padding: 16px;
-  border-bottom: 1px solid ${colors.gray[200]};
   background-color: ${colors.background.main};
+  border: 1px solid ${colors.gray[200]};
+  border-radius: 8px;
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;

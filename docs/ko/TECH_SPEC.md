@@ -417,33 +417,95 @@ export const ChannelItem = memo(function ChannelItem({
 
 ```typescript
 import styled from 'styled-components'
-import { colors } from '@/_styles/common.style'
+import { animations, colors } from '@/_styles/common.style'
 
-export const ChannelItemContainer = styled.div<{ $isUpdating: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  padding: 12px 16px;
-  border-bottom: 1px solid ${colors.gray[200]};
-  background: ${colors.background.main};
-  cursor: pointer;
-  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
-
+export const StyledChannelItem = styled.div<{ $clickable: boolean; $isUpdating: boolean }>`
+  padding: 16px;
+  background-color: ${colors.background.main};
+  border: 1px solid ${colors.gray[200]};
+  border-radius: 8px;
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;
+  transform: translateX(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: ${animations.fadeSlideIn} 300ms ease-out;
+  cursor: ${props => (props.$clickable ? 'pointer' : 'default')};
+  position: relative;
+  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
+  pointer-events: ${props => (props.$isUpdating ? 'none' : 'auto')};
+  user-select: ${props => (props.$clickable ? 'none' : 'auto')};
 
   &:hover {
-    background-color: ${colors.gray[50]};
+    transform: translateX(40px);
+    background-color: ${colors.background.light};
   }
+
+  &:hover + & {
+    transform: translateX(20px);
+  }
+
+  &:has(+ &:hover) {
+    transform: translateX(20px);
+  }
+
+  ${props =>
+    props.$clickable &&
+    `
+    &:active {
+      background-color: ${colors.background.hover};
+      transform: translateX(38px) scale(0.99);
+    }
+
+    &:focus {
+      outline: 2px solid ${colors.primary.main};
+      outline-offset: -2px;
+    }
+  `}
 `
 
-export const ChannelName = styled.span`
+export const ChannelInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const ChannelName = styled.h3`
   font-size: 16px;
+  font-weight: 600;
+  color: ${colors.gray[800]};
+  margin: 0;
+`
+
+export const ChannelDate = styled.time`
+  font-size: 12px;
+  color: ${colors.gray[300]};
+`
+
+export const CustomType = styled.span`
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: ${colors.primary.main};
+  background-color: ${colors.primary.lightest};
+  border-radius: 4px;
   font-weight: 500;
-  color: ${colors.text.primary};
-  user-select: none;
+  text-transform: uppercase;
+`
+
+export const LoadingIndicator = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: ${colors.gray[500]};
+  font-weight: 500;
+  padding: 4px 8px;
+  background-color: ${colors.background.dark};
+  border-radius: 4px;
+  animation: ${animations.pulse} 1.5s ease-in-out infinite;
 `
 ```
 
@@ -1979,11 +2041,12 @@ export const ANIMATION_CONFIG = {
 
 ## 문서 변경 이력
 
-| 버전  | 날짜       | 작성자 | 변경 사항                                                                                                                                                                                                          |
-| ----- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성                                                                                                                                                                                              |
-| 1.0.1 | 2025-11-24 | 개발팀 | Production 완료 상태 반영, styled-components 및 SSR 최적화 내용 업데이트 (의존성, 컴포넌트 트리, 애니메이션 구현, CSS 성능 섹션), 실제 테스트 결과 반영 (161 tests, 85%+ coverage)                                 |
-| 1.0.2 | 2025-11-28 | 개발팀 | 아키텍처 다이어그램 업데이트 (Session 06 private 폴더, Session 08 styled-components, Phase 6 API 분리), 의존성 노트 추가 (제거/추가된 패키지), 계층화 아키텍처에 SSR 레이어 추가, 채널 서비스 3개 파일 분리 문서화 |
+| 버전  | 날짜       | 작성자 | 변경 사항                                                                                                                                                                                                                                                     |
+| ----- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0 | 2025-11-23 | 개발팀 | 초기 기술 사양서 작성                                                                                                                                                                                                                                         |
+| 1.0.1 | 2025-11-24 | 개발팀 | Production 완료 상태 반영, styled-components 및 SSR 최적화 내용 업데이트 (의존성, 컴포넌트 트리, 애니메이션 구현, CSS 성능 섹션), 실제 테스트 결과 반영 (161 tests, 85%+ coverage)                                                                            |
+| 1.0.2 | 2025-11-28 | 개발팀 | 아키텍처 다이어그램 업데이트 (Session 06 private 폴더, Session 08 styled-components, Phase 6 API 분리), 의존성 노트 추가 (제거/추가된 패키지), 계층화 아키텍처에 SSR 레이어 추가, 채널 서비스 3개 파일 분리 문서화                                            |
+| 1.0.3 | 2025-11-28 | 개발팀 | UI 스타일링 개선: ChannelItem 스타일 업데이트 (border + border-radius 추가), ChannelList에서 Card 스타일 제거 (배경색, border-radius, box-shadow), 채널 아이템 간 8px gap 추가, ChannelItem.style.ts 섹션 실제 코드 반영, 테스트 178개 통과 (92.68% 커버리지) |
 
 ---
 

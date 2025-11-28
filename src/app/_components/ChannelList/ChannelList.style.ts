@@ -5,8 +5,9 @@
 import styled from 'styled-components'
 import { colors, Card, mixins } from '@/_styles/common.style'
 
-export const StyledChannelList = styled(Card)`
+export const StyledChannelList = styled.div`
   ${mixins.flexColumn}
+  gap: 8px; /* 채널 아이템 간 간격 */
   width: 100%;
   max-width: 600px;
   margin: 0 auto;

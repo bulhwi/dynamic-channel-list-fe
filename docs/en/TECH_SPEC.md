@@ -417,33 +417,95 @@ export const ChannelItem = memo(function ChannelItem({
 
 ```typescript
 import styled from 'styled-components'
-import { colors } from '@/_styles/common.style'
+import { animations, colors } from '@/_styles/common.style'
 
-export const ChannelItemContainer = styled.div<{ $isUpdating: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  padding: 12px 16px;
-  border-bottom: 1px solid ${colors.gray[200]};
-  background: ${colors.background.main};
-  cursor: pointer;
-  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
-
+export const StyledChannelItem = styled.div<{ $clickable: boolean; $isUpdating: boolean }>`
+  padding: 16px;
+  background-color: ${colors.background.main};
+  border: 1px solid ${colors.gray[200]};
+  border-radius: 8px;
   transition:
     transform 250ms ease-in-out,
     background-color 200ms ease;
+  transform: translateX(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: ${animations.fadeSlideIn} 300ms ease-out;
+  cursor: ${props => (props.$clickable ? 'pointer' : 'default')};
+  position: relative;
+  opacity: ${props => (props.$isUpdating ? 0.6 : 1)};
+  pointer-events: ${props => (props.$isUpdating ? 'none' : 'auto')};
+  user-select: ${props => (props.$clickable ? 'none' : 'auto')};
 
   &:hover {
-    background-color: ${colors.gray[50]};
+    transform: translateX(40px);
+    background-color: ${colors.background.light};
   }
+
+  &:hover + & {
+    transform: translateX(20px);
+  }
+
+  &:has(+ &:hover) {
+    transform: translateX(20px);
+  }
+
+  ${props =>
+    props.$clickable &&
+    `
+    &:active {
+      background-color: ${colors.background.hover};
+      transform: translateX(38px) scale(0.99);
+    }
+
+    &:focus {
+      outline: 2px solid ${colors.primary.main};
+      outline-offset: -2px;
+    }
+  `}
 `
 
-export const ChannelName = styled.span`
+export const ChannelInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const ChannelName = styled.h3`
   font-size: 16px;
+  font-weight: 600;
+  color: ${colors.gray[800]};
+  margin: 0;
+`
+
+export const ChannelDate = styled.time`
+  font-size: 12px;
+  color: ${colors.gray[300]};
+`
+
+export const CustomType = styled.span`
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: ${colors.primary.main};
+  background-color: ${colors.primary.lightest};
+  border-radius: 4px;
   font-weight: 500;
-  color: ${colors.text.primary};
-  user-select: none;
+  text-transform: uppercase;
+`
+
+export const LoadingIndicator = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: ${colors.gray[500]};
+  font-weight: 500;
+  padding: 4px 8px;
+  background-color: ${colors.background.dark};
+  border-radius: 4px;
+  animation: ${animations.pulse} 1.5s ease-in-out infinite;
 `
 ```
 
@@ -2006,11 +2068,12 @@ export const ANIMATION_CONFIG = {
 
 ## Document Change Log
 
-| Version | Date       | Author           | Changes                                                                                                                                                                                                                                                  |
-| ------- | ---------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification                                                                                                                                                                                                                          |
-| 1.0.1   | 2025-11-24 | Development Team | Production completion status update, styled-components and SSR optimization content updates (dependencies, component tree, animation implementation, CSS performance section), actual test results reflected (161 tests, 85%+ coverage)                  |
-| 1.0.2   | 2025-11-28 | Development Team | Architecture diagrams updated (Session 06 private folders, Session 08 styled-components, Phase 6 API split), dependencies notes added (removed/added packages), layered architecture expanded with SSR layer, channel service split (3 files) documented |
+| Version | Date       | Author           | Changes                                                                                                                                                                                                                                                                          |
+| ------- | ---------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2025-11-23 | Development Team | Initial technical specification                                                                                                                                                                                                                                                  |
+| 1.0.1   | 2025-11-24 | Development Team | Production completion status update, styled-components and SSR optimization content updates (dependencies, component tree, animation implementation, CSS performance section), actual test results reflected (161 tests, 85%+ coverage)                                          |
+| 1.0.2   | 2025-11-28 | Development Team | Architecture diagrams updated (Session 06 private folders, Session 08 styled-components, Phase 6 API split), dependencies notes added (removed/added packages), layered architecture expanded with SSR layer, channel service split (3 files) documented                         |
+| 1.0.3   | 2025-11-28 | Development Team | UI styling improvements: ChannelItem style updated (border + border-radius added), ChannelList Card styles removed (background, border-radius, box-shadow), 8px gap between channel items, ChannelItem.style.ts section reflects actual code, 178 tests passed (92.68% coverage) |
 
 ---
 

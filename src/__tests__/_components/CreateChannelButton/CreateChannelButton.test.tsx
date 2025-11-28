@@ -14,7 +14,7 @@ describe('CreateChannelButton', () => {
     const mockOnClick = jest.fn()
     render(<CreateChannelButton onClick={mockOnClick} />)
 
-    expect(screen.getByRole('button', { name: /create channel/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /create new channel/i })).toBeInTheDocument()
   })
 
   // 클릭 시 onClick 핸들러가 호출되어야 함
@@ -102,7 +102,7 @@ describe('CreateChannelButton', () => {
     // 로딩 완료 후 재렌더링
     rerender(<CreateChannelButton onClick={mockOnClick} isLoading={false} />)
 
-    expect(screen.getByText(/create channel/i)).toBeInTheDocument()
+    expect(screen.getByText(/create new channel/i)).toBeInTheDocument()
     expect(screen.queryByText(/creating/i)).not.toBeInTheDocument()
   })
 
