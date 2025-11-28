@@ -133,6 +133,20 @@ export const mixins = {
     }
   `,
 
+  // 스크롤바 숨기기 (스크롤 기능은 유지)
+  hideScrollbar: css`
+    /* Chrome, Safari, Edge */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* IE, Legacy Edge */
+    -ms-overflow-style: none;
+  `,
+
   // 부드러운 전환
   transition: css`
     transition: all 200ms ease;

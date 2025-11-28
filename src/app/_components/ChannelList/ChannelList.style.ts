@@ -12,8 +12,9 @@ export const StyledChannelList = styled(Card)`
   margin: 0 auto;
   max-height: calc(60px * 10);
   overflow-y: auto;
-  overflow-x: hidden;
-  ${mixins.scrollbar}
+  overflow-x: visible; /* 호버 애니메이션이 잘리지 않도록 */
+  padding-right: 50px; /* 호버 시 translateX 공간 확보 */
+  ${mixins.hideScrollbar}/* 스크롤바 숨기기 */
 `
 
 export const Loading = styled.div`
