@@ -423,8 +423,6 @@ Sendbird 인증 정보는 [Sendbird Dashboard](https://dashboard.sendbird.com/)�
 
 ## 🤝 기여
 
-이 프로젝트는 과제 제출용이지만, 피드백과 제안은 환영합니다!
-
 1. 현재 작업은 [GitHub Issues](https://github.com/bulhwi/dynamic-channel-list-fe/issues)에서 확인하세요
 2. 아키텍처는 [기술 사양서](docs/en/TECH_SPEC.md)를 검토하세요
 3. TDD 방법론을 따라주세요 (테스트를 먼저 작성)
@@ -441,15 +439,6 @@ Sendbird 인증 정보는 [Sendbird Dashboard](https://dashboard.sendbird.com/)�
 다음의 지원을 받아 개발되었습니다:
 
 - **Claude Code** (claude-sonnet-4.5) by Anthropic
-
-## 🙏 감사의 말
-
-- **Sendbird** - 채팅 SDK 및 문서
-- **Vercel** - Next.js 프레임워크 및 호스팅
-- **Anthropic** - Claude Code AI 지원
-- **오픈소스 커뮤니티** - 훌륭한 도구와 라이브러리
-
----
 
 **최종 업데이트**: 2025-11-24
 **버전**: 1.0.0
